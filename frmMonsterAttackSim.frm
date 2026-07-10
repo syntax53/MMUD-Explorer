@@ -1039,6 +1039,7 @@ Begin VB.Form frmMonsterAttackSim
       Width           =   3435
    End
    Begin VB.CommandButton cmdRunSim 
+      Style           =   1  'Graphical
       Caption         =   "Run Simulator"
       Default         =   -1  'True
       BeginProperty Font 
@@ -1092,6 +1093,7 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   795
       End
       Begin VB.CommandButton cmdAlwaysDodgeQ 
+         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   315
          Left            =   3960
@@ -1253,6 +1255,7 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   1215
       End
       Begin VB.CommandButton cmdResetUserDefs 
+         Style           =   1  'Graphical
          Caption         =   "Reload"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -1271,6 +1274,7 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   855
       End
       Begin VB.CommandButton cmdResetUserDefs 
+         Style           =   1  'Graphical
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -1405,6 +1409,7 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   735
       End
       Begin VB.CommandButton cmdMRNote 
+         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Left            =   5160
@@ -1748,7 +1753,7 @@ Dim nParty As Integer
 chkAlwaysDodge.Value = 0
 
 If Index = 0 Then
-    fraChar.Caption = "Character Defenses"
+    Call SetFrameCaption(fraChar, "Character Defenses")
     txtUserAC.Text = 0
     txtUserDR.Text = 0
     txtUserDodge.Text = 0
@@ -1768,7 +1773,7 @@ Else
     If nParty > 6 Then nParty = 6
     
     If nParty = 1 Then
-        fraChar.Caption = "Character Defenses"
+        Call SetFrameCaption(fraChar, "Character Defenses")
         txtUserAC.Text = Round(val(frmMain.lblInvenCharStat(2).Caption))
         txtUserDR.Text = Round(val(frmMain.lblInvenCharStat(3).Caption))
         txtUserMR.Text = Round(val(frmMain.txtCharMR.Text))
@@ -1781,7 +1786,7 @@ Else
         txtElementalResist(5).Text = frmMain.lblInvenCharStat(26).Tag 'wat
         txtProtEvil.Text = val(frmMain.lblInvenCharStat(20).Tag)
     Else
-        fraChar.Caption = "PARTY Defenses"
+        Call SetFrameCaption(fraChar, "PARTY Defenses")
         'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
         txtUserAC.Text = Round(val(frmMain.txtMonsterLairFilter(1).Text))
         txtUserDR.Text = Round(val(frmMain.txtMonsterLairFilter(2).Text))
@@ -1928,6 +1933,7 @@ MsgBox "MME can now calculate your dodge value and should have populated it for 
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)
@@ -2083,9 +2089,9 @@ End Sub
 Private Sub chkDynamicRounds_Click()
 If chkDynamicRounds.Value = 1 Then
     txtNumRounds.Enabled = False
-    txtNumRounds.BackColor = &H8000000F
+    txtNumRounds.BackColor = TColor(&H8000000F)
 Else
-    txtNumRounds.BackColor = &H80000005
+    txtNumRounds.BackColor = TColor(&H80000005)
     txtNumRounds.Enabled = True
 End If
 End Sub

@@ -43,6 +43,7 @@ Begin VB.Form frmNotepad
       Width           =   5235
    End
    Begin VB.CommandButton cmdDO 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "Cl&ose"
       Height          =   315
@@ -53,6 +54,7 @@ Begin VB.Form frmNotepad
       Width           =   1275
    End
    Begin VB.CommandButton cmdDO 
+      Style           =   1  'Graphical
       Caption         =   "&Paste"
       Height          =   315
       Index           =   2
@@ -62,6 +64,7 @@ Begin VB.Form frmNotepad
       Width           =   1275
    End
    Begin VB.CommandButton cmdDO 
+      Style           =   1  'Graphical
       Caption         =   "&Copy"
       Height          =   315
       Index           =   1
@@ -71,6 +74,7 @@ Begin VB.Form frmNotepad
       Width           =   1275
    End
    Begin VB.CommandButton cmdDO 
+      Style           =   1  'Graphical
       Caption         =   "&Save As..."
       Height          =   315
       Index           =   0
@@ -206,6 +210,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim nTemp As Long
 

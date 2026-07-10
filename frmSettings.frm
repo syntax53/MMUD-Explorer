@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   7425
+   ClientHeight    =   7725
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   10110
@@ -10,23 +10,32 @@ Begin VB.Form frmSettings
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   7425
+   ScaleHeight     =   7725
    ScaleWidth      =   10110
    Begin VB.CommandButton cmdRecreateINI 
+      Style           =   1  'Graphical
       Caption         =   "Recreate settings.ini"
       Height          =   375
       Left            =   4020
       TabIndex        =   3
-      Top             =   6900
+      Top             =   7200
       Width           =   2115
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   6675
+      Height          =   6975
       Left            =   60
       TabIndex        =   2
       Top             =   60
       Width           =   9915
+      Begin VB.CheckBox chkDarkMode 
+         Caption         =   "Enable dark mode (takes effect after restarting MMUD Explorer)"
+         Height          =   255
+         Left            =   180
+         TabIndex        =   50
+         Top             =   6600
+         Width           =   5595
+      End
       Begin VB.CheckBox chkSwapMonDetailOutput 
          Caption         =   "In lair mode, print damage out and lair/scripting information first"
          Height          =   255
@@ -146,6 +155,7 @@ Begin VB.Form frmSettings
             Width           =   855
          End
          Begin VB.CommandButton cmdCEPHB_Q 
+            Style           =   1  'Graphical
             Caption         =   "XP"
             Height          =   315
             Index           =   3
@@ -155,6 +165,7 @@ Begin VB.Form frmSettings
             Width           =   735
          End
          Begin VB.CommandButton cmdCEPHB_Q 
+            Style           =   1  'Graphical
             Caption         =   "Move"
             Height          =   315
             Index           =   2
@@ -164,6 +175,7 @@ Begin VB.Form frmSettings
             Width           =   735
          End
          Begin VB.CommandButton cmdCEPHB_Q 
+            Style           =   1  'Graphical
             Caption         =   "Mana"
             Height          =   315
             Index           =   1
@@ -173,6 +185,7 @@ Begin VB.Form frmSettings
             Width           =   735
          End
          Begin VB.CommandButton cmdCEPHB_Q 
+            Style           =   1  'Graphical
             Caption         =   "DMG"
             Height          =   315
             Index           =   0
@@ -352,6 +365,7 @@ Begin VB.Form frmSettings
          Width           =   7035
       End
       Begin VB.CommandButton cmdNone 
+         Style           =   1  'Graphical
          Caption         =   "None"
          Height          =   435
          Left            =   8580
@@ -360,6 +374,7 @@ Begin VB.Form frmSettings
          Width           =   1095
       End
       Begin VB.CommandButton cmdAll 
+         Style           =   1  'Graphical
          Caption         =   "All"
          Height          =   435
          Left            =   7380
@@ -488,6 +503,7 @@ Begin VB.Form frmSettings
       End
    End
    Begin VB.CommandButton cmdCancel 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Cancel"
       BeginProperty Font 
@@ -502,10 +518,11 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   8700
       TabIndex        =   1
-      Top             =   6900
+      Top             =   7200
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
+      Style           =   1  'Graphical
       Caption         =   "&Save"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -519,7 +536,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   120
       TabIndex        =   0
-      Top             =   6900
+      Top             =   7200
       Width           =   1575
    End
 End
@@ -645,6 +662,7 @@ chkLoadShops.Value = 0
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim sSectionName As String
 
@@ -673,6 +691,7 @@ If val(ReadINI("Settings", "AutoCalcMonDamage", , "1")) > 0 Then chkAutoCalcMonD
 If val(ReadINI("Settings", "SwapWindowTitle")) > 0 Then chkSwapWindowTitle.Value = 1
 If val(ReadINI("Settings", "DontLookupMonsterRegen")) > 0 Then chkDontLookupMonsterRegen.Value = 1
 If val(ReadINI("Settings", "MobPrintCharDamageOutFirst")) > 0 Then chkSwapMonDetailOutput.Value = 1
+If val(ReadINI("Settings", "DarkMode")) > 0 Then chkDarkMode.Value = 1
 If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 Then
     bPerCharOnLoad = True
     chkExpHrCalcByCharacter.Value = 1
@@ -823,6 +842,10 @@ Call WriteINI("Settings", "AutoCalcMonDamage", chkAutoCalcMonDamage.Value)
 Call WriteINI("Settings", "SwapWindowTitle", chkSwapWindowTitle.Value)
 Call WriteINI("Settings", "DontLookupMonsterRegen", chkDontLookupMonsterRegen.Value)
 Call WriteINI("Settings", "MobPrintCharDamageOutFirst", chkSwapMonDetailOutput.Value)
+Call WriteINI("Settings", "DarkMode", chkDarkMode.Value)
+If (chkDarkMode.Value = 1) <> bDarkMode Then
+    MsgBox "The dark mode change will take effect the next time " & App.title & " is started.", vbInformation
+End If
 Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
 
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)

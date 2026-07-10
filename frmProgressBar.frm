@@ -39,6 +39,7 @@ Begin VB.Form frmProgressBar
          Appearance      =   1
       End
       Begin VB.CommandButton cmdCancel 
+         Style           =   1  'Graphical
          Cancel          =   -1  'True
          Caption         =   "Cancel"
          Height          =   315
@@ -101,6 +102,7 @@ Me.Hide
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 Dim nLng As Long
 On Error Resume Next
 'SubclassForm Me

@@ -1,0 +1,9 @@
+96dpi
+
+1-bit transparency (a pixel is either fully opaque or fully invisible — no alpha channel, PNG isn't supported)
+
+Better format: instead of GIF, use a 24-bit BMP with UseMaskColor=True and MaskColor set to magenta (&H00FF00FF / #FF00FF) on the button.  An .ico works identically if you prefer icon tooling.
+
+Edge handling (this matters more than format): don't antialias glyph edges against the transparent/mask background — that's what causes fringing. Either draw hard-edged (aliased) glyphs, or pre-blend the antialiasing against #C4C4C4 — the midpoint between the light button face (~#F0F0F0) and the new dark-mode face (#989898). 
+
+Sizing: pictures draw 1:1 pixels, centered. Button pixels = twips ÷ 15 at 96 DPI; leave ~4px for the 3D border (a 495×435-twip button → 33×29px → keep the glyph ≤26×22; 16×16 or 24×24 are the safe standards). Mid-dark strokes (#202020–#404040) read well on both faces.

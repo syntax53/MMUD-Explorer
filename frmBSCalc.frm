@@ -31,6 +31,7 @@ Begin VB.Form frmBSCalc
       Top             =   0
    End
    Begin VB.CommandButton cmdNote 
+      Style           =   1  'Graphical
       Caption         =   "Help"
       Height          =   375
       Left            =   3180
@@ -39,6 +40,7 @@ Begin VB.Form frmBSCalc
       Width           =   1035
    End
    Begin VB.CommandButton cmdReset 
+      Style           =   1  'Graphical
       Caption         =   "Reset"
       Height          =   375
       Left            =   2040
@@ -47,6 +49,7 @@ Begin VB.Form frmBSCalc
       Width           =   1035
    End
    Begin VB.CommandButton cmdClose 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Close"
       Height          =   375
@@ -56,6 +59,7 @@ Begin VB.Form frmBSCalc
       Width           =   1335
    End
    Begin VB.CommandButton cmdCopytoClip 
+      Style           =   1  'Graphical
       Caption         =   "Cop&y to Clipboard"
       Height          =   375
       Index           =   0
@@ -81,6 +85,7 @@ Begin VB.Form frmBSCalc
       Top             =   0
       Width           =   5835
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -108,6 +113,7 @@ Begin VB.Form frmBSCalc
          Width           =   675
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -134,6 +140,7 @@ Begin VB.Form frmBSCalc
          Width           =   1275
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -152,6 +159,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -170,6 +178,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -188,6 +197,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -206,6 +216,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -224,6 +235,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -242,6 +254,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -260,6 +273,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -278,6 +292,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "+"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -296,6 +311,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdAlterLevel 
+         Style           =   1  'Graphical
          Caption         =   "-"
          BeginProperty Font 
             Name            =   "MS Sans Serif"
@@ -314,6 +330,7 @@ Begin VB.Form frmBSCalc
          Width           =   315
       End
       Begin VB.CommandButton cmdJump 
+         Style           =   1  'Graphical
          Caption         =   ">"
          Height          =   315
          Left            =   3120
@@ -554,6 +571,7 @@ End Sub
 
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim bClassStealth As Boolean
 

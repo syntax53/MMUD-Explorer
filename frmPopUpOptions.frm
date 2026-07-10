@@ -26,6 +26,7 @@ Begin VB.Form frmPopUpOptions
       Top             =   60
    End
    Begin VB.CommandButton cmdPaste 
+      Style           =   1  'Graphical
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -44,6 +45,7 @@ Begin VB.Form frmPopUpOptions
       Width           =   2535
    End
    Begin VB.CommandButton cmdCancel 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Cancel"
       BeginProperty Font 
@@ -62,6 +64,7 @@ Begin VB.Form frmPopUpOptions
       Width           =   1515
    End
    Begin VB.CommandButton cmdContinue 
+      Style           =   1  'Graphical
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -109,6 +112,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   2835
          End
          Begin VB.CommandButton cmdHelp 
+            Style           =   1  'Graphical
             Caption         =   "?"
             Height          =   315
             Index           =   3
@@ -118,6 +122,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   315
          End
          Begin VB.CommandButton cmdHealRoundsMod 
+            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -136,6 +141,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   315
          End
          Begin VB.CommandButton cmdHealRoundsMod 
+            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -154,6 +160,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   315
          End
          Begin VB.CommandButton cmdHelp 
+            Style           =   1  'Graphical
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -516,6 +523,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   615
          End
          Begin VB.CommandButton cmdHelp 
+            Style           =   1  'Graphical
             Caption         =   "?"
             Height          =   315
             Index           =   2
@@ -544,6 +552,7 @@ Begin VB.Form frmPopUpOptions
             Width           =   1275
          End
          Begin VB.CommandButton cmdHelp 
+            Style           =   1  'Graphical
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -1627,7 +1636,7 @@ Dim x As Integer
 fraChooseAttack.Visible = False
 
 For x = 0 To cmdRoomFindDir.count - 1
-    cmdRoomFindDir(x).BackColor = &H8000000F
+    cmdRoomFindDir(x).BackColor = TBtnColor(&H8000000F)
     cmdRoomFindDir(x).Tag = 0
 Next x
 
@@ -1650,10 +1659,10 @@ Private Sub cmdRoomFindDir_Click(Index As Integer)
 On Error GoTo error:
 
 If cmdRoomFindDir(Index).Tag = "0" Then
-    cmdRoomFindDir(Index).BackColor = &HC000&
+    cmdRoomFindDir(Index).BackColor = TBtnColor(&HC000&)
     cmdRoomFindDir(Index).Tag = 1
 Else
-    cmdRoomFindDir(Index).BackColor = &H8000000F
+    cmdRoomFindDir(Index).BackColor = TBtnColor(&H8000000F)
     cmdRoomFindDir(Index).Tag = 0
 End If
 
@@ -1666,6 +1675,7 @@ Resume out:
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)

@@ -49,6 +49,7 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 'stop windows from resizing fixed-size windows when changing dpi

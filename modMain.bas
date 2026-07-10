@@ -404,6 +404,10 @@ End If
 
 Set fso = Nothing
 
+'resolve settings and read the dark mode flag before any form loads
+INIFileName = ResolveSettingsPath(bGlobalNewINICreated)
+If val(ReadINI("Settings", "DarkMode")) > 0 Then bDarkMode = True
+
 Load frmMain
 
 If bCancelLaunch Or bAppTerminating Then
@@ -2193,9 +2197,9 @@ If nNMRVer >= 1.83 Then
     If Not tabMonsters.Fields("GameLimit") = 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Game Limit"
-        If tabMonsters.Fields("RegenTime") = 0 Then oLI.ForeColor = RGB(204, 0, 0)
+        If tabMonsters.Fields("RegenTime") = 0 Then oLI.ForeColor = TColor(RGB(204, 0, 0))
         oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("GameLimit")
-        If tabMonsters.Fields("RegenTime") = 0 Then oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+        If tabMonsters.Fields("RegenTime") = 0 Then oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
     End If
 End If
 
@@ -2347,13 +2351,13 @@ If tabMonsters.Fields("DeathSpell") > 0 Then
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     oLI.ListSubItems(1).Tag = tabMonsters.Fields("DeathSpell")
     If SpellHasAbility(tabMonsters.Fields("DeathSpell"), 60) >= 0 Then 'fear
-        oLI.ListSubItems(1).ForeColor = &HC0&
+        oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
         oLI.ListSubItems(1).Bold = True
     ElseIf SpellHasAbility(tabMonsters.Fields("DeathSpell"), 19) >= 0 Then 'poison
-        oLI.ListSubItems(1).ForeColor = &H8000&
+        oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
         oLI.ListSubItems(1).Bold = True
     ElseIf SpellHasAbility(tabMonsters.Fields("DeathSpell"), 71) >= 0 Then 'confusion
-        oLI.ListSubItems(1).ForeColor = &H80FF&
+        oLI.ListSubItems(1).ForeColor = TColor(&H80FF&)
         oLI.ListSubItems(1).Bold = True
     End If
 End If
@@ -2371,10 +2375,10 @@ If tabMonsters.Fields("GreetTXT") > 0 Then
             Set oLI = DetailLV.ListItems.Add()
             oLI.Tag = "greet_text"
             oLI.Text = "Greet Commands:"
-            oLI.ForeColor = &H8000&
+            oLI.ForeColor = TColor(&H8000&)
             oLI.ListSubItems.Add (1), "Detail", "Textblock " & tabMonsters.Fields("GreetTXT")
             oLI.ListSubItems(1).Tag = tabMonsters.Fields("GreetTXT")
-            oLI.ListSubItems(1).ForeColor = &H8000&
+            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
         End If
     End If
 End If
@@ -2383,9 +2387,9 @@ If nNMRVer >= 1.83 Then
     If tabMonsters.Fields("BSDefense") > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "BS Defense:"
-        oLI.ForeColor = &HC00000
+        oLI.ForeColor = TColor(&HC00000)
         oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("BSDefense")
-        oLI.ListSubItems(1).ForeColor = &HC00000
+        oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
     End If
 End If
 
@@ -2445,11 +2449,11 @@ If nTemp = 1 Then eMobDefenseFlags = eMobDefenseFlags Or DF109_IsLiving
 If Not sAbil = "" Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Abilities: "
-    oLI.ForeColor = &HC00000
+    oLI.ForeColor = TColor(&HC00000)
     'oLI.ForeColor = &HFF00FF
     'oLI.Bold = True
     oLI.ListSubItems.Add (1), "Detail", sAbil
-    oLI.ListSubItems(1).ForeColor = &HC00000
+    oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
     'oLI.ListSubItems(1).ForeColor = &HFF00FF
     'oLI.Height = oLI.Height * 2
 End If
@@ -2460,7 +2464,7 @@ For x = 0 To 9 'mon guards
         If oLI Is Nothing Then
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Guarded by: "
-            oLI.ForeColor = &H800080
+            oLI.ForeColor = TColor(&H800080)
             oLI.Tag = "Monster"
         Else
             Set oLI = DetailLV.ListItems.Add()
@@ -2469,7 +2473,7 @@ For x = 0 To 9 'mon guards
         End If
         
         oLI.ListSubItems.Add (1), "Detail", GetMonsterName(tabMonsters.Fields("AbilVal-" & x), bHideRecordNumbers)
-        oLI.ListSubItems(1).ForeColor = &H800080
+        oLI.ListSubItems(1).ForeColor = TColor(&H800080)
         
         tabMonsters.Seek "=", nMonsterNum
         oLI.ListSubItems(1).Tag = tabMonsters.Fields("AbilVal-" & x)
@@ -2559,7 +2563,7 @@ If bHasAttacks Then
     If nLocalMonsterDamage.nAverageDamage > 0 Or nLocalMonsterDamage.nMaxDamage > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Dmg/Round *"
-        oLI.ForeColor = RGB(204, 0, 0)
+        oLI.ForeColor = TColor(RGB(204, 0, 0))
     
         If nLocalMonsterDamage.nAverageDamage < nLocalMonsterDamage.nMaxDamage Then
             oLI.ListSubItems.Add (1), "Detail", "AVG: " & nLocalMonsterDamage.nAverageDamage & ", Max: " & nLocalMonsterDamage.nMaxDamage
@@ -2572,7 +2576,7 @@ If bHasAttacks Then
         Else
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * before character defenses, " & nGlobalMonsterSimRounds & " round sim"
         End If
-        oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+        oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
         bNeedBlankRow = True
     End If
     
@@ -2589,7 +2593,7 @@ If bHasAttacks Then
         
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Dmg/Round *"
-            oLI.ForeColor = RGB(144, 4, 214)
+            oLI.ForeColor = TColor(RGB(144, 4, 214))
         
             If frmMain.bAutoCalcMonDamage Then
                 oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
@@ -2598,7 +2602,7 @@ If bHasAttacks Then
             End If
             
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current character defenses, " & nGlobalMonsterSimRounds & " round sim"
-            oLI.ListSubItems(1).ForeColor = RGB(144, 4, 214)
+            oLI.ListSubItems(1).ForeColor = TColor(RGB(144, 4, 214))
             bNeedBlankRow = True
         End If
     End If
@@ -2614,7 +2618,7 @@ If bHasAttacks Then
         If nDamage >= 0 Then
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Dmg/Round *"
-            oLI.ForeColor = &H40C0&
+            oLI.ForeColor = TColor(&H40C0&)
             
             If frmMain.bAutoCalcMonDamage Then
                 oLI.ListSubItems.Add (1), "Detail", "AVG: " & nDamage & ", Max Seen: " & clsMonAtkSim.nMaxRoundDamage
@@ -2623,7 +2627,7 @@ If bHasAttacks Then
             End If
             
             oLI.ListSubItems(1).Text = oLI.ListSubItems(1).Text & "   * versus current PARTY defenses, " & nGlobalMonsterSimRounds & " round sim"
-            oLI.ListSubItems(1).ForeColor = &H40C0&
+            oLI.ListSubItems(1).ForeColor = TColor(&H40C0&)
             bNeedBlankRow = True
         End If
     End If
@@ -2659,16 +2663,16 @@ If bHasAttacks Then
             oLI.ListSubItems(1).Tag = tabMonsters.Fields("MidSpell-" & x) & "@" & tabMonsters.Fields("MidSpellLVL-" & x)
             
             If SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 60) >= 0 Then 'fear
-                oLI.ListSubItems(1).ForeColor = &HC0&
+                oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                 oLI.ListSubItems(1).Bold = True
             ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 19) >= 0 Then 'poison
-                oLI.ListSubItems(1).ForeColor = &H8000&
+                oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
                 oLI.ListSubItems(1).Bold = True
             ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 71) >= 0 Then 'confusion
-                oLI.ListSubItems(1).ForeColor = &H80FF&
+                oLI.ListSubItems(1).ForeColor = TColor(&H80FF&)
                 oLI.ListSubItems(1).Bold = True
             ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 95) >= 0 Then 'slay
-                oLI.ListSubItems(1).ForeColor = &HC0&
+                oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                 oLI.ListSubItems(1).Bold = True
             ElseIf SpellHasAbility(tabMonsters.Fields("MidSpell-" & x), 13) <= -999 Then 'illu
                 'oLI.ListSubItems(1).ForeColor = &HC0&
@@ -2753,13 +2757,13 @@ If bHasAttacks Then
                         oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
                         
                         If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
-                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
-                            oLI.ListSubItems(1).ForeColor = &H8000&
+                            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
-                            oLI.ListSubItems(1).ForeColor = &H80FF&
+                            oLI.ListSubItems(1).ForeColor = TColor(&H80FF&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 13) <= -999 Then 'illu
                             'oLI.ListSubItems(1).ForeColor = &HC0&
@@ -2780,16 +2784,16 @@ If bHasAttacks Then
                     oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttAcc-" & x) & "@" & tabMonsters.Fields("AttMax-" & x)
                     
                     If SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 60) >= 0 Then 'fear
-                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 19) >= 0 Then 'poison
-                        oLI.ListSubItems(1).ForeColor = &H8000&
+                        oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 71) >= 0 Then 'confusion
-                        oLI.ListSubItems(1).ForeColor = &H80FF&
+                        oLI.ListSubItems(1).ForeColor = TColor(&H80FF&)
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 95) >= 0 Then 'slay
-                        oLI.ListSubItems(1).ForeColor = &HC0&
+                        oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                         oLI.ListSubItems(1).Bold = True
                     ElseIf SpellHasAbility(tabMonsters.Fields("AttAcc-" & x), 13) <= -999 Then 'illu
                         'oLI.ListSubItems(1).ForeColor = &HC0&
@@ -2800,7 +2804,7 @@ If bHasAttacks Then
                         Set oLI = DetailLV.ListItems.Add()
                         oLI.Text = ""
                         oLI.ListSubItems.Add (1), "Detail", "Target: " & GetSpellTargetsEnum(tabSpells.Fields("Targets"))
-                        oLI.ListSubItems(1).ForeColor = &HFF&
+                        oLI.ListSubItems(1).ForeColor = TColor(&HFF&)
                         'oLI.ListSubItems(1).Bold = True
                     End If
                     
@@ -2833,16 +2837,16 @@ If bHasAttacks Then
                         oLI.ListSubItems(1).Tag = tabMonsters.Fields("AttHitSpell-" & x)
                         
                         If SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 60) >= 0 Then 'fear
-                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 19) >= 0 Then 'poison
-                            oLI.ListSubItems(1).ForeColor = &H8000&
+                            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 71) >= 0 Then 'confusion
-                            oLI.ListSubItems(1).ForeColor = &H80FF&
+                            oLI.ListSubItems(1).ForeColor = TColor(&H80FF&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 95) >= 0 Then 'slay
-                            oLI.ListSubItems(1).ForeColor = &HC0&
+                            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
                             oLI.ListSubItems(1).Bold = True
                         ElseIf SpellHasAbility(tabMonsters.Fields("AttHitSpell-" & x), 13) <= -999 Then 'illu
                             'oLI.ListSubItems(1).ForeColor = &HC0&
@@ -3709,8 +3713,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     oLI.Text = "AVG BS Defense"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgBSDefense
     If tAvgLairInfo.nAvgBSDefense <> 0 And bGlobalAttackBackstab Then
-        oLI.ForeColor = &HC00000
-        oLI.ListSubItems(1).ForeColor = &HC00000
+        oLI.ForeColor = TColor(&HC00000)
+        oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
     End If
     
     Set oLI = DetailLV.ListItems.Add()
@@ -3744,15 +3748,15 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         
         If nGlobalCharWeaponNumber(0) > 0 And (nGlobalAttackTypeMME = a1_PhysAttack Or nGlobalAttackTypeMME = a6_PhysBash Or nGlobalAttackTypeMME = a7_PhysSmash) Then
             If nWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
         If nGlobalAttackTypeMME > a0_oneshot And bGlobalAttackBackstab = True Then
             If nBackstabWeaponMagic < tAvgLairInfo.nMaxMagicLVL Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
@@ -3768,8 +3772,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         
         If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
             If tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
@@ -3782,8 +3786,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
         If ((eAttackFlags And AR023_Undead) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
             If Round(tAvgLairInfo.nNumUndeads / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
@@ -3795,8 +3799,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumLiving / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
         If ((eAttackFlags And AR108_Living) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
             If Round(tAvgLairInfo.nNumLiving / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
@@ -3808,8 +3812,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", Round((tAvgLairInfo.nNumAnimals / RoundUp(tAvgLairInfo.nMobs)) * 100) & "% of mobs/lair"
         If ((eAttackFlags And AR080_Animal) <> 0) And nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
             If Round(tAvgLairInfo.nNumAnimals / RoundUp(tAvgLairInfo.nMobs) * 100) < 100 Then
-                oLI.ForeColor = RGB(204, 0, 0)
-                oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+                oLI.ForeColor = TColor(RGB(204, 0, 0))
+                oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
             End If
         End If
@@ -3858,7 +3862,7 @@ If nNMRVer < 1.83 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = " "
     oLI.ListSubItems.Add (1), "Detail", "This database is out of date and unable to use all features."
-    oLI.ListSubItems(1).ForeColor = &H80000015
+    oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
 End If
 
 Set oLI = DetailLV.ListItems.Add()
@@ -3935,8 +3939,8 @@ oLI.Text = sHeader
 oLI.ListSubItems.Add (1), "Detail", sDetail
 
 If InStr(1, sDetail, "immune:", vbTextCompare) > 0 Then
-    oLI.ForeColor = RGB(204, 0, 0)
-    oLI.ListSubItems(1).ForeColor = RGB(204, 0, 0)
+    oLI.ForeColor = TColor(RGB(204, 0, 0))
+    oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
 End If
 
 If nSurpriseDamageOut > 0 And Len(sSurpriseDamageOut) > 0 Then
@@ -3963,10 +3967,10 @@ If Len(tCombatRounds.sRTK & tCombatRounds.sRTD) > 0 Then
     
     If (tCombatRounds.nRTD > 0 And tCombatRounds.nRTK > 1) And tCombatRounds.nSuccess < 70 Then
         'nRTD > 0 And (nRTK = 0 Or (nRTK * 1.1) > (nRTD * 0.9))
-        oLI.ListSubItems(1).ForeColor = &HC0&
+        oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
         'oLI.ListSubItems(1).Bold = True
     ElseIf tCombatRounds.nRTD >= 1 And tCombatRounds.nSuccess >= 95 Then
-        oLI.ListSubItems(1).ForeColor = &H8000&
+        oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
     End If
 End If
 
@@ -3975,7 +3979,7 @@ If nOOM > 0 And nOOM < 100 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     oLI.ListSubItems.Add (1), "Detail", "OOM in " & nOOM & " rounds" & sExtText
-    If (nOOM * 0.9) < (tCombatRounds.nRTK * 1.1) Then oLI.ListSubItems(1).ForeColor = &HC0&
+    If (nOOM * 0.9) < (tCombatRounds.nRTK * 1.1) Then oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
 End If
 
 Set oLI = DetailLV.ListItems.Add()
@@ -5898,9 +5902,9 @@ End If
 oLI.ListSubItems.Add (nIndex), "Damage", IIf(nAvgDmg > 0, Format(nAvgDmg, "#,##"), IIf(nAvgDmg = 0, 0, "?")) & sTemp
 oLI.ListSubItems(nIndex).Tag = nAvgDmg
 If nParty > 1 Then 'vs party
-    If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+    If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
 ElseIf bUseCharacter And nMonsterDamageVsChar(nMonsterNum) >= 0 Then
-    oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+    oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
 End If
 
 If InStr(1, tabMonsters.Fields("Summoned By"), "(lair)", vbTextCompare) > 0 Then
@@ -5992,9 +5996,9 @@ If nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True And lv.hWnd = fr
     oLI.ListSubItems(nIndex).Tag = nExpPerHour
     
     If nParty > 1 Then
-        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     ElseIf bUseCharacter And nMonsterDamageVsChar(nMonsterNum) >= 0 Then
-        oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     End If
     
 ElseIf nExp > 0 Then
@@ -6010,9 +6014,9 @@ ElseIf nExp > 0 Then
     oLI.ListSubItems(nIndex).Tag = nExpDmgHP
     
     If nParty > 1 Then
-        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     ElseIf bUseCharacter And nMonsterDamageVsChar(nMonsterNum) >= 0 Then
-        oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     End If
 Else
     oLI.ListSubItems.Add (nIndex), "Exp/(Dmg+HP)", 0
@@ -6067,9 +6071,9 @@ Else
     oLI.ListSubItems(nIndex).Tag = nScriptValue
     
     If nParty > 1 Then
-        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        If nMonsterDamageVsParty(nMonsterNum) >= 0 Then oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     ElseIf nMonsterDamageVsChar(nMonsterNum) >= 0 And bUseCharacter Then
-        oLI.ListSubItems(nIndex).ForeColor = RGB(193, 0, 232)
+        oLI.ListSubItems(nIndex).ForeColor = TColor(RGB(193, 0, 232))
     End If
 End If
 
@@ -6111,9 +6115,9 @@ If Len(tMonAtkSummary.sSpellAttackTypes) > 0 Then tMonAtkSummary.sSpellAttackTyp
 oLI.ListSubItems.Add (nIndex), "Spell Atk.", tMonAtkSummary.sSpellAttackTypes
 
 If bDoesNotMatchFilter Then
-    oLI.ForeColor = RGB(192, 192, 192)
+    oLI.ForeColor = TColor(RGB(192, 192, 192))
     For x = 1 To oLI.ListSubItems.count
-        oLI.ListSubItems(x).ForeColor = RGB(192, 192, 192)
+        oLI.ListSubItems(x).ForeColor = TColor(RGB(192, 192, 192))
     Next x
 End If
 
@@ -6261,19 +6265,19 @@ For Each oLI In lv.ListItems
     If tabRaces.NoMatch = False Then
         
         
-        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) < Stat(1, 1) - 20 Then oLI.ListSubItems(4).ForeColor = &H80&
-        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) < Stat(2, 1) - 20 Then oLI.ListSubItems(5).ForeColor = &H80&
-        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) < Stat(3, 1) - 20 Then oLI.ListSubItems(6).ForeColor = &H80&
-        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) < Stat(4, 1) - 20 Then oLI.ListSubItems(7).ForeColor = &H80&
-        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) < Stat(5, 1) - 20 Then oLI.ListSubItems(8).ForeColor = &H80&
-        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) < Stat(6, 1) - 20 Then oLI.ListSubItems(9).ForeColor = &H80&
+        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) < Stat(1, 1) - 20 Then oLI.ListSubItems(4).ForeColor = TColor(&H80&)
+        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) < Stat(2, 1) - 20 Then oLI.ListSubItems(5).ForeColor = TColor(&H80&)
+        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) < Stat(3, 1) - 20 Then oLI.ListSubItems(6).ForeColor = TColor(&H80&)
+        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) < Stat(4, 1) - 20 Then oLI.ListSubItems(7).ForeColor = TColor(&H80&)
+        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) < Stat(5, 1) - 20 Then oLI.ListSubItems(8).ForeColor = TColor(&H80&)
+        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) < Stat(6, 1) - 20 Then oLI.ListSubItems(9).ForeColor = TColor(&H80&)
         
-        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) > Stat(1, 1) + 20 Then oLI.ListSubItems(4).ForeColor = &H8000&
-        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) > Stat(2, 1) + 20 Then oLI.ListSubItems(5).ForeColor = &H8000&
-        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) > Stat(3, 1) + 20 Then oLI.ListSubItems(6).ForeColor = &H8000&
-        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) > Stat(4, 1) + 20 Then oLI.ListSubItems(7).ForeColor = &H8000&
-        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) > Stat(5, 1) + 20 Then oLI.ListSubItems(8).ForeColor = &H8000&
-        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) > Stat(6, 1) + 20 Then oLI.ListSubItems(9).ForeColor = &H8000&
+        If val(tabRaces.Fields("mSTR")) + val(tabRaces.Fields("xSTR")) > Stat(1, 1) + 20 Then oLI.ListSubItems(4).ForeColor = TColor(&H8000&)
+        If val(tabRaces.Fields("mINT")) + val(tabRaces.Fields("xINT")) > Stat(2, 1) + 20 Then oLI.ListSubItems(5).ForeColor = TColor(&H8000&)
+        If val(tabRaces.Fields("mWIL")) + val(tabRaces.Fields("xWIL")) > Stat(3, 1) + 20 Then oLI.ListSubItems(6).ForeColor = TColor(&H8000&)
+        If val(tabRaces.Fields("mAGL")) + val(tabRaces.Fields("xAGL")) > Stat(4, 1) + 20 Then oLI.ListSubItems(7).ForeColor = TColor(&H8000&)
+        If val(tabRaces.Fields("mHEA")) + val(tabRaces.Fields("xHEA")) > Stat(5, 1) + 20 Then oLI.ListSubItems(8).ForeColor = TColor(&H8000&)
+        If val(tabRaces.Fields("mCHM")) + val(tabRaces.Fields("xCHM")) > Stat(6, 1) + 20 Then oLI.ListSubItems(9).ForeColor = TColor(&H8000&)
         
     End If
 Next
@@ -7468,7 +7472,7 @@ Dim intIndex As Integer
 
 
 Set itmX = lv.ListItems(RowNbr)
-itmX.ForeColor = RowColor
+itmX.ForeColor = TColor(RowColor)
 If bAndBold Then
     itmX.Bold = True
 Else
@@ -7476,7 +7480,7 @@ Else
 End If
 For intIndex = 1 To itmX.ListSubItems.count
     Set lvSI = itmX.ListSubItems(intIndex)
-    lvSI.ForeColor = RowColor
+    lvSI.ForeColor = TColor(RowColor)
     If bAndBold Then
         lvSI.Bold = True
     Else

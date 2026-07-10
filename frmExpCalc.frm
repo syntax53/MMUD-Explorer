@@ -66,6 +66,7 @@ Begin VB.Form frmExpCalc
       Width           =   975
    End
    Begin VB.CommandButton cmdCalcExp 
+      Style           =   1  'Graphical
       Caption         =   "&Calc."
       Height          =   555
       Left            =   6120
@@ -207,6 +208,7 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim x As Integer, sSectionName As String
 

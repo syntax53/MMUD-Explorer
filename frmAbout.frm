@@ -27,6 +27,7 @@ Begin VB.Form frmAbout
       Width           =   7515
    End
    Begin VB.CommandButton cmdClose 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "Close"
       Height          =   315
@@ -156,6 +157,7 @@ End Sub
 
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error Resume Next
 Dim rc As RECT
 'SubclassForm Me

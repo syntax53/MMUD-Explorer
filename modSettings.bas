@@ -3,6 +3,7 @@ Attribute VB_Name = "modSettings"
 Global INIReadOnly As Boolean
 Global INIFileName As String
 Global sGlobalWorkingDirectory As String
+Global bGlobalNewINICreated As Boolean
 
 Private Ret As String
 

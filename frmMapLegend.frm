@@ -652,6 +652,7 @@ Dim tWindowSize As WindowSizeProperties
 Public objFormOwner As Form
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim nTemp As Long
 

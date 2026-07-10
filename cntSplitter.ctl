@@ -114,6 +114,13 @@ Public Property Let FullDrag(ByVal bState As Boolean)
    End If
 End Property
 
+Public Property Get BackColor() As OLE_COLOR
+   BackColor = UserControl.BackColor
+End Property
+Public Property Let BackColor(ByVal nColor As OLE_COLOR)
+   UserControl.BackColor = nColor
+End Property
+
 Public Property Get Orientation() As ESPLTOrientationConstants
    Orientation = m_eOrientation
 End Property

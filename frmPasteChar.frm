@@ -18,6 +18,7 @@ Begin VB.Form frmPasteChar
       Top             =   60
    End
    Begin VB.CommandButton cmdPaste 
+      Style           =   1  'Graphical
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -35,6 +36,7 @@ Begin VB.Form frmPasteChar
       Width           =   2175
    End
    Begin VB.CommandButton cmdCancel 
+      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Cancel"
       BeginProperty Font 
@@ -53,6 +55,7 @@ Begin VB.Form frmPasteChar
       Width           =   1275
    End
    Begin VB.CommandButton cmdContinue 
+      Style           =   1  'Graphical
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -107,6 +110,7 @@ Begin VB.Form frmPasteChar
          Top             =   180
          Width           =   12435
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "Swings"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -195,6 +199,7 @@ Begin VB.Form frmPasteChar
             Width           =   675
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   12
             Left            =   10470
@@ -203,6 +208,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   11
             Left            =   10470
@@ -211,6 +217,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   10
             Left            =   10470
@@ -219,6 +226,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   9
             Left            =   10470
@@ -227,6 +235,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   8
             Left            =   10470
@@ -235,6 +244,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   7
             Left            =   10470
@@ -243,6 +253,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "M.DMG"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -401,6 +412,7 @@ Begin VB.Form frmPasteChar
             Width           =   555
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   6
             Left            =   7950
@@ -409,6 +421,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   5
             Left            =   7950
@@ -417,6 +430,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   4
             Left            =   7950
@@ -425,6 +439,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   3
             Left            =   7950
@@ -433,6 +448,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   2
             Left            =   7950
@@ -441,6 +457,7 @@ Begin VB.Form frmPasteChar
             Width           =   135
          End
          Begin VB.CommandButton cmdPasteMegaDmg 
+            Style           =   1  'Graphical
             Height          =   255
             Index           =   1
             Left            =   7950
@@ -519,6 +536,7 @@ Begin VB.Form frmPasteChar
             Width           =   735
          End
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "P.DMG"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -577,6 +595,7 @@ Begin VB.Form frmPasteChar
             Width           =   675
          End
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "Heals"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -695,6 +714,7 @@ Begin VB.Form frmPasteChar
             Width           =   615
          End
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "Regen - Rest"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -733,6 +753,7 @@ Begin VB.Form frmPasteChar
             Width           =   615
          End
          Begin VB.CommandButton cmdPasteQ 
+            Style           =   1  'Graphical
             Caption         =   "Attack Last"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -3007,6 +3028,7 @@ End Select
 End Sub
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 
 Call SetWindowLong(Me.hWnd, GWL_HWNDPARENT, 0)

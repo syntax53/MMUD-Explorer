@@ -30,6 +30,7 @@ Begin VB.Form frmResults
       Top             =   15
       Width           =   4395
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Next"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -48,6 +49,7 @@ Begin VB.Form frmResults
          Width           =   555
       End
       Begin VB.CommandButton cmdFind 
+         Style           =   1  'Graphical
          Caption         =   "&Find"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -66,6 +68,7 @@ Begin VB.Form frmResults
          Width           =   555
       End
       Begin VB.CommandButton cmdQ 
+         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -83,6 +86,7 @@ Begin VB.Form frmResults
          Width           =   255
       End
       Begin VB.CommandButton cmdCollapse 
+         Style           =   1  'Graphical
          Caption         =   "&Expand"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -109,6 +113,7 @@ Begin VB.Form frmResults
          Width           =   855
       End
       Begin VB.CommandButton cmdCollapse 
+         Style           =   1  'Graphical
          Caption         =   "&Collapse"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -245,6 +250,7 @@ Public nLastTimerTop As Long
 Public nLastTimerLeft As Long
 
 Private Sub Form_Load()
+Call ApplyDarkTheme(Me)
 On Error GoTo error:
 Dim nTemp As Long
 
