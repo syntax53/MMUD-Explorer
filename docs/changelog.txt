@@ -1,3 +1,7 @@
+v2.3.3 (07/##/2026)  
+------------------------------------------  
+- FIX: Removed hardcoded quarterstaff and dagger for staff classes in [GreaterMUD]  
+
 v2.3.2 (07/09/2026)  
 ------------------------------------------  
 - NEW: Optional dark mode, toggled in Settings (takes effect after restarting MME)

@@ -40867,8 +40867,10 @@ Select Case tabItems.Fields("ItemType")
                 If Not tabItems.Fields("WeaponType") <= 1 Then GoTo out:
             Case 8: '"All Weapons"
             Case 9: '"Staff"
-                'hardcoding from dll - dagger and quarterstaff
-                If tabItems.Fields("Number") = 68 Or tabItems.Fields("Number") = 100 Then bClassOK = True
+                If Not bGreaterMUD Then
+                    'hardcoding from dll - dagger and quarterstaff
+                    If tabItems.Fields("Number") = 68 Or tabItems.Fields("Number") = 100 Then bClassOK = True
+                End If
                 If bClassOK = False Then GoTo out:
         End Select
 End Select
