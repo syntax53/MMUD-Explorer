@@ -2551,6 +2551,12 @@ If lv.ListItems.count > 0 Then
         
         nItemNum = val(lv.ListItems(i).Text)
         
+'        If nItemNum = 3706 Then
+'            Debug.Print 3706
+'        ElseIf nItemNum = 1449 Then
+'            Debug.Print 1449
+'        End If
+        
         If frmMain.cmbEquip(16).ListIndex > 0 Then
             If frmMain.cmbEquip(16).ItemData(frmMain.cmbEquip(16).ListIndex) = nItemNum Then
                 Call ColorListviewRow(lv, i, &H40C0&, True)
@@ -2560,13 +2566,13 @@ If lv.ListItems.count > 0 Then
         End If
         
         If Not bBolded And nGlobalCharSavedWeaponNumber = nItemNum Then
-            Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
-            If Not oLI Is Nothing Then
+            'Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+            'If Not oLI Is Nothing Then
                 Call ColorListviewRow(lv, i, &HFF0000, True)
                 bColored = True
                 bBolded = True
-            End If
-            Set oLI = Nothing
+            'End If
+            'Set oLI = Nothing
         End If
         
         If Not bBolded And Not lv.name = "lvWeaponCompare" Then

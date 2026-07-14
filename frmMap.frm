@@ -44641,6 +44641,17 @@ On Error GoTo error:
 '              5/12/2026 - toll currency
 '=============================================================================
 
+'--- skip non-existent map cells (physical gap 2501-9000 has no lblRoomCell control): prevents error 340 in MapActivateCell and self-heals stale/corrupt cells
+If Cell > 2500 And Cell < 9001 Then
+    UnchartedCells(Cell) = 0
+    CellRoom(Cell, 1) = 0
+    CellRoom(Cell, 2) = 0
+    ALT_UnchartedCells(Cell) = 0
+    ALT_CellRoom(Cell, 1) = 0
+    ALT_CellRoom(Cell, 2) = 0
+    Exit Sub
+End If
+
 If bUseZoomMap And Me.name = "frmMap" Then
     'COMMENT BELOW ON frmMain, UNCOMMENT ON frmMap
     Set oPM = picZoomMap
@@ -45244,7 +45255,7 @@ Select Case direction
         
 End Select
 
-If MapActivateCell < nStartCell Or MapActivateCell > sMapSECorner Then GoTo DontActivate:
+If MapActivateCell < nStartCell Or MapActivateCell > sMapSECorner Or (MapActivateCell > 2500 And MapActivateCell < 9001) Then GoTo DontActivate:
 
 'set line mode
 'ScaleMode = vbPixels

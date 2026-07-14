@@ -5,6 +5,7 @@ v2.3.3 (07/##/2026)
 - FIX: Removed hardcoded quarterstaff and dagger for staff classes in GreaterMUD  
 - FIX: Rooms tab frame caption shows the currently drawn room name again in dark mode  
 - FIX: Global filter frame border no longer runs through its caption in dark mode when the filter is on  
+- FIX: MapActivateCell error when clicking references  
 - FIX: Weapon saved to file wasn't showing blue (for convenience) when a different weapon is EQ'd but yet saved  
 
 v2.3.2 (07/09/2026)  
