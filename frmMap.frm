@@ -43845,7 +43845,9 @@ If nAlsoMark >= 0 And nAlsoMark <= 2 Then optAlsoMark(nAlsoMark).Value = True
 
 Call LoadPresets
 
-cmbMapSize.ListIndex = val(ReadINI("Settings", "ExMapSize"))
+nTemp = val(ReadINI("Settings", "ExMapSize"))
+If nTemp < 0 Or nTemp > 5 Then nTemp = 1 'guard invalid ExMapSize (e.g. -1) that left the map size unselected and crashed MapStartMapping with subscript error 9
+cmbMapSize.ListIndex = nTemp
 
 Call ResizeMap
 timWindowMove.Enabled = True
@@ -44508,6 +44510,9 @@ objToolTip.DelToolTip picZoomMap.hWnd, 0
 objToolTip.DelToolTip picZoomMap.hWnd
 
 Call ResizeMap
+
+'safety: if an invalid saved size (e.g. ExMapSize=-1) left cmbMapSize unselected, ResizeMap sets no dimensions; bail cleanly instead of a subscript error 9 below
+If sMapSECorner < 1 Or nMapCenterCell < 1 Or nMapCenterCell > sMapSECorner Then GoTo Cancel
 
 StopBuild = False
 
