@@ -68,6 +68,9 @@ Option Base 0
 
 Private Sub Form_Load()
 Call ApplyDarkTheme(Me)
+'the loading text sits on the splash artwork, not themed chrome -- keep it
+'white in both themes (deliberately not routed through TColor)
+lblCaption.ForeColor = vbWhite
 Dim x As Long, y As Long, nMainWidth As Long, nMainHeight As Long
 'Dim mi As MONITORINFO, hMonitor As Long
 'Dim workWidth As Long, workHeight As Long

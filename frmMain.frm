@@ -21299,7 +21299,7 @@ If chkGlobalFilter.Value = 0 Then
     Call ResetFilterOptions
     'the click event never fired (checkbox still at its design-time value),
     'so initialize the frame caption color/weight for the off state
-    frmGlobalFilter.FontBold = False
+    Call SetFrameFontBold(frmGlobalFilter, False)
     Call SetFrameForeColor(frmGlobalFilter, TColor(&H80000012))
 End If
 
@@ -21424,7 +21424,7 @@ If chkGlobalFilter.Value = 1 Then
     'Call ResetFilterOptions(, , , True)
     'Call cmbGlobalClass_Click(0)
     
-    frmGlobalFilter.FontBold = True
+    Call SetFrameFontBold(frmGlobalFilter, True)
     Call SetFrameForeColor(frmGlobalFilter, TColor(&H8000&))
     'txtWeaponExtras(0).Text = txtCharStats(0).Text
     
@@ -21450,7 +21450,7 @@ Else
     lblGlobalFilterLabels(2).Enabled = False
     txtGlobalMinLVL.Enabled = False
     
-    frmGlobalFilter.FontBold = False
+    Call SetFrameFontBold(frmGlobalFilter, False)
     Call SetFrameForeColor(frmGlobalFilter, TColor(&H80000012))
     
     'txtWeaponExtras(0).Text = 999
@@ -34073,7 +34073,7 @@ If tabRooms.NoMatch Then
     'framNav(10).Caption = "Rooms"
     Exit Sub
 Else
-    framNav(10).Caption = "Rooms -- " & tabRooms.Fields("Name") & " (" & nStartMap & "/" & nStartRoom & ")  "
+    Call SetFrameCaption(framNav(10), "Rooms -- " & tabRooms.Fields("Name") & " (" & nStartMap & "/" & nStartRoom & ")  ")
 End If
 
 If nMap_iGoBack = 0 Then
