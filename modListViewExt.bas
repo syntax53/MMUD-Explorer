@@ -2568,7 +2568,7 @@ If lv.ListItems.count > 0 Then
         If Not bBolded And nGlobalCharSavedWeaponNumber = nItemNum Then
             'Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             'If Not oLI Is Nothing Then
-                Call ColorListviewRow(lv, i, &HFF0000, True)
+                Call ColorListviewRow(lv, i, &HFF8000, True) '&HFF0000 > 0080FF
                 bColored = True
                 bBolded = True
             'End If

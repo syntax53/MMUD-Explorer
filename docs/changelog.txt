@@ -1,6 +1,7 @@
 v2.3.3 (07/##/2026)  
 ------------------------------------------  
 - UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
+- FIX: Error when marking a spell as learned/unlearned by the menu  
 - FIX: 2nd alignment and Dread Wraith quest rewards in GreaterMUD  
 - FIX: Removed hardcoded quarterstaff and dagger for staff classes in GreaterMUD  
 - FIX: Rooms tab frame caption shows the currently drawn room name again in dark mode  
