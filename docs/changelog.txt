@@ -3,11 +3,11 @@ v2.3.3 (07/15/2026)
 - UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
 - FIX: Error when marking a spell as learned/unlearned by the menu  
 - FIX: 2nd alignment and Dread Wraith quest rewards in GreaterMUD  
-- FIX: Removed hardcoded quarterstaff and dagger for staff classes in GreaterMUD  
+- FIX: Removed hard-coded quarterstaff and dagger for staff classes in GreaterMUD  
 - FIX: Rooms tab frame caption shows the currently drawn room name again in dark mode  
 - FIX: Global filter frame border no longer runs through its caption in dark mode when the filter is on  
 - FIX: External map loading and MapActivateCell errors  
-- FIX: Weapon saved to file wasn't showing blue (for convenience) when a different weapon is EQ'd but yet saved  
+- FIX: EQ'd weapon saved to file showing blue when a different weapon is EQ'd, but not yet saved (convenience thing)  
 
 v2.3.2 (07/09/2026)  
 ------------------------------------------  
