@@ -1,4 +1,4 @@
-v2.3.3 (07/##/2026)  
+v2.3.3 (07/15/2026)  
 ------------------------------------------  
 - UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
 - FIX: Error when marking a spell as learned/unlearned by the menu  
