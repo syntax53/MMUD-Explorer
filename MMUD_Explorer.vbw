@@ -1,5 +1,5 @@
 frmMain = 52, 52, 1796, 924, , 26, 26, 1770, 898, C
-modMain = 104, 104, 1848, 976, Z
+modMain = 104, 104, 1848, 976, 
 frmLoad = 260, 260, 2004, 1106, C, 286, 286, 2134, 971, C
 modSettings = 260, 260, 2004, 1106, C
 modTheme = 52, 52, 1796, 924, 
@@ -35,6 +35,6 @@ modForms = 0, 0, 0, 0, C
 frmCoinConvert = 0, 0, 0, 0, C, 104, 104, 1952, 789, C
 modExpPerHour = 182, 182, 1926, 1054, C
 modItemParse = 78, 78, 1822, 924, C
-modListViewExt = 26, 26, 1770, 872, 
+modListViewExt = 26, 26, 1770, 872, Z
 frmHitCalc = 156, 156, 1900, 1002, C, 286, 286, 2030, 1132, C
 frmMonsterFilters = 26, 26, 1770, 872, C, 130, 130, 1874, 1002, C

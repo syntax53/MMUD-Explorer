@@ -56,11 +56,13 @@ Begin VB.Form frmHitCalc
          Height          =   315
          Index           =   0
          Left            =   5760
+         MaskColor       =   &H00FF00FF&
          Picture         =   "frmHitCalc.frx":100C
          Style           =   1  'Graphical
          TabIndex        =   10
          ToolTipText     =   "Refresh Monster Only"
          Top             =   2646
+         UseMaskColor    =   -1  'True
          Width           =   375
       End
       Begin VB.CommandButton cmdQ 
@@ -99,9 +101,9 @@ Begin VB.Form frmHitCalc
       End
       Begin VB.ComboBox cmbEvil 
          Height          =   315
-         ItemData        =   "frmHitCalc.frx":1261
+         ItemData        =   "frmHitCalc.frx":134E
          Left            =   2460
-         List            =   "frmHitCalc.frx":1263
+         List            =   "frmHitCalc.frx":1350
          Sorted          =   -1  'True
          Style           =   2  'Dropdown List
          TabIndex        =   17
