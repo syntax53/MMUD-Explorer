@@ -2171,7 +2171,7 @@ If Len(sPastedText) < 10 Then GoTo canceled:
 'Wealth: 0 copper farthings
 'Encumbrance: 1535/2880 - Medium [53%]
 
-sRegexPattern = "(?:(Armour Class|Hits|Mana|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Spellcasting|Strength|Agility|Willpower|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s[^\s:]+)?))"
+sRegexPattern = "(?:(Armour Class|Hits|Mana|Encumbrance):\s*\*?\s*(-?\d+)\/(\d+)|(MagicRes|Level|Spellcasting|Strength|Agility|Willpower|Charm|Intellect|Health):\s*\*?\s*(\d+)|(Name|Race|Class):\s*([^\s:]+(?:\s(?![^\s:]*:)[^\s:]+)?))"
 tMatches() = RegExpFindv2(sPastedText, sRegexPattern, False, True, False)
 If UBound(tMatches()) = 0 And Len(tMatches(0).sFullMatch) = 0 Then
     If val(txtPastePartyPartyTotal.Text) = 0 Then

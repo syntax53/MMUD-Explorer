@@ -1,3 +1,7 @@
+v2.3.4 (07/##/2026)  
+------------------------------------------  
+- UP: Fix pasting party members not recognizing their class (missionary and witchunter usually)  
+
 v2.3.3 (07/15/2026)  
 ------------------------------------------  
 - UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
