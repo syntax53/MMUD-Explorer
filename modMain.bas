@@ -2331,20 +2331,20 @@ If tabMonsters.Fields("CreateSpell") > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Create Spell:"
     oLI.Tag = "Spell"
-    'oLI.ForeColor = &HC00000
+    'oLI.ForeColor = &HCC6600
     'nSpellNest = 0 'make sure this doesn't nest too deep
     oLI.ListSubItems.Add (1), "Detail", "[" & GetSpellName(tabMonsters.Fields("CreateSpell"), bHideRecordNumbers) _
         & ", " & PullSpellEQ(False, , tabMonsters.Fields("CreateSpell")) & "]"
     If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
     oLI.ListSubItems(1).Tag = tabMonsters.Fields("CreateSpell")
-    'oLI.ListSubItems(1).ForeColor = &HC00000
+    'oLI.ListSubItems(1).ForeColor = &HCC6600
 End If
 
 If tabMonsters.Fields("DeathSpell") > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Death Spell"
     oLI.Tag = "Spell"
-    'oLI.ForeColor = &HC00000
+    'oLI.ForeColor = &HCC6600
     'nSpellNest = 0 'make sure this doesn't nest too deep
     oLI.ListSubItems.Add (1), "Detail", "[" & GetSpellName(tabMonsters.Fields("DeathSpell"), bHideRecordNumbers) _
         & ", " & PullSpellEQ(False, , tabMonsters.Fields("DeathSpell")) & "]"
@@ -2387,9 +2387,9 @@ If nNMRVer >= 1.83 Then
     If tabMonsters.Fields("BSDefense") > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "BS Defense:"
-        oLI.ForeColor = TColor(&HC00000)
+        oLI.ForeColor = TColor(&HCC6600)
         oLI.ListSubItems.Add (1), "Detail", tabMonsters.Fields("BSDefense")
-        oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
+        oLI.ListSubItems(1).ForeColor = TColor(&HCC6600)
     End If
 End If
 
@@ -2449,11 +2449,11 @@ If nTemp = 1 Then eMobDefenseFlags = eMobDefenseFlags Or DF109_IsLiving
 If Not sAbil = "" Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = "Abilities: "
-    oLI.ForeColor = TColor(&HC00000)
+    oLI.ForeColor = TColor(&HCC6600)
     'oLI.ForeColor = &HFF00FF
     'oLI.Bold = True
     oLI.ListSubItems.Add (1), "Detail", sAbil
-    oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
+    oLI.ListSubItems(1).ForeColor = TColor(&HCC6600)
     'oLI.ListSubItems(1).ForeColor = &HFF00FF
     'oLI.Height = oLI.Height * 2
 End If
@@ -3713,8 +3713,8 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     oLI.Text = "AVG BS Defense"
     oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nAvgBSDefense
     If tAvgLairInfo.nAvgBSDefense <> 0 And bGlobalAttackBackstab Then
-        oLI.ForeColor = TColor(&HC00000)
-        oLI.ListSubItems(1).ForeColor = TColor(&HC00000)
+        oLI.ForeColor = TColor(&HCC6600)
+        oLI.ListSubItems(1).ForeColor = TColor(&HCC6600)
     End If
     
     Set oLI = DetailLV.ListItems.Add()

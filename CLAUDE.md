@@ -104,9 +104,10 @@ followed when touching UI code:
   *compares* a themed control's color must compare against the same `TColor(...)`-wrapped value
   (see `modListViewExt`).
 - In dark mode a frame's real caption is not drawn; an overlay label (`lblDkFrameCap*`) stands
-  in. Change frame captions via `SetFrameCaption fra, "..."` and caption colors via
-  `SetFrameForeColor fra, TColor(...)` — raw `.Caption`/`.ForeColor` assignments silently won't
-  display. Also note VB6 fires `chk_Click` only on value *change*, so design-time-default states
+  in. Change frame captions via `SetFrameCaption fra, "..."`, caption colors via
+  `SetFrameForeColor fra, TColor(...)`, and caption bolding via `SetFrameFontBold fra, b` —
+  raw `.Caption`/`.ForeColor` assignments silently won't display, and a raw `.FontBold`
+  change widens the caption without re-measuring the border's caption gap. Also note VB6 fires `chk_Click` only on value *change*, so design-time-default states
   need explicit color init in `Form_Load` (see the `chkGlobalFilter` block).
 - Opt-outs: put `notheme` in a control's `Tag`, and any control with a custom (non-system)
   opaque `BackColor` is skipped automatically — that's what protects the map room cells

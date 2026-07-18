@@ -1,3 +1,14 @@
+v2.3.3 (07/15/2026)  
+------------------------------------------  
+- UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
+- FIX: Error when marking a spell as learned/unlearned by the menu  
+- FIX: 2nd alignment and Dread Wraith quest rewards in GreaterMUD  
+- FIX: Removed hard-coded quarterstaff and dagger for staff classes in GreaterMUD  
+- FIX: Rooms tab frame caption shows the currently drawn room name again in dark mode  
+- FIX: Global filter frame border no longer runs through its caption in dark mode when the filter is on  
+- FIX: External map loading and MapActivateCell errors  
+- FIX: EQ'd weapon saved to file showing blue when a different weapon is EQ'd, but not yet saved (convenience thing)  
+
 v2.3.2 (07/09/2026)  
 ------------------------------------------  
 - NEW: Optional dark mode, toggled in Settings (takes effect after restarting MME)
@@ -52,7 +63,7 @@ v2.1.1 (02/01/2026)
 -FIX: Default extra monster filter values when canceling a character load on first launch  
 -FIX: Armor comparison calculation for AC/DR +/- (it was rounding decimals)  
 -FIX: "What leads here" on maps will now detect teleports from monster greet commands  
--FIX: Backstab accuracy calculation for [GreaterMUD]  
+-FIX: Backstab accuracy calculation for GreaterMUD  
 -FIX: When pasting your spellbook it was learning all usable spells with the same name, ignoring any special class restriction  
     * NOTE: To clean this up, clear learned spells from the option menu and then paste or mark spells learned again  
 
@@ -70,10 +81,10 @@ v2.1 (12/20/2025)
 -UP: Can now right click on scroll references on spell tabs to add the scroll to the item manager (build a shopping list)  
 -UP: Area/party effect spells will now display with a carrot (###^) in their dmg/heal column on spell tabs  
 -UP: Bless spells will now be more clearly identified on equipment tab tooltips  
--UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for [GreaterMUD]  
--UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for [GreaterMUD]  
+-UP: Items will now show ganghouse shop value (fixed 200% markup w/no charm discount) in the detail pane for GreaterMUD  
+-UP: Stealth calculation now includes encumbrance penalties and properly rounds stat calculations for GreaterMUD  
 -UP: Tooltip for Quickness on EQ tab will now show calculated walking speed  
--UP: NoFirstKillDrop ability will now show the item name in [GreaterMUD]  
+-UP: NoFirstKillDrop ability will now show the item name in GreaterMUD  
 -UP: Room tooltips will once again show the max regen in the "Also Here" line (but still be shown below, too)  
 -FIX: Placed items in rooms being duplicated on map tooltips and reference window  
 -FIX: MegaMUD pathing room checksum calculation for rooms that contain a whirling vortex or obsidian obelisk  
@@ -82,20 +93,20 @@ v2.1 (12/20/2025)
 -FIX: Incorrect RTK/RTC values on lairs when damage output is zero in some cases  
 -FIX: Bless spell selection causing an error on delete and with certain keystrokes  
 -FIX: Blesses now calculated based on 3-second round ticks instead of 5 (effects total damage/heals and OOM calculations)  
--FIX: Negative max damage as a result of low strength in [GreaterMUD]  
+-FIX: Negative max damage as a result of low strength in GreaterMUD  
 -FIX: Coin converter charm button when no charm effect  
 -FIX: Upon character load, learned spells that cannot be cast by the loaded character will be unlearned  
 -FIX: The option to "recreate settings.ini" in settings will now actually do what it says it will  
 -FIX: Pasting characters with modified stats causing some items to be double-counted (MME will now prompt to confirm stats)  
 -FIX: Spells with ability 144-NonMagicalSpell (hidden in MME due to prevalence) will no longer show as Damage(-MR)  
 -FIX: AC(Blur) calculation on [stock], now based on worn armour (MME was calculating for GreaterMUD, which is based off Enc%)  
--FIX: Sell value formula in [GreaterMUD]  
+-FIX: Sell value formula in GreaterMUD  
 -FIX: Unable to add certain non-getable items to the Item Manager  
 -FIX: Detail/reference text not refreshing to next item when deleting rows on the Item Manager  
--FIX: Picklocks detection and calculation for [GreaterMUD]  
--FIX: Area effect spells cast by monsters utilizing abil-1 being marked as invalid for [GreaterMUD] (they ARE still invalid for stock)  
+-FIX: Picklocks detection and calculation for GreaterMUD  
+-FIX: Area effect spells cast by monsters utilizing abil-1 being marked as invalid for GreaterMUD (they ARE still invalid for stock)  
 -FIX: Unusable worn-nowhere carried items on the Item Manager having their stats count  
--FIX: 6th alignment +encumbrance not calculating in [GreaterMUD]  
+-FIX: 6th alignment +encumbrance not calculating in GreaterMUD  
 
 v2.0.8 (10/12/2025)  
 ------------------------------------------  
@@ -121,12 +132,12 @@ v2.0.6 (10/10/2025)
 -UP: Tweak to one of the exp/hr models regarding mana regen  
 -UP: Cleaned up spell detail and added increases when global filter is off  
 -UP: Majority/Max Accuracy added to lair output  
--UP: Monster regen time reduced from 1m30s to 30s for [GreaterMUD]  
+-UP: Monster regen time reduced from 1m30s to 30s for GreaterMUD  
 -FIX: Indication of level spell was casted (calculated) at in spell detail  
 -FIX: Attack/Combat setup screen showing @lvl for melee attacks  
 -FIX: +HitMagic from non-weapon sources not being properly applied  
--FIX: Loremaster and Cartographer quest rewards swapped [GreaterMUD]  
--FIX: Updated dodge formula for mob v player damage calc in [GreaterMUD]  
+-FIX: Loremaster and Cartographer quest rewards swapped GreaterMUD  
+-FIX: Updated dodge formula for mob v player damage calc in GreaterMUD  
 -FIX: Ability search on Sundry tab not auto-completing  
 
 v2.0.5 (10/05/2025)  
@@ -135,7 +146,7 @@ v2.0.5 (10/05/2025)
 -UP: Attack/Combat setup screen will now only show spells you have learned or could cast  
 -UP: Attack text on Equipment tab will now show regular and BS damage separately  
 -UP: Duration healing spells now properly supported when set as heal spell for exp/hr calculations  
--FIX: Off-Hand items filtered out for 1h/limited weapon classes [GreaterMUD]  
+-FIX: Off-Hand items filtered out for 1h/limited weapon classes GreaterMUD  
 
 v2.0.4 (10/04/2025)  
 ------------------------------------------  
@@ -156,7 +167,7 @@ v2.0.2 (10/02/2025)
 -UP: Can now set multiple bless spells at once from the spell tab  
 -UP: Accy, Stealth, and MR will now be colored on the EQ tab as they are calculated stats  
 -FIX: Rounding swings on EQ tab (will now be truncated)  
--FIX: CP cost > 10 [GreaterMUD]  
+-FIX: CP cost > 10 GreaterMUD  
 -FIX: +STR from items effecting encumbrance  
 -FIX: Error when equipping armor with +stats  
 -FIX: Compensate for encumbrance changes when weapons were swapped  

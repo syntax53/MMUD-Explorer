@@ -2,6 +2,11 @@ Attribute VB_Name = "modListViewExt"
 Option Explicit
 Option Base 0
 
+'rows saved to a compare/saved list (or present in the item manager) are
+'bolded AND colored purple (routed through ColorListviewRow/TColor like
+'the equipped-orange and saved-weapon-blue, so dark mode inverts it)
+Public Const CLR_SAVED_LIST As Long = &HCC0085   'RGB(133, 0, 204)
+
 '===============================================================================
 ' Module: modListViewExt.bas  —  ListView sorting, “sticky” grouping, and actions
 '===============================================================================
@@ -2263,7 +2268,7 @@ If lv.ListItems.count > 0 Then
         If Not bBolded And Not lv.name = "lvSpellCompare" Then
             Set oLI = frmMain.lvSpellCompare.FindItem(nSpellNum, lvwText, , 0)
             If Not oLI Is Nothing Then
-                Call ColorListviewRow(lv, i, &H80000008, True)
+                Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                 bBolded = True
             End If
             Set oLI = Nothing
@@ -2334,20 +2339,12 @@ If lv.ListItems.count > 0 Then
             'If Not oLI Is Nothing Then
             If in_long_arr(nMonNum, nMonsOnCompare()) Then
                 If Not lv.ListItems.item(i).Bold Then
-                    'Call ColorListviewRow(LV, i, &H80000008, True)
-                    lv.ListItems.item(i).Bold = True
-                    For x = 1 To lv.ListItems.item(i).ListSubItems.count
-                        lv.ListItems.item(i).ListSubItems(x).Bold = True
-                    Next x
+                    Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                     bRowBolded = True
                 End If
             Else
                 If lv.ListItems.item(i).Bold Then
-                    'Call ColorListviewRow(LV, i, &H80000008, False)
-                    lv.ListItems.item(i).Bold = False
-                    For x = 1 To lv.ListItems.item(i).ListSubItems.count
-                        lv.ListItems.item(i).ListSubItems(x).Bold = False
-                    Next x
+                    Call ColorListviewRow(lv, i, &H80000008, False)
                 End If
             End If
             Set oLI = Nothing
@@ -2464,7 +2461,7 @@ If lv.ListItems.count > 0 Then
                 If Not bBolded And frmMain.lvWeaponCompare.ListItems.count > 0 Then
                     Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
-                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                         bBolded = True
                     End If
                     Set oLI = Nothing
@@ -2475,7 +2472,7 @@ If lv.ListItems.count > 0 Then
                 If Not bBolded And frmMain.lvArmourCompare.ListItems.count > 0 Then
                     Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                     If Not oLI Is Nothing Then
-                        Call ColorListviewRow(lv, i, &H80000008, True)
+                        Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                         bBolded = True
                     End If
                     Set oLI = Nothing
@@ -2554,6 +2551,12 @@ If lv.ListItems.count > 0 Then
         
         nItemNum = val(lv.ListItems(i).Text)
         
+'        If nItemNum = 3706 Then
+'            Debug.Print 3706
+'        ElseIf nItemNum = 1449 Then
+'            Debug.Print 1449
+'        End If
+        
         If frmMain.cmbEquip(16).ListIndex > 0 Then
             If frmMain.cmbEquip(16).ItemData(frmMain.cmbEquip(16).ListIndex) = nItemNum Then
                 Call ColorListviewRow(lv, i, &H40C0&, True)
@@ -2563,19 +2566,19 @@ If lv.ListItems.count > 0 Then
         End If
         
         If Not bBolded And nGlobalCharSavedWeaponNumber = nItemNum Then
-            Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
-            If Not oLI Is Nothing Then
-                Call ColorListviewRow(lv, i, &HFF0000, True)
+            'Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
+            'If Not oLI Is Nothing Then
+                Call ColorListviewRow(lv, i, &HCC6600, True) '&HFF0000 > 0080FF
                 bColored = True
                 bBolded = True
-            End If
-            Set oLI = Nothing
+            'End If
+            'Set oLI = Nothing
         End If
         
         If Not bBolded And Not lv.name = "lvWeaponCompare" Then
             Set oLI = frmMain.lvWeaponCompare.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
-                Call ColorListviewRow(lv, i, &H80000008, True)
+                Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                 bBolded = True
             End If
             Set oLI = Nothing
@@ -2585,7 +2588,7 @@ If lv.ListItems.count > 0 Then
             Set oLI = frmMain.lvItemManager.FindItem(nItemNum, lvwText, , 0)
             If Not oLI Is Nothing Then
                 If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 Or InStr(1, oLI.ListSubItems(2), "STASH", vbTextCompare) > 0 Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                     bBolded = True
                 End If
             End If
@@ -2697,7 +2700,7 @@ If lv.ListItems.count > 0 Then
             If Not bBolded And Not lv.name = "lvArmourCompare" Then
                 Set oLI = frmMain.lvArmourCompare.FindItem(nItemNum, lvwText, , 0)
                 If Not oLI Is Nothing Then
-                    Call ColorListviewRow(lv, i, &H80000008, True)
+                    Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                     bBolded = True
                 End If
                 Set oLI = Nothing
@@ -2710,7 +2713,7 @@ If lv.ListItems.count > 0 Then
                         If InStr(1, oLI.ListSubItems(2), "CARRIED", vbTextCompare) > 0 And frmMain.ItemIsUsableByChar(nItemNum, True) And ItemHasAbility(nItemNum, -1) Then
                             Call ColorListviewRow(lv, i, &H40C0&, True)
                         ElseIf Not bBolded Then
-                            Call ColorListviewRow(lv, i, &H80000008, True)
+                            Call ColorListviewRow(lv, i, CLR_SAVED_LIST, True)
                         End If
                         bBolded = True
                     End If

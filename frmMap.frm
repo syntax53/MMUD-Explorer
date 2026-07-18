@@ -25,7 +25,6 @@ Begin VB.Form frmMap
       Visible         =   0   'False
       Width           =   1395
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "D"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -40,12 +39,12 @@ Begin VB.Form frmMap
          Index           =   9
          Left            =   870
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3296
          Top             =   990
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "U"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -60,12 +59,12 @@ Begin VB.Form frmMap
          Index           =   8
          Left            =   150
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3295
          Top             =   990
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "SE"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -80,12 +79,12 @@ Begin VB.Form frmMap
          Index           =   6
          Left            =   870
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3294
          Top             =   750
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "S"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -100,12 +99,12 @@ Begin VB.Form frmMap
          Index           =   1
          Left            =   510
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3293
          Top             =   750
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "SW"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -120,12 +119,12 @@ Begin VB.Form frmMap
          Index           =   7
          Left            =   150
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3292
          Top             =   750
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "E"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -140,12 +139,12 @@ Begin VB.Form frmMap
          Index           =   2
          Left            =   870
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3291
          Top             =   510
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "W"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -160,12 +159,12 @@ Begin VB.Form frmMap
          Index           =   3
          Left            =   150
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3290
          Top             =   510
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "NE"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -180,12 +179,12 @@ Begin VB.Form frmMap
          Index           =   4
          Left            =   870
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3289
          Top             =   270
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "N"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -200,12 +199,12 @@ Begin VB.Form frmMap
          Index           =   0
          Left            =   510
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3288
          Top             =   270
          Width           =   375
       End
       Begin VB.CommandButton cmdMove 
-         Style           =   1  'Graphical
          Caption         =   "NW"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -220,6 +219,7 @@ Begin VB.Form frmMap
          Index           =   5
          Left            =   150
          MaskColor       =   &H80000016&
+         Style           =   1  'Graphical
          TabIndex        =   3287
          Top             =   270
          Width           =   375
@@ -10450,7 +10450,16 @@ Begin VB.Form frmMap
       Begin VB.OptionButton optAlsoMark 
          BackColor       =   &H00000000&
          Caption         =   "MegaMud Rooms"
-         ForeColor       =   &H00FF8080&
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00CC6600&
          Height          =   435
          Index           =   3
          Left            =   2160
@@ -10526,7 +10535,6 @@ Begin VB.Form frmMap
          Width           =   1215
       End
       Begin VB.CommandButton cmdQ 
-         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -10540,6 +10548,7 @@ Begin VB.Form frmMap
          Height          =   255
          Index           =   3
          Left            =   3060
+         Style           =   1  'Graphical
          TabIndex        =   3334
          Top             =   240
          Width           =   255
@@ -10556,7 +10565,6 @@ Begin VB.Form frmMap
          Width           =   1275
       End
       Begin VB.CommandButton cmdQ 
-         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -10570,6 +10578,7 @@ Begin VB.Form frmMap
          Height          =   195
          Index           =   2
          Left            =   2220
+         Style           =   1  'Graphical
          TabIndex        =   3351
          Top             =   3060
          Width           =   195
@@ -10596,7 +10605,6 @@ Begin VB.Form frmMap
          Width           =   2415
       End
       Begin VB.CommandButton cmdQ 
-         Style           =   1  'Graphical
          Caption         =   "?"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -10610,6 +10618,7 @@ Begin VB.Form frmMap
          Height          =   195
          Index           =   1
          Left            =   2220
+         Style           =   1  'Graphical
          TabIndex        =   3348
          Top             =   2580
          Width           =   195
@@ -10637,39 +10646,39 @@ Begin VB.Form frmMap
          Width           =   1935
       End
       Begin VB.CommandButton cmdViewMapLegend 
-         Style           =   1  'Graphical
          Caption         =   "View &Legend"
          Height          =   315
          Left            =   1800
+         Style           =   1  'Graphical
          TabIndex        =   3356
          Top             =   4080
          Width           =   1335
       End
       Begin VB.CommandButton cmdMapShowUnused 
-         Style           =   1  'Graphical
          Caption         =   "S&how Blocks"
          Height          =   315
          Left            =   360
+         Style           =   1  'Graphical
          TabIndex        =   3355
          Top             =   4080
          Width           =   1455
       End
       Begin VB.CommandButton cmdMapFindText 
-         Style           =   1  'Graphical
          Caption         =   "Find &Next"
          Height          =   315
          Index           =   1
          Left            =   1800
+         Style           =   1  'Graphical
          TabIndex        =   3354
          Top             =   3780
          Width           =   1335
       End
       Begin VB.CommandButton cmdMapFindText 
-         Style           =   1  'Graphical
          Caption         =   "&Find Room"
          Height          =   315
          Index           =   0
          Left            =   360
+         Style           =   1  'Graphical
          TabIndex        =   3353
          Top             =   3780
          Width           =   1455
@@ -10772,237 +10781,236 @@ Begin VB.Form frmMap
       Visible         =   0   'False
       Width           =   3435
       Begin VB.CommandButton cmdMapPresetSelect 
-         Style           =   1  'Graphical
          Caption         =   "5"
          Height          =   375
          Index           =   4
          Left            =   2040
+         Style           =   1  'Graphical
          TabIndex        =   3309
          Top             =   300
          Width           =   495
       End
       Begin VB.CommandButton cmdMapPresetSelect 
-         Style           =   1  'Graphical
          Caption         =   "4"
          Height          =   375
          Index           =   3
          Left            =   1560
+         Style           =   1  'Graphical
          TabIndex        =   3308
          Top             =   300
          Width           =   495
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   9
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3330
          Top             =   3540
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   8
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3328
          Top             =   3240
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   7
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3326
          Top             =   2940
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   6
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3324
          Top             =   2640
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   5
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3322
          Top             =   2340
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   4
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3320
          Top             =   2040
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   3
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3318
          Top             =   1740
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   2
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3316
          Top             =   1440
          Width           =   375
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   1
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3314
          Top             =   1140
          Width           =   375
       End
       Begin VB.CommandButton cmdMapPresetSelect 
-         Style           =   1  'Graphical
          Caption         =   "3"
          Height          =   375
          Index           =   2
          Left            =   1080
+         Style           =   1  'Graphical
          TabIndex        =   3307
          Top             =   300
          Width           =   495
       End
       Begin VB.CommandButton cmdMapPresetSelect 
-         Style           =   1  'Graphical
          Caption         =   "2"
          Height          =   375
          Index           =   1
          Left            =   600
+         Style           =   1  'Graphical
          TabIndex        =   3306
          Top             =   300
          Width           =   495
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Lava Fields"
          Height          =   315
          Index           =   9
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3329
          Top             =   3540
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Ancient Ruin"
          Height          =   315
          Index           =   8
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3327
          Top             =   3240
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Storm Fortress"
          Height          =   315
          Index           =   7
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3325
          Top             =   2940
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Black Fortress"
          Height          =   315
          Index           =   6
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3323
          Top             =   2640
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Commander Markus"
          Height          =   315
          Index           =   5
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3321
          Top             =   2340
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Rhudar"
          Height          =   315
          Index           =   4
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3319
          Top             =   2040
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Lost City"
          Height          =   315
          Index           =   3
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3317
          Top             =   1740
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Arlysia"
          Height          =   315
          Index           =   2
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3315
          Top             =   1440
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Khazarad"
          Height          =   315
          Index           =   1
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3313
          Top             =   1140
          Width           =   2715
       End
       Begin VB.CommandButton cmdMapPresetSelect 
-         Style           =   1  'Graphical
          Caption         =   "1"
          Height          =   375
          Index           =   0
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3305
          Top             =   300
          Width           =   495
       End
       Begin VB.CommandButton cmdResetPresets 
-         Style           =   1  'Graphical
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -11015,26 +11023,27 @@ Begin VB.Form frmMap
          EndProperty
          Height          =   375
          Left            =   2640
+         Style           =   1  'Graphical
          TabIndex        =   3310
          Top             =   300
          Width           =   675
       End
       Begin VB.CommandButton cmdMapPreset 
-         Style           =   1  'Graphical
          Caption         =   "Town Square"
          Height          =   315
          Index           =   0
          Left            =   120
+         Style           =   1  'Graphical
          TabIndex        =   3311
          Top             =   840
          Width           =   2715
       End
       Begin VB.CommandButton cmdEditPreset 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Index           =   0
          Left            =   2940
+         Style           =   1  'Graphical
          TabIndex        =   3312
          Top             =   840
          Width           =   375
@@ -11051,31 +11060,31 @@ Begin VB.Form frmMap
       Top             =   60
       Width           =   3465
       Begin VB.CommandButton cmdDrawMap 
-         Style           =   1  'Graphical
          Caption         =   "&Draw"
          Default         =   -1  'True
          Height          =   375
          Index           =   0
          Left            =   1680
+         Style           =   1  'Graphical
          TabIndex        =   3300
          Top             =   0
          Width           =   855
       End
       Begin VB.CommandButton cmdPresets 
-         Style           =   1  'Graphical
          Caption         =   "&Presets"
          Height          =   315
          Left            =   1680
+         Style           =   1  'Graphical
          TabIndex        =   3303
          ToolTipText     =   "Goes back one room"
          Top             =   420
          Width           =   1755
       End
       Begin VB.CommandButton cmdOptions 
-         Style           =   1  'Graphical
          Caption         =   "&Options / Reload"
          Height          =   315
          Left            =   60
+         Style           =   1  'Graphical
          TabIndex        =   3302
          ToolTipText     =   "Show/Hide Options AND Reload Map"
          Top             =   420
@@ -11124,11 +11133,11 @@ Begin VB.Form frmMap
          Width           =   735
       End
       Begin VB.CommandButton cmdDrawMap 
-         Style           =   1  'Graphical
          Caption         =   "&Go Back"
          Height          =   375
          Index           =   1
          Left            =   2580
+         Style           =   1  'Graphical
          TabIndex        =   3301
          ToolTipText     =   "Back to last room"
          Top             =   0
@@ -43845,7 +43854,9 @@ If nAlsoMark >= 0 And nAlsoMark <= 2 Then optAlsoMark(nAlsoMark).Value = True
 
 Call LoadPresets
 
-cmbMapSize.ListIndex = val(ReadINI("Settings", "ExMapSize"))
+nTemp = val(ReadINI("Settings", "ExMapSize"))
+If nTemp < 0 Or nTemp > 5 Then nTemp = 1 'guard invalid ExMapSize (e.g. -1) that left the map size unselected and crashed MapStartMapping with subscript error 9
+cmbMapSize.ListIndex = nTemp
 
 Call ResizeMap
 timWindowMove.Enabled = True
@@ -44509,6 +44520,9 @@ objToolTip.DelToolTip picZoomMap.hWnd
 
 Call ResizeMap
 
+'safety: if an invalid saved size (e.g. ExMapSize=-1) left cmbMapSize unselected, ResizeMap sets no dimensions; bail cleanly instead of a subscript error 9 below
+If sMapSECorner < 1 Or nMapCenterCell < 1 Or nMapCenterCell > sMapSECorner Then GoTo Cancel
+
 StopBuild = False
 
 nMapStartRoom = nStartRoom
@@ -44640,6 +44654,17 @@ On Error GoTo error:
 '              9/27/2025 - reordered tooltip
 '              5/12/2026 - toll currency
 '=============================================================================
+
+'--- skip non-existent map cells (physical gap 2501-9000 has no lblRoomCell control): prevents error 340 in MapActivateCell and self-heals stale/corrupt cells
+If Cell > 2500 And Cell < 9001 Then
+    UnchartedCells(Cell) = 0
+    CellRoom(Cell, 1) = 0
+    CellRoom(Cell, 2) = 0
+    ALT_UnchartedCells(Cell) = 0
+    ALT_CellRoom(Cell, 1) = 0
+    ALT_CellRoom(Cell, 2) = 0
+    Exit Sub
+End If
 
 If bUseZoomMap And Me.name = "frmMap" Then
     'COMMENT BELOW ON frmMain, UNCOMMENT ON frmMap
@@ -45244,7 +45269,7 @@ Select Case direction
         
 End Select
 
-If MapActivateCell < nStartCell Or MapActivateCell > sMapSECorner Then GoTo DontActivate:
+If MapActivateCell < nStartCell Or MapActivateCell > sMapSECorner Or (MapActivateCell > 2500 And MapActivateCell < 9001) Then GoTo DontActivate:
 
 'set line mode
 'ScaleMode = vbPixels

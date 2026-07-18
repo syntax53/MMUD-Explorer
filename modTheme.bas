@@ -356,6 +356,25 @@ Next ctl
 End Sub
 
 '=========================================================================
+' Sets a frame caption's bold state AND keeps the dark-mode border-gap
+' geometry in sync. The overlay caption label shares the frame's Font
+' object, so it bolds by itself -- but bolding changes the caption width,
+' and the gap in the group-box border line must be re-measured or the
+' line runs through the text. Runtime frame bold changes must use this.
+'=========================================================================
+Public Sub SetFrameFontBold(fra As Object, ByVal bBold As Boolean)
+On Error Resume Next
+
+fra.FontBold = bBold
+If Not bDarkMode Then Exit Sub
+
+'re-measure the overlay label and re-pack the border-gap geometry
+Call SetFrameCaption(fra, fra.Caption)
+fra.Refresh
+
+End Sub
+
+'=========================================================================
 ' Subclass proc for ComboBoxes in dark mode: after the control paints its
 ' classic sunken border (bright system 3D colors), overdraw the two border
 ' rings in muted dark colors. The drop-down arrow button keeps the classic

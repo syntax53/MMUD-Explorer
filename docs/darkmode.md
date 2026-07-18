@@ -37,6 +37,7 @@ for standard controls.**
 | `TBtnColor(color)` | Same idea for CommandButton faces only: remaps the default face to `DK_BTN_FACE`, passes custom highlight colors through |
 | `SetFrameCaption fra, s` | Change a frame caption at runtime (updates the dark-mode overlay label and border gap) |
 | `SetFrameForeColor fra, c` | Change a frame caption color at runtime (same reason) |
+| `SetFrameFontBold fra, b` | Change a frame caption's bold state at runtime (re-measures the caption gap in the border line) |
 | `ApplyDarkTitleBar hWnd` | Dark title bar for a window (already called by ApplyDarkTheme) |
 | `DK_FORM_BACK` &H202020 | window/dialog background |
 | `DK_FIELD_BACK` &H262525 | text/list/combo field background |
@@ -56,7 +57,10 @@ for standard controls.**
 3. **Frame captions**: in dark mode the real caption is not drawn (BorderStyle
    is 0); an overlay label `lblDkFrameCap*` stands in. Any runtime
    `.Caption`/caption-`.ForeColor` change must go through `SetFrameCaption` /
-   `SetFrameForeColor` or it silently won't display.
+   `SetFrameForeColor` or it silently won't display. Bold changes must go
+   through `SetFrameFontBold` — the overlay shares the frame's Font object so
+   the text itself bolds either way, but the caption gap in the border line
+   must be re-measured or the line runs through the widened text.
 4. **Startup state**: VB6 fires `chk_Click` only when a value *changes*. If a
    checkbox controls a themed color and its saved state equals the design-time
    state, initialize the color explicitly in `Form_Load` (see the
