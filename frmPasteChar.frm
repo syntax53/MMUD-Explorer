@@ -2098,6 +2098,7 @@ Dim x As Integer, x2 As Integer, y As Integer, iMatch As Integer, sPastedText As
 Dim sWorn(1 To 6, 0 To 1) As String, sText As String, iChar As Integer, sChar As String
 Dim bItemsFound As Boolean, sEquipLoc(1 To 6, 0 To 19) As String, nWillpower(6) As Integer
 Dim nPlusRegen(6) As Integer, nPlusDodge(6) As Integer, nTemp As Long, sFindAtkLast As String
+Dim nSyncSlot As Integer, nNameCount As Integer
 Dim nPhysDamage(6) As Long, nSwings(6) As Double, tAttack As tAttackDamage, nSpellDamage(6) As Long
 Dim tCharacter(6) As tCharacterProfile, nEnergy As Integer, nAttackTypeMUD As eAttackTypeMUD, nCombat As Integer
 Dim nWeaponNum(6) As Long, nWeaponSpeed(6) As Long, nWeaponSTR(6) As Long
@@ -2213,6 +2214,29 @@ For iMatch = 0 To UBound(tMatches())
             If val(sName(0)) >= 6 Then GoTo skip_match
             sName(val(sName(0)) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
             sName(0) = val(sName(0)) + 1
+            'every field below keeps its own slot counter, and a counter only advances
+            'when that field is seen.  a character missing a line (non-casters have no
+            'Mana/Spellcasting, no inventory pasted means no Encumbrance) would other-
+            'wise shift all later characters' values into the wrong slot.  a new "Name:"
+            'starts a block, so bring every counter up to the current character index.
+            nSyncSlot = val(sName(0)) - 1
+            If val(sClassName(0)) < nSyncSlot Then sClassName(0) = nSyncSlot
+            If val(sRaceName(0)) < nSyncSlot Then sRaceName(0) = nSyncSlot
+            If nMR(0) < nSyncSlot Then nMR(0) = nSyncSlot
+            If nLevel(0) < nSyncSlot Then nLevel(0) = nSyncSlot
+            If nAgility(0) < nSyncSlot Then nAgility(0) = nSyncSlot
+            If nStrength(0) < nSyncSlot Then nStrength(0) = nSyncSlot
+            If nIntellect(0) < nSyncSlot Then nIntellect(0) = nSyncSlot
+            If nHealth(0) < nSyncSlot Then nHealth(0) = nSyncSlot
+            If nCharm(0) < nSyncSlot Then nCharm(0) = nSyncSlot
+            If nWillpower(0) < nSyncSlot Then nWillpower(0) = nSyncSlot
+            If nSpellcasting(0) < nSyncSlot Then nSpellcasting(0) = nSyncSlot
+            If nHitPoints(0) < nSyncSlot Then nHitPoints(0) = nSyncSlot
+            If nMaxMana(0) < nSyncSlot Then nMaxMana(0) = nSyncSlot
+            If nAC(0) < nSyncSlot Then nAC(0) = nSyncSlot
+            If nDR(0) < nSyncSlot Then nDR(0) = nSyncSlot
+            If nCurrentEnc(0) < nSyncSlot Then nCurrentEnc(0) = nSyncSlot
+            If nMaxEnc(0) < nSyncSlot Then nMaxEnc(0) = nSyncSlot
         Case "Class":
             If val(sClassName(0)) >= 6 Then GoTo skip_match
             sClassName(val(sClassName(0)) + 1) = Trim(tMatches(iMatch).sSubMatches(1))
@@ -2300,11 +2324,28 @@ Do Until x + y > Len(sPastedText) + 1
     
     sText = RemoveCharacter(sText & sChar, " ")
     
-    If InStr(1, LCase(sText), "equippedwith:") > 0 Then
-        iChar = iChar + 1
+    If InStr(1, LCase(sText), "name:") > 0 Then
+        'a new stat block starts here.  the inventory that follows belongs to this
+        'character, so key the equipment off the block index instead of counting
+        'inventory blocks on their own - a character with no inventory pasted would
+        'otherwise shift everyone after them onto the wrong slot.  (this assumes the
+        'documented paste order: each character's stat output followed by their own
+        'inventory output, one character after another.)
+        nNameCount = nNameCount + 1
+        GoTo clear:
+    ElseIf InStr(1, LCase(sText), "equippedwith:") > 0 Then
+        If nNameCount > 0 Then
+            iChar = nNameCount
+        Else
+            iChar = iChar + 1
+        End If
         GoTo clear:
     ElseIf InStr(1, LCase(sText), "arecarrying") > 0 Then
-        iChar = iChar + 1
+        If nNameCount > 0 Then
+            iChar = nNameCount
+        Else
+            iChar = iChar + 1
+        End If
         GoTo clear:
     End If
     

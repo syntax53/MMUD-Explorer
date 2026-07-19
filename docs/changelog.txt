@@ -1,6 +1,7 @@
 v2.3.4 (07/##/2026)  
 ------------------------------------------  
-- UP: Fix pasting party members not recognizing their class (missionary and witchunter usually)  
+- FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
+- FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------  
