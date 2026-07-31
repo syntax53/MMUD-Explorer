@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -5187,7 +5187,7 @@ Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
 
-If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+If Not bForceNoParty And frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
     tChar.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 End If
 If tChar.nParty < 1 Then tChar.nParty = 1

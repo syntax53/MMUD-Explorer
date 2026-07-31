@@ -1,5 +1,6 @@
 v2.3.4 (07/##/2026)  
 ------------------------------------------  
+- FIX: Spells not filtering properly when in monster lair mode with party > 1  
 - FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
 - FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
 
