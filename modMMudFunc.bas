@@ -137,6 +137,7 @@ Public Type tSpellCastValues
     sSpellName As String
     nCastLevel As Integer
     nSpellAttackType As Integer
+    nRequiredLevel As Integer
 End Type
 
 Public Type tAttackDamage
@@ -815,6 +816,7 @@ End If
 If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 CalculateSpellCast.nCastLevel = nCastLVL
+CalculateSpellCast.nRequiredLevel = tabSpells.Fields("ReqLevel")
 
 If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
     And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
