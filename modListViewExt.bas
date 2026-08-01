@@ -1269,6 +1269,173 @@ Public Sub LV_RefreshSort( _
     LV_WriteSortState lv, st
 End Sub
 
+'===============================================================================
+' Shops-first reference sorting
+'-------------------------------------------------------------------------------
+' Backs the Options menu toggle "Show shops first in item references".  Used by
+' PullItemDetail for the item reference lists (lvWeaponLoc, lvArmourLoc,
+' lvOtherItemLoc, lvWeaponCompareLoc, lvArmourCompareLoc, lvItemManagerLoc).
+' Shop rows are pinned above everything else; inside each block the rows keep the
+' column/direction the user last chose (or the caller's defaults).
+'===============================================================================
+
+' Same contract as LV_RefreshSort, but pins shop rows to the top.
+Public Sub LV_RefreshSort_ShopsFirst( _
+    ByVal lv As ListView, _
+    Optional ByVal defaultCol As Integer = 1, _
+    Optional ByVal defaultDType As ListDataType = ldtstring, _
+    Optional ByVal defaultByTag As Boolean = False, _
+    Optional ByVal defaultAsc As Boolean = True _
+)
+    Dim st As tSortState
+    Dim haveState As Boolean
+    Dim asc As Boolean
+
+    haveState = LV_ReadSortState(lv, st) And (st.LastCol > 0)
+
+    If haveState Then
+        ' Reapply EXACT previous sort (no toggle), shops still on top
+        Call LV_DoSort_ShopsFirst(lv, st.LastCol, st.DType, (st.ByTag <> 0), (st.asc <> 0))
+        Exit Sub
+    End If
+
+    ' No prior state recorded - only proceed if caller provided a default column
+    If defaultCol <= 0 Then Exit Sub
+
+    asc = defaultAsc
+
+    Call LV_DoSort_ShopsFirst(lv, defaultCol, defaultDType, defaultByTag, asc)
+
+    ' Persist as the ListView's sort state so future refreshes need no args
+    st.LastCol = defaultCol
+    st.asc = IIf(asc, 1, 0)
+    st.DType = defaultDType
+    st.ByTag = IIf(defaultByTag, 1, 0)
+    LV_WriteSortState lv, st
+End Sub
+
+' Composite sort: primary key = shop rows first, secondary = the requested column.
+' Uses the same Text-stash idiom SortListView already uses internally, so nothing is
+' added to the ListView (no hidden columns) and nothing is left behind afterwards.
+Private Sub LV_DoSort_ShopsFirst( _
+    ByVal lv As ListView, _
+    ByVal colIdx As Integer, _
+    ByVal DataType As ListDataType, _
+    ByVal bByTag As Boolean, _
+    ByVal bAsc As Boolean _
+)
+    Dim L As Long, li As ListItem
+    Dim sKeySep As String, sRaw As String, sPri As String, sTie As String
+    Dim minV As Double, maxV As Double, v As Double
+    Dim bGotAny As Boolean, bStashed As Boolean
+
+    If lv.ListItems.count <= 1 Then Exit Sub
+
+    sKeySep = Chr$(31)
+
+    On Error GoTo fail:
+
+    ' Pre-scan the source column so BuildSecondaryKey can normalise the range
+    If DataType = ldtnumber Or DataType = ldtDateTime Then
+        For L = 1 To lv.ListItems.count
+            Set li = lv.ListItems(L)
+            If bByTag Then
+                sRaw = GetCellTagFromColumn(li, colIdx)
+            Else
+                sRaw = LV_GetCell(li, colIdx)
+            End If
+
+            If DataType = ldtnumber Then
+                v = val(StripNumFmt(sRaw))
+            Else
+                v = 0#
+                On Error Resume Next
+                v = CDbl(CDate(sRaw))
+                If Err.Number <> 0 Then v = 0#
+                Err.clear
+                On Error GoTo fail:
+            End If
+
+            If Not bGotAny Then
+                minV = v
+                maxV = v
+                bGotAny = True
+            Else
+                If v < minV Then minV = v
+                If v > maxV Then maxV = v
+            End If
+        Next L
+    End If
+
+    ' Stash Text (plus the original Tag) and write the composite key into column 1
+    bStashed = True
+    For L = 1 To lv.ListItems.count
+        Set li = lv.ListItems(L)
+
+        If bByTag Then
+            sRaw = GetCellTagFromColumn(li, colIdx)
+        Else
+            sRaw = LV_GetCell(li, colIdx)
+        End If
+
+        sPri = IIf(LV_RowIsShop(li), "1", "2")
+        sTie = Right$("00000000" & CStr(L), 8)      'keeps equal keys in their current order
+
+        li.Tag = li.Text & Chr$(0) & li.Tag
+        li.Text = sPri & sKeySep & BuildSecondaryKey(sRaw, DataType, bAsc, minV, maxV) & sKeySep & sTie
+    Next L
+
+    ' Direction is already encoded in the key, so the sort itself is always ascending
+    Call SortListView(lv, 1, ldtstring, True)
+
+    Call LV_UnstashText(lv)
+
+    Set li = Nothing
+    Exit Sub
+
+fail:
+    Err.clear
+    If bStashed Then Call LV_UnstashText(lv)
+    Set li = Nothing
+    ' Fall back to the plain sort so the list is never left unsorted
+    If bByTag Then
+        Call SortListViewByTag(lv, colIdx, DataType, bAsc)
+    Else
+        Call SortListView(lv, colIdx, DataType, bAsc)
+    End If
+End Sub
+
+' Undo the Text/Tag stash written by LV_DoSort_ShopsFirst.  Rows that were never
+' stashed have no Chr$(0) in their Tag and are left alone, so this is safe to call
+' after a partial failure.
+Private Sub LV_UnstashText(ByVal lv As ListView)
+    Dim L As Long, i As Long
+    On Error Resume Next
+    With lv.ListItems
+        For L = 1 To .count
+            With .item(L)
+                i = InStr(.Tag, Chr$(0))
+                If i > 0 Then
+                    .Text = Left$(.Tag, i - 1)
+                    .Tag = mid$(.Tag, i + 1)
+                End If
+            End With
+        Next L
+    End With
+End Sub
+
+' GetLocations labels shop rows "Shop: ", "Shop (sell): " or "Shop (nogen): " in the
+' reference column - the same textual dispatch GotoLocation relies on.  Two-column
+' reference lists carry that text in SubItem(1); single-column lists carry it in .Text.
+Private Function LV_RowIsShop(ByRef li As ListItem) As Boolean
+    Dim s As String
+    On Error Resume Next
+    If li.ListSubItems.count >= 1 Then s = li.ListSubItems(1).Text
+    If LenB(Trim$(s)) = 0 Then s = li.Text
+    LV_RowIsShop = (LCase$(Left$(LTrim$(s), 4)) = "shop")
+End Function
+
+
 ' Call this instead of LV_Sort_ColumnClick from your ColumnClick handler.
 ' - If sticky is enabled for this LV, we route to LV_Sort_WithStickyByAction / LV_Sort_WithStickyByTagCol
 ' - Else (not sticky) we call SortListView directly (so we can honor forceAsc/forceDesc)

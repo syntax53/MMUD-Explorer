@@ -18809,6 +18809,9 @@ Begin VB.Form frmMain
          Checked         =   -1  'True
          Shortcut        =   ^J
       End
+      Begin VB.Menu mnuShopsFirst 
+         Caption         =   "Show shops first in item references"
+      End
    End
    Begin VB.Menu mnuMain 
       Caption         =   "&Tools"
@@ -31469,6 +31472,12 @@ Else
     mnuJumpToCompare.Checked = False
 End If
 
+If val(ReadINI("Settings", "ShopsFirstInRefs")) = 1 Then
+    mnuShopsFirst.Checked = True
+Else
+    mnuShopsFirst.Checked = False
+End If
+
 If val(ReadINI("Settings", "FilterAll")) = 1 And bCharLoaded Then Call FilterAll(True)
 
 sForceCharacterFile = ""
@@ -35378,6 +35387,15 @@ If mnuJumpToCompare.Checked = True Then
     mnuJumpToCompare.Checked = False
 Else
     mnuJumpToCompare.Checked = True
+End If
+End Sub
+
+Private Sub mnuShopsFirst_Click()
+On Error Resume Next
+If mnuShopsFirst.Checked = True Then
+    mnuShopsFirst.Checked = False
+Else
+    mnuShopsFirst.Checked = True
 End If
 End Sub
 
@@ -39626,6 +39644,12 @@ If mnuJumpToCompare.Checked = True Then
     Call WriteINI("Settings", "JumpToCompare", 1)
 Else
     Call WriteINI("Settings", "JumpToCompare", 0)
+End If
+
+If mnuShopsFirst.Checked = True Then
+    Call WriteINI("Settings", "ShopsFirstInRefs", 1)
+Else
+    Call WriteINI("Settings", "ShopsFirstInRefs", 0)
 End If
 
 Exit Function

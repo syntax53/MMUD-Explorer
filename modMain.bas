@@ -1895,7 +1895,11 @@ If LocationLV.ListItems.count > 0 Then
 '        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
 '    End If
     
-    Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    If frmMain.mnuShopsFirst.Checked Then
+        Call LV_RefreshSort_ShopsFirst(LocationLV, 1, ldtnumber, True, False)
+    Else
+        Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    End If
 End If
 
 out:
