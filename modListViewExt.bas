@@ -1275,42 +1275,36 @@ End Sub
 ' Backs the Options menu toggle "Show shops first in item references".  Used by
 ' PullItemDetail for the item reference lists (lvWeaponLoc, lvArmourLoc,
 ' lvOtherItemLoc, lvWeaponCompareLoc, lvArmourCompareLoc, lvItemManagerLoc).
-' Shop rows are pinned above everything else; inside each block the rows keep the
-' column/direction the user last chose (or the caller's defaults).
+' Shop rows are pinned above everything else; inside each block the rows are sorted
+' by the column/direction the caller asks for.
 '===============================================================================
 
-' Same contract as LV_RefreshSort, but pins shop rows to the top.
+' Like LV_RefreshSort, but pins shop rows to the top.  Unlike LV_RefreshSort it ALWAYS
+' applies the sort it is handed instead of replaying whichever column the user last
+' clicked, so a shops-first listing always reads "shops first, then every other
+' reference by descending percentage".
+' The defaults are the item-reference sort itself (column 1 = the % column, read from
+' each row's Tag, descending) so a bare call still does the right thing.
 Public Sub LV_RefreshSort_ShopsFirst( _
     ByVal lv As ListView, _
-    Optional ByVal defaultCol As Integer = 1, _
-    Optional ByVal defaultDType As ListDataType = ldtstring, _
-    Optional ByVal defaultByTag As Boolean = False, _
-    Optional ByVal defaultAsc As Boolean = True _
+    Optional ByVal sortCol As Integer = 1, _
+    Optional ByVal sortDType As ListDataType = ldtnumber, _
+    Optional ByVal sortByTag As Boolean = True, _
+    Optional ByVal sortAsc As Boolean = False _
 )
     Dim st As tSortState
-    Dim haveState As Boolean
-    Dim asc As Boolean
 
-    haveState = LV_ReadSortState(lv, st) And (st.LastCol > 0)
+    If sortCol <= 0 Then Exit Sub
 
-    If haveState Then
-        ' Reapply EXACT previous sort (no toggle), shops still on top
-        Call LV_DoSort_ShopsFirst(lv, st.LastCol, st.DType, (st.ByTag <> 0), (st.asc <> 0))
-        Exit Sub
-    End If
+    Call LV_DoSort_ShopsFirst(lv, sortCol, sortDType, sortByTag, sortAsc)
 
-    ' No prior state recorded - only proceed if caller provided a default column
-    If defaultCol <= 0 Then Exit Sub
-
-    asc = defaultAsc
-
-    Call LV_DoSort_ShopsFirst(lv, defaultCol, defaultDType, defaultByTag, asc)
-
-    ' Persist as the ListView's sort state so future refreshes need no args
-    st.LastCol = defaultCol
-    st.asc = IIf(asc, 1, 0)
-    st.DType = defaultDType
-    st.ByTag = IIf(defaultByTag, 1, 0)
+    ' Record it anyway: LV_GetNextAscending needs a known direction to toggle from on
+    ' the next column-header click, and turning the option back off then keeps the
+    ' same descending-percentage order.
+    st.LastCol = sortCol
+    st.asc = IIf(sortAsc, 1, 0)
+    st.DType = sortDType
+    st.ByTag = IIf(sortByTag, 1, 0)
     LV_WriteSortState lv, st
 End Sub
 
