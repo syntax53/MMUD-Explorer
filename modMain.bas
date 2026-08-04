@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -4573,6 +4573,54 @@ Else
 End If
 
 End Function
+Public Sub SetArmourACDRSortTags(ByVal lv As ListView, ByVal bByDR As Boolean)
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If bByDR Then
+            lv.ListItems(i).ListSubItems(6).Tag = (nDR * 100000) + nAC
+        Else
+            lv.ListItems(i).ListSubItems(6).Tag = (nAC * 100000) + nDR
+        End If
+    End If
+Next i
+
+out:
+Exit Sub
+error:
+Call HandleError("SetArmourACDRSortTags")
+Resume out:
+End Sub
+Public Function ArmourACDRTagsAreByDR(ByVal lv As ListView) As Boolean
+'reports which of the two modes the ac/dr sort tags are currently built for.
+'a row where ac = dr builds an identical tag either way, so keep looking until
+'we find one that can actually tell them apart
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If nAC <> nDR Then
+            ArmourACDRTagsAreByDR = (val(lv.ListItems(i).ListSubItems(6).Tag) = ((nDR * 100000) + nAC))
+            Exit Function
+        End If
+    End If
+Next i
+
+out:
+Exit Function
+error:
+Call HandleError("ArmourACDRTagsAreByDR")
+Resume out:
+End Function
 Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
@@ -4591,7 +4639,7 @@ oLI.ListSubItems.Add (3), "Armr Type", GetArmourTypeEnum(tabItems.Fields("Armour
 oLI.ListSubItems.Add (4), "Level", 0
 oLI.ListSubItems.Add (5), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
-oLI.ListSubItems(6).Tag = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+oLI.ListSubItems(6).Tag = (CLng(tabItems.Fields("ArmourClass")) * 100000) + tabItems.Fields("DamageResist")
 
 oLI.ListSubItems.Add (7), "Acc", tabItems.Fields("Accy")
 oLI.ListSubItems.Add (8), "Crits", 0
