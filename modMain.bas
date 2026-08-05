@@ -5812,12 +5812,12 @@ oLI.ListSubItems(nIndex).Tag = nExp
 
 nIndex = nIndex + 1 '5
 sTemp = ""
-If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
-    nHP = tAvgLairInfo.nAvgHP
-    sTemp = "*"
-Else
+'If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
+'    nHP = tAvgLairInfo.nAvgHP
+'    sTemp = "*"
+'Else
     nHP = tabMonsters.Fields("HP")
-End If
+'End If
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0) & sTemp
 oLI.ListSubItems(nIndex).Tag = nHP
 
