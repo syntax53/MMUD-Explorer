@@ -1,5 +1,16 @@
+v2.3.4 (08/##/2026)  
+------------------------------------------------------------------------------------  
+- UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
+- UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  
+- UP: New toggle option in menu to initially always show shops first when listing item references  
+- FIX: Spell immunity now compared against the spell's required level instead of the level it was cast at  
+- FIX: Spells not filtering properly when in monster lair mode with party > 1  
+- FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
+- FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
+- FIX: Paste Character treating item stat bonuses as part of your base stats  
+
 v2.3.3 (07/15/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 - UP: Saved-list rows are now purple in addition to bold so they are easier to spot in dark mode  
 - FIX: Error when marking a spell as learned/unlearned by the menu  
 - FIX: 2nd alignment and Dread Wraith quest rewards in GreaterMUD  
@@ -10,17 +21,17 @@ v2.3.3 (07/15/2026)
 - FIX: EQ'd weapon saved to file showing blue when a different weapon is EQ'd, but not yet saved (convenience thing)  
 
 v2.3.2 (07/09/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 - NEW: Optional dark mode, toggled in Settings (takes effect after restarting MME)
 - FIX: "Global Filter + Use Character" caption now initializes grey on startup when the filter is off
 - UP: Pre-configured quest rewards updated for Paramud v1.9+ (not backwards compatible to v1.8.5!)
 
 v2.3.1 (06/20/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 - FIX: 6 swings for bash on the swing calc with Paramud DB 1.9+  
 
 v2.3 (06/20/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 - NEW: Option on maps to star rooms known to MegaMUD (loaded from rooms.md files)  
 - UP: Added a new exp/hr model (D), refined by Claude using information from the other models  
 - UP: Discrepancies in pasted versus carried items on item manager will now show in a warning  
@@ -30,7 +41,7 @@ v2.3 (06/20/2026)
 - FIX: Martial arts attacks on weapon tab not sorting damage properly  
 
 v2.2 (05/15/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -FIX: Weapon +hitmagic was not being considered in vs mob/lair damage output calculations for regular melee attacks  
       if the character wasn't also backstabbing. Even in those cases, it was the backstab weapon magic being considered.  
       This could greatly hinder accurate exp/hr predictions for many versus mobs that have +hitmagic requirements.  
@@ -55,7 +66,7 @@ v2.2 (05/15/2026)
 -FIX: Added keepalives to the database connection to prevent errors after MME has been idle for awhile  
 
 v2.1.1 (02/01/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -UP: Added BS Defense filter to extra monster filters  
 -UP: Extra monster filter will auto-toggle on/off when adjusting filters  
 -FIX: Clicking the header to reset "Mobs/Lair <=" on the extra monster filter  
@@ -68,7 +79,7 @@ v2.1.1 (02/01/2026)
     * NOTE: To clean this up, clear learned spells from the option menu and then paste or mark spells learned again  
 
 v2.1 (12/20/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -NEW: By popular demand, more monster filter options (accuracy, dodge, coin types, ac/dr, etc)  
 -NEW: Reordered the tab strip + added a new hybrid display that will be the default view on launch  
 -UP: Adjusted monster coin drop display and now shows actual coin types as well as total value  
@@ -109,11 +120,11 @@ v2.1 (12/20/2025)
 -FIX: 6th alignment +encumbrance not calculating in GreaterMUD  
 
 v2.0.8 (10/12/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -FIX: Missed a spot where the loaded character's stats were still effecting the spellbook output of another magery  
 
 v2.0.7 (10/12/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -UP: Added a "use" flag on item manager; use to open chests, read scrolls, etc  
 -UP: Spell detail columns will now show cast @lvl cap instead of @req level when global filter is off  
 -UP: Spell tab tweak: current char stats will only be utilized in table data when APPLYing filter w/global filter ON  
@@ -123,7 +134,7 @@ v2.0.7 (10/12/2025)
 -FIX: Prot. from Evil overvalued (x10!) in monster sim and monster dmg vs char calculations  
 
 v2.0.6 (10/10/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -NEW: Hit Calculator improved and moved to its own window  
 -UP: Prot. from Evil implemented for monster damage vs character calculation  
 -UP: Option added to reset all character-related fields at once  
@@ -141,7 +152,7 @@ v2.0.6 (10/10/2025)
 -FIX: Ability search on Sundry tab not auto-completing  
 
 v2.0.5 (10/05/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -UP: Attack/Combat setup screen will now show melee attack damage too  
 -UP: Attack/Combat setup screen will now only show spells you have learned or could cast  
 -UP: Attack text on Equipment tab will now show regular and BS damage separately  
@@ -149,15 +160,15 @@ v2.0.5 (10/05/2025)
 -FIX: Off-Hand items filtered out for 1h/limited weapon classes GreaterMUD  
 
 v2.0.4 (10/04/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -FIX: Weapons tab table data all screwed up (poor implementation of previous weapon swapping encumbrance compensation)  
 
 v2.0.3 (10/03/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -FIX: Error when clicking monster references on maps  
 
 v2.0.2 (10/02/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -NEW: Half-Ass'd Class/Race Builder (it's better than flipping tabs, for now)  
 -UP: Added a filter option to the bless spell dropdowns  
 -UP: Added exp required display to stat/CP calc  
@@ -178,7 +189,7 @@ v2.0.2 (10/02/2025)
 -FIX: "How is this monster summoned" pop-up correctly linking lairs to rooms  
 
 v2.0.1 (09/30/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 -UP: Added weapon swings and 1st round damage columns to weapon tab  
 -UP: Current attack damage + swings/casts shown on equipment tab  
 -FIX: Weapon damage/swing calculation (but not the swing calculator) was flooring swings at 1 swing instead of 0  
@@ -186,7 +197,7 @@ v2.0.1 (09/30/2025)
 -FIX: Charm adjustments on shop tab (and also strength on inventory tab)  
 
 v2.0 (09/29/2025)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
 General:  
 -NEW: Accuracy formula discovered and now calculated automatically  
 -NEW: Critical Hit Chance formula discovered and now calculated automatically  

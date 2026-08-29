@@ -1141,7 +1141,7 @@ End Function
 
 ' === DB lookup ===
 ' Now also requires [Gettable] <> 0
-Private Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() As ItemMatch) As Long
+Public Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() As ItemMatch) As Long
     On Error GoTo fail
     Dim rs As DAO.Recordset
     Dim cnt As Long
@@ -1405,7 +1405,7 @@ End Function
 
 
 ' "Name (N)" -> base name + qty; if none, qty=1
-Private Sub ParseNameAndQty(ByVal raw As String, ByRef baseName As String, ByRef qty As Long)
+Public Sub ParseNameAndQty(ByVal raw As String, ByRef baseName As String, ByRef qty As Long)
     Dim s As String, pOpen As Long, pClose As Long, inside As String, lastTrailing As Long
     s = Trim$(raw)
     baseName = s

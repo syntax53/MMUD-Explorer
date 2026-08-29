@@ -18809,6 +18809,9 @@ Begin VB.Form frmMain
          Checked         =   -1  'True
          Shortcut        =   ^J
       End
+      Begin VB.Menu mnuShopsFirst 
+         Caption         =   "Show shops first in item references"
+      End
    End
    Begin VB.Menu mnuMain 
       Caption         =   "&Tools"
@@ -21052,7 +21055,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-'sNormalCaption = sNormalCaption & " v260610a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
+sNormalCaption = sNormalCaption & " v260805a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -31469,6 +31472,12 @@ Else
     mnuJumpToCompare.Checked = False
 End If
 
+If val(ReadINI("Settings", "ShopsFirstInRefs")) = 1 Then
+    mnuShopsFirst.Checked = True
+Else
+    mnuShopsFirst.Checked = False
+End If
+
 If val(ReadINI("Settings", "FilterAll")) = 1 And bCharLoaded Then Call FilterAll(True)
 
 sForceCharacterFile = ""
@@ -31712,9 +31721,16 @@ Else
     nSortType = ldtnumber
 End If
 
-If ColumnHeader.Index = 7 Then bSortTag = True 'ac/dr
-
-Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, nSortType, bSortTag)
+If ColumnHeader.Index = 7 Then 'ac/dr: alternate ac-desc / dr-desc on repeat clicks
+    If lvArmour.SortKey = 6 Then
+        Call SetArmourACDRSortTags(lvArmour, Not ArmourACDRTagsAreByDR(lvArmour))
+    Else
+        Call SetArmourACDRSortTags(lvArmour, False)
+    End If
+    Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, ldtnumber, True, , True)
+Else
+    Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, nSortType, bSortTag)
+End If
 
 out:
 Exit Sub
@@ -31745,9 +31761,16 @@ Else
     nSortType = ldtnumber
 End If
 
-If ColumnHeader.Index = 7 Then bSortTag = True
-
-Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, nSortType, bSortTag)
+If ColumnHeader.Index = 7 Then 'ac/dr: alternate ac-desc / dr-desc on repeat clicks
+    If lvArmourCompare.SortKey = 6 Then
+        Call SetArmourACDRSortTags(lvArmourCompare, Not ArmourACDRTagsAreByDR(lvArmourCompare))
+    Else
+        Call SetArmourACDRSortTags(lvArmourCompare, False)
+    End If
+    Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, ldtnumber, True, , True)
+Else
+    Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, nSortType, bSortTag)
+End If
 
 out:
 Exit Sub
@@ -35381,6 +35404,15 @@ Else
 End If
 End Sub
 
+Private Sub mnuShopsFirst_Click()
+On Error Resume Next
+If mnuShopsFirst.Checked = True Then
+    mnuShopsFirst.Checked = False
+Else
+    mnuShopsFirst.Checked = True
+End If
+End Sub
+
 'Private Sub mnuLairLimitMovement_Click()
 'On Error Resume Next
 'If mnuLairLimitMovement.Checked = True Then
@@ -37012,6 +37044,9 @@ Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As I
 Dim bPastedInven As Boolean, sManualStat As String
 Dim tPasteItems As ItemParseResult, bCountThis As Boolean
 Dim sCarryName As String, sEquippedAnom As String, sMissingAnom As String, sDiscrepMsg As String
+Dim nItemStatBonus() As Long, sItemStatSource() As String, sCarryStatAnom As String, sInvName As String
+Dim nCarryQTY As Long, nCarryHits As Long, tCarryHits() As ItemMatch, nInvUB As Long
+Dim iEQ As Integer, iInv As Long, iHit As Long
 
 'x = current position in string
 'y = length of next possible (current) string match
@@ -37341,110 +37376,70 @@ skip:
 Loop
 tabItems.MoveFirst
 
+'parse the paste once so carried weight is only counted for items that were
+'actually in it (see bCountThis below), to flag carried/equipped anomalies, and to
+'work out which carried items are inflating the pasted stats below
+If bPastedInven Then tPasteItems = ParseGameTextInventory(sSearch)
+
+'The game's stat block reports each stat WITH its item bonuses already applied, but
+'txtCharStats().Text holds the BASE stat. Total up what CalcCharacterStats will re-add
+'for items so the pasted numbers can be reduced back to base. Only GreaterMUD/Paramud
+'items add stats -- in stock only spells do (see CalcCharacterStats).
+ReDim nItemStatBonus(0 To 5)
+ReDim sItemStatSource(0 To 5)
+
+If bGreaterMUD Then
+    For iEQ = 0 To UBound(nEquippedItem())
+        Call AccumItemStatBonus(nEquippedItem(iEQ), False, 1, nItemStatBonus(), sItemStatSource())
+    Next iEQ
+
+    'items that apply their abilities while merely carried (special items, or armour
+    'worn nowhere) inflate the reported stats too, but only if the character can
+    'actually use them
+    If bPastedInven Then
+        nInvUB = -1
+        On Error Resume Next
+        nInvUB = UBound(tPasteItems.sInventory)
+        On Error GoTo error:
+
+        For iInv = 0 To nInvUB
+            Call ParseNameAndQty(tPasteItems.sInventory(iInv), sInvName, nCarryQTY)
+            If Len(sInvName) > 0 Then
+                Erase tCarryHits
+                nCarryHits = GetItemsByExactNameArr(sInvName, tCarryHits)
+                For iHit = 0 To nCarryHits - 1
+                    If AccumItemStatBonus(tCarryHits(iHit).Number, True, nCarryQTY, nItemStatBonus(), sItemStatSource()) Then
+                        'CalcCharacterStats only applies a carried item's abilities when its
+                        'Item Manager row is flagged CARRIED, so warn about any that aren't
+                        'rather than editing the user's list for them
+                        If Not ItemIsFlaggedCarried(tCarryHits(iHit).Number) Then
+                            sCarryStatAnom = AutoAppend(sCarryStatAnom, tCarryHits(iHit).name, ", ")
+                        End If
+                        Exit For 'only one record for a given name can be the one carried
+                    End If
+                Next iHit
+            End If
+        Next iInv
+    End If
+End If
+
 nStat = ExtractValueFromString(sSearch, "Strength:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Strength: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(0).Text <> nStat - val(lblLabelArray(1).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Strength (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Strength or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(1).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(0).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(0).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(0, "Strength", val(nStat), PastedStatIsBuffed(sSearch, "Strength:"), nItemStatBonus(0), sItemStatSource(0), sManualStat)
+
 nStat = ExtractValueFromString(sSearch, "Intellect:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Intellect:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(1).Text <> nStat - val(lblLabelArray(4).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Intellect (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Intellect or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(4).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(1).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(1).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(1, "Intellect", val(nStat), PastedStatIsBuffed(sSearch, "Intellect:"), nItemStatBonus(1), sItemStatSource(1), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Willpower:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Willpower:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(2).Text <> nStat - val(lblLabelArray(24).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Willpower (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Willpower or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(24).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(2).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(2).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(2, "Willpower", val(nStat), PastedStatIsBuffed(sSearch, "Willpower:"), nItemStatBonus(2), sItemStatSource(2), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Agility:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Agility:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(3).Text <> nStat - val(lblLabelArray(2).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Agility (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Agility or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(2).Tag))
-        If val(sManualStat) > 0 Then
-                txtCharStats(3).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(3).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(3, "Agility", val(nStat), PastedStatIsBuffed(sSearch, "Agility:"), nItemStatBonus(3), sItemStatSource(3), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Health:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Health: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(4).Text <> nStat - val(lblLabelArray(23).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Health (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Health or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(23).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(4).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(4).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(4, "Health", val(nStat), PastedStatIsBuffed(sSearch, "Health:"), nItemStatBonus(4), sItemStatSource(4), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Charm:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Charm:  *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(5).Text <> nStat - val(lblLabelArray(3).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Charm (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Charm or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(3).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(5).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(5).Text = nStat
-    End If
-End If
-
-'parse the paste once so carried weight is only counted for items that were
-'actually in it (see bCountThis below) and to flag carried/equipped anomalies
-If bPastedInven Then tPasteItems = ParseGameTextInventory(sSearch)
+Call ApplyPastedStat(5, "Charm", val(nStat), PastedStatIsBuffed(sSearch, "Charm:"), nItemStatBonus(5), sItemStatSource(5), sManualStat)
 
 If nEncum > 0 Then
     If lvItemManager.ListItems.count > 0 Then
@@ -37510,7 +37505,7 @@ If bPastedInven Then Call PasteInventoryManager(sSearch)
 bDontRefresh = False
 Call RefreshAll
 
-If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Then
+If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Or Len(sCarryStatAnom) > 0 Then
     sDiscrepMsg = "Discrepancy in carried/equipped items detected." & vbCrLf
     If Len(sMissingAnom) > 0 Then
         sDiscrepMsg = sDiscrepMsg & vbCrLf _
@@ -37524,8 +37519,16 @@ If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Then
             & " (items both carried and equipped are highlighted in red on the Item Manager):" & vbCrLf _
             & sEquippedAnom & vbCrLf
     End If
+    If Len(sCarryStatAnom) > 0 Then
+        sDiscrepMsg = sDiscrepMsg & vbCrLf _
+            & "In the pasted inventory and boosting a stat while carried, but NOT flagged" _
+            & " CARRIED on the Item Manager (the boost was taken back out of your pasted" _
+            & " stats -- flag them CARRIED so it gets applied again):" & vbCrLf _
+            & sCarryStatAnom & vbCrLf
+    End If
     sDiscrepMsg = sDiscrepMsg & vbCrLf _
-        & "Nothing was changed automatically -- review these items if this was unexpected."
+        & "Apart from the stat values, nothing was changed automatically -- review these" _
+        & " items if this was unexpected."
     MsgBox sDiscrepMsg, vbInformation + vbOKOnly, "Carried/Equipped Discrepancy"
 End If
 
@@ -37560,6 +37563,198 @@ Call HandleError("PasteCharacter")
 Me.Enabled = True
 If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
 bDontRefresh = False
+End Sub
+
+'=== Paste Character stat helpers ==============================================
+'The game's stat block reports each stat WITH the bonuses from its worn (and
+'carry-active) items already applied, but txtCharStats().Text holds the BASE stat --
+'txtCharStats_Change adds the bonuses back on to produce .Tag, which is what every
+'calculator reads. These helpers total up exactly what CalcCharacterStats will re-add
+'for items so a pasted stat can be reduced to its base, keeping
+'base + item bonus = the number the game printed.
+
+'True when the stat following sLabel is asterisked, i.e. spell-modified. The game
+'right-aligns the value and floats the "*" ahead of it, so its column moves with the
+'digit count -- skip spaces rather than matching a fixed number of them. Finds the
+'label the same way ExtractValueFromString does so the two always read the same stat.
+Private Function PastedStatIsBuffed(ByVal sSearch As String, ByVal sLabel As String) As Boolean
+Dim x As Long
+On Error GoTo error:
+
+x = InStr(1, sSearch, sLabel, vbTextCompare)
+If x = 0 Then Exit Function
+x = x + Len(sLabel)
+
+Do Until x > Len(sSearch)
+    Select Case mid(sSearch, x, 1)
+        Case " ":
+            x = x + 1
+        Case "*":
+            PastedStatIsBuffed = True
+            Exit Do
+        Case Else:
+            Exit Do
+    End Select
+Loop
+
+out:
+Exit Function
+error:
+Call HandleError("PastedStatIsBuffed")
+Resume out:
+End Function
+
+'True if this item grants its abilities while merely carried -- the same test
+'CalcCharacterStats and RefreshListviewItemColors_ItemManager use. ItemIsUsableByChar
+'enforces the item's own MinLevel ability, so e.g. a level 40 item does nothing for a
+'level 30 character carrying it.
+Private Function ItemIsCarryActive(ByVal nItemNum As Long) As Boolean
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNum
+If tabItems.NoMatch Then Exit Function
+
+'10==special items, armour + nowhere
+If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then
+    ItemIsCarryActive = ItemIsUsableByChar(nItemNum, True)
+End If
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsCarryActive")
+Resume out:
+End Function
+
+'True if nItemNum already has a CARRIED row on the Item Manager, meaning
+'CalcCharacterStats is already applying its abilities.
+Private Function ItemIsFlaggedCarried(ByVal nItemNum As Long) As Boolean
+Dim x As Integer
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+
+For x = 1 To lvItemManager.ListItems.count
+    If val(lvItemManager.ListItems(x).Text) = nItemNum And lvItemManager.ListItems(x).ListSubItems.count >= 2 Then
+        If InStr(1, lvItemManager.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then
+            ItemIsFlaggedCarried = True
+            Exit For
+        End If
+    End If
+Next x
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsFlaggedCarried")
+Resume out:
+End Function
+
+'Accumulate nItemNum's +stat abilities into nBonus() and describe them in sSources(),
+'both indexed like txtCharStats (0=str, 1=int, 2=wil, 3=agi, 4=hea, 5=cha). Returns
+'True if anything was added. The ability-to-stat mapping mirrors GetAbilityStatSlot
+'(slots 101/102/103/104/123/124) and AdjMainStatBonus -- keep it in step with those.
+Private Function AccumItemStatBonus(ByVal nItemNum As Long, ByVal bCarried As Boolean, ByVal nQTY As Long, _
+                                    ByRef nBonus() As Long, ByRef sSources() As String) As Boolean
+Dim x As Integer, nStatIndex As Integer, nAbilVal As Long, nMulti As Long, sName As String
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+'ItemIsCarryActive moves the shared recordset (via ItemIsUsableByChar), so seek after it
+If bCarried Then
+    If Not ItemIsCarryActive(nItemNum) Then Exit Function
+End If
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNum
+If tabItems.NoMatch Then Exit Function
+
+If nQTY < 1 Then nQTY = 1
+sName = tabItems.Fields("Name")
+
+For x = 0 To 19
+    nStatIndex = -1
+    Select Case tabItems.Fields("Abil-" & x)
+        Case 46: nStatIndex = 0 'str
+        Case 44: nStatIndex = 1 'int
+        Case 45: nStatIndex = 2 'wil (called "Wisdom" in the ability table)
+        Case 48: nStatIndex = 3 'agi
+        Case 47: nStatIndex = 4 'hea
+        Case 49: nStatIndex = 5 'cha
+    End Select
+
+    If nStatIndex >= 0 Then
+        nAbilVal = tabItems.Fields("AbilVal-" & x)
+        If Not nAbilVal = 0 Then
+            'CalcCharacterStats adds +str once during the encumbrance pass with no
+            'quantity multiplier and the other five with * nMultiQTY -- mirror that, or
+            'the base stat won't add back up to what the game reported
+            If bCarried And nStatIndex <> 0 Then nMulti = nQTY Else nMulti = 1
+
+            nBonus(nStatIndex) = nBonus(nStatIndex) + (nAbilVal * nMulti)
+            sSources(nStatIndex) = AutoAppend(sSources(nStatIndex), sName & " (" _
+                & IIf(nAbilVal * nMulti > 0, "+", "") & (nAbilVal * nMulti) & ")", ", ")
+            AccumItemStatBonus = True
+        End If
+    End If
+Next x
+
+out:
+Exit Function
+error:
+Call HandleError("AccumItemStatBonus")
+Resume out:
+End Function
+
+'Write a pasted stat into its base-stat textbox. nItemBonus is the item contribution
+'already baked into nPasted, so base = nPasted - nItemBonus. A buffed stat also carries
+'a spell bonus that can't be derived from the paste, so that case still prompts -- but
+'with the item portion already taken off the suggested value.
+Private Sub ApplyPastedStat(ByVal nStatIndex As Integer, ByVal sStatName As String, ByVal nPasted As Long, _
+                            ByVal bBuffed As Boolean, ByVal nItemBonus As Long, ByVal sItemSources As String, _
+                            ByRef sManualStat As String)
+Dim nBase As Long, sPrompt As String
+On Error GoTo error:
+
+If nPasted < 1 Then Exit Sub
+
+nBase = nPasted - nItemBonus
+If nBase < 1 Then nBase = 1
+
+If Not bBuffed Then
+    txtCharStats(nStatIndex).Text = nBase
+    Exit Sub
+End If
+
+'spell-modified: the spell portion is unknowable from the paste, so ask
+If sManualStat = "SKIP" Then Exit Sub
+If val(txtCharStats(nStatIndex).Text) = nBase Then Exit Sub
+
+sPrompt = "Your pasted character has spell-modified " & sStatName & " (" & nPasted & ")." & vbCrLf
+If Not nItemBonus = 0 And Len(sItemSources) > 0 Then
+    sPrompt = sPrompt & vbCrLf & "Item bonuses already taken off: " & sItemSources & vbCrLf
+End If
+sPrompt = sPrompt & vbCrLf & "Enter your actual " & sStatName _
+        & " or press cancel to skip this and all further stat prompts."
+
+sManualStat = InputBox(sPrompt, "Confirm Stat", nBase)
+If val(sManualStat) > 0 Then
+    txtCharStats(nStatIndex).Text = val(sManualStat)
+Else
+    sManualStat = "SKIP"
+End If
+
+out:
+Exit Sub
+error:
+Call HandleError("ApplyPastedStat")
+Resume out:
 End Sub
 
 Public Sub PasteParty()
@@ -39463,6 +39658,12 @@ If mnuJumpToCompare.Checked = True Then
     Call WriteINI("Settings", "JumpToCompare", 1)
 Else
     Call WriteINI("Settings", "JumpToCompare", 0)
+End If
+
+If mnuShopsFirst.Checked = True Then
+    Call WriteINI("Settings", "ShopsFirstInRefs", 1)
+Else
+    Call WriteINI("Settings", "ShopsFirstInRefs", 0)
 End If
 
 Exit Function

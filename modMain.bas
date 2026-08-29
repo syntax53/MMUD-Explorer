@@ -1895,7 +1895,11 @@ If LocationLV.ListItems.count > 0 Then
 '        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
 '    End If
     
-    Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    If frmMain.mnuShopsFirst.Checked Then
+        Call LV_RefreshSort_ShopsFirst(LocationLV, 1, ldtnumber, True, False)
+    Else
+        Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    End If
 End If
 
 out:
@@ -3201,7 +3205,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                                 nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, nCalcElementalResist(0), nCalcElementalResist(1), _
                                 nCalcElementalResist(2), nCalcElementalResist(3), nCalcElementalResist(5))
                 
-                If nCalcSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nCalcSpellImmuLVL Then
+                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nCalcSpellImmuLVL)) Then
                     If eAttackFlags = AR000_Unknown Then
                         If SpellSeek(nGlobalAttackSpellNum) Then
                             For x = 0 To 9
@@ -3242,7 +3246,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nDamageOut = 0
                     nFirstRoundDamageOut = 0
                     nMinDamageOut = 0
-                    If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
+                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
                     If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
                     If ((eAttackFlags And AR108_Living) <> 0 And (DF_Flags And DF109_IsLiving) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotLiving", "+")
@@ -3771,7 +3775,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", sTemp
         
         If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-            If tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL Then
+            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Then
                 oLI.ForeColor = TColor(RGB(204, 0, 0))
                 oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
@@ -4569,6 +4573,54 @@ Else
 End If
 
 End Function
+Public Sub SetArmourACDRSortTags(ByVal lv As ListView, ByVal bByDR As Boolean)
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If bByDR Then
+            lv.ListItems(i).ListSubItems(6).Tag = (nDR * 100000) + nAC
+        Else
+            lv.ListItems(i).ListSubItems(6).Tag = (nAC * 100000) + nDR
+        End If
+    End If
+Next i
+
+out:
+Exit Sub
+error:
+Call HandleError("SetArmourACDRSortTags")
+Resume out:
+End Sub
+Public Function ArmourACDRTagsAreByDR(ByVal lv As ListView) As Boolean
+'reports which of the two modes the ac/dr sort tags are currently built for.
+'a row where ac = dr builds an identical tag either way, so keep looking until
+'we find one that can actually tell them apart
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If nAC <> nDR Then
+            ArmourACDRTagsAreByDR = (val(lv.ListItems(i).ListSubItems(6).Tag) = ((nDR * 100000) + nAC))
+            Exit Function
+        End If
+    End If
+Next i
+
+out:
+Exit Function
+error:
+Call HandleError("ArmourACDRTagsAreByDR")
+Resume out:
+End Function
 Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
@@ -4587,7 +4639,7 @@ oLI.ListSubItems.Add (3), "Armr Type", GetArmourTypeEnum(tabItems.Fields("Armour
 oLI.ListSubItems.Add (4), "Level", 0
 oLI.ListSubItems.Add (5), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
-oLI.ListSubItems(6).Tag = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+oLI.ListSubItems(6).Tag = (CLng(tabItems.Fields("ArmourClass")) * 100000) + tabItems.Fields("DamageResist")
 
 oLI.ListSubItems.Add (7), "Acc", tabItems.Fields("Accy")
 oLI.ListSubItems.Add (8), "Crits", 0
@@ -5071,7 +5123,7 @@ Select Case nGlobalAttackTypeMME
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
                             nVSrcol, nVSrfir, nVSrsto, nVSrlit, nVSrwat)
             
-            If nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL Then
+            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nSpellImmuLVL)) Then
                 If eAttackFlags = AR000_Unknown Then
                     If SpellSeek(nGlobalAttackSpellNum) Then
                         For x = 0 To 9
@@ -5187,7 +5239,7 @@ Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
 
-If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+If Not bForceNoParty And frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
     tChar.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 End If
 If tChar.nParty < 1 Then tChar.nParty = 1
@@ -5760,12 +5812,12 @@ oLI.ListSubItems(nIndex).Tag = nExp
 
 nIndex = nIndex + 1 '5
 sTemp = ""
-If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
-    nHP = tAvgLairInfo.nAvgHP
-    sTemp = "*"
-Else
+'If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
+'    nHP = tAvgLairInfo.nAvgHP
+'    sTemp = "*"
+'Else
     nHP = tabMonsters.Fields("HP")
-End If
+'End If
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0) & sTemp
 oLI.ListSubItems(nIndex).Tag = nHP
 
