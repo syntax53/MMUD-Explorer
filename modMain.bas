@@ -4831,7 +4831,12 @@ If nAttackTypeMUD = 4 Then 'backstab
 Else
     oLI.ListSubItems.Add (16), "xSwings", tWeaponDmg.nRoundPhysical
 End If
-oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
+If tWeaponDmg.nAvgExtraSwing > 0 And tWeaponDmg.nSwings > 0 And tWeaponDmg.nHitChance > 0 Then
+    oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings * (tWeaponDmg.nHitChance / 100))
+Else
+    oLI.ListSubItems.Add (17), "Extra", 0
+End If
+
 oLI.ListSubItems.Add (18), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 oLI.ListSubItems.Add (19), "Dmg/1st", tWeaponDmg.nFirstRoundDamage
 oLI.ListSubItems(19).Tag = tWeaponDmg.nFirstRoundDamage + Round(tWeaponDmg.nRoundTotal / 100, 2)
