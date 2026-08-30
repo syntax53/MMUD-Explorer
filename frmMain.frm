@@ -34285,7 +34285,7 @@ Select Case Index
         Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc", "lvSpellLoc", "lvShopLoc", "lvSpellCompareLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
-            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc":
+            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc", "lvOtherItemLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , 0, True)
             Case "lvShops":
                 Call CopyShopToClipboard(True)

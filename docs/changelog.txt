@@ -8,6 +8,7 @@ v2.3.4 (08/##/2026)
 - FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
 - FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
 - FIX: Paste Character treating item stat bonuses as part of your base stats  
+- FIX: "Copy Name to Clipboard" now works when right-clicking a reference on the Sundry tab  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------------------------------------------------  
