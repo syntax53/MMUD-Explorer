@@ -39423,6 +39423,7 @@ For Each oLI In lvItemManager.ListItems
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
@@ -39442,6 +39443,7 @@ For Each oLI In lvItemManager.ListItems
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1

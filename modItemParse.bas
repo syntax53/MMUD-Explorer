@@ -81,6 +81,7 @@ Option Base 0
 ' • ListView helpers:
 '     LV_AssignRowSeqIfMissing(ByRef lv As ListView, ByRef li As ListItem)
 '     ParseActionAndQty(ByVal sFlag As String, ByRef sAction As String, ByRef nQty As Long) ' in modListViewExt
+'       Optional 4th arg nFieldQTY As Long seeds nQty when sFlag has no " xN" suffix (bare flag = 1)
 '
 ' • UI/Forms:
 '     frmMain.lvItemManager (ListView target)
@@ -1120,18 +1121,20 @@ Private Function SumInvOrCarriedQtyForName(ByRef lv As ListView, ByVal itemName 
             
             src = UCase$(SafeSubText(li, 4))
             If Left(src, Len("INVENTORY")) = "INVENTORY" Then
+                ' one physical stack per row: an Inventory row's qty lives in the QTY column, so a
+                ' CARRIED flag on that same row must NOT be added again by the branch below
                 q = val(SafeSubText(li, 3))
                 If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
-            End If
-            
-            src = UCase$(SafeSubText(li, 2))
-            If Left(src, Len("CARRIED")) = "CARRIED" Then
-                If LCase(mid(src, Len("CARRIED") + 1, 2)) = " x" Then
-                    q = val(mid(src, Len("CARRIED") + 3, 999))
-                Else
-                    q = 1
+            Else
+                src = UCase$(SafeSubText(li, 2))
+                If Left(src, Len("CARRIED")) = "CARRIED" Then
+                    If LCase(mid(src, Len("CARRIED") + 1, 2)) = " x" Then
+                        q = val(mid(src, Len("CARRIED") + 3, 999))
+                    Else
+                        q = 1
+                    End If
+                    If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
                 End If
-                If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
             End If
             
         End If
@@ -1374,6 +1377,8 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
+    ' NOTE: the LenB(sFlagBase) guard is load-bearing - a blank-flag row with QTY>1 would otherwise
+    '       render a headless " xN", breaking the non-flagged-row prune and sticky sort bucketing
     oLI.ListSubItems.Add 2, "Flag", IIf(LenB(sFlagBase) = 0, "", sFlagBase & IIf(tmpQty > 1, " x" & CStr(tmpQty), ""))
     oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
     oLI.ListSubItems.Add 4, "Source", sectionName                ' Col 5
@@ -1766,7 +1771,7 @@ End Function
 '   • Numeric sort tag for Value column matches your existing behavior (nCopperSell or 0).
 '   • Skips items not found or not gettable ([Gettable]=0), matching your other import paths.
 Public Sub LV_AddRowByItemNumber(ByVal nItemNumber As Long, Optional ByVal sSource As String, _
-    Optional ByVal sFlag As String, Optional ByVal nQTY As Integer, _
+    Optional ByVal sFlag As String, Optional ByVal nQTY As Long, _
     Optional ByVal nForceShop As Long)
 On Error GoTo error:
 

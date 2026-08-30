@@ -47,14 +47,14 @@ Public Const CLR_SAVED_LIST As Long = &HCC0085   'RGB(133, 0, 204)
 ' • LV_SetActionCell(lv, actionIndex)
 '     - Toggles/adjusts the action text in SubItem(2) for ALL selected rows:
 '         9 = cycle DROP/HIDE/clear
-'        10 = toggle PICKUP
-'        11 = cycle SELL?BUY?clear (qty preserved only where applicable)
-'        12 = toggle CARRIED   (no quantity)
+'        10 = cycle PICKUP/USE/clear
+'        11 = cycle SELL/BUY/clear (qty preserved)
+'        12 = toggle CARRIED   (qty via +/-)
 '        17 = toggle STASH     (quantity allowed)
-'        15 = decrement quantity for DROP/HIDE/BUY/SELL/PICKUP/STASH (min 1)
-'        16 = increment quantity for DROP/HIDE/BUY/SELL/PICKUP/STASH
+'        15 = decrement quantity for DROP/HIDE/BUY/SELL/PICKUP/USE/STASH/CARRIED (min 1, bare word at 1)
+'        16 = increment quantity for DROP/HIDE/BUY/SELL/PICKUP/USE/STASH/CARRIED
 '        18 = clear
-'     - Automatically sets bPromptSave when CARRIED is added/removed and calls frmMain.RefreshAll.
+'     - Automatically sets bPromptSave when CARRIED or STASH changes; calls frmMain.RefreshAll for CARRIED.
 '
 ' • LV_CopySelectedActionsToClipboard(lv)
 '     - Converts selected rows’ actions to game commands (drop/hide/sell/buy/get/stash) and copies
@@ -63,7 +63,7 @@ Public Const CLR_SAVED_LIST As Long = &HCC0085   'RGB(133, 0, 204)
 '
 ' • LV_DeleteSelected(lv)
 '     - Deletes selected rows with confirmation (when >1). Preserves a sensible selection after
-'       deletion. Triggers character save prompt + frmMain.RefreshAll if any CARRIED was affected.
+'       deletion. Triggers character save prompt if a CARRIED/STASH row was deleted (+ frmMain.RefreshAll for CARRIED).
 '
 ' • LV_InvertSelection(lv)
 '     - Inverts the Selected state for all rows.
@@ -351,6 +351,7 @@ On Error GoTo error:
     Dim targetNewIndex As Long
     Dim resp As VbMsgBoxResult
     Dim bCarriedAddedOrRemoved As Boolean
+    Dim bStashChanged As Boolean
     
     If lvListView Is Nothing Then Exit Sub
     If lvListView.ListItems.count = 0 Then Exit Sub
@@ -387,14 +388,15 @@ On Error GoTo error:
         If lvListView.ListItems(i).Selected Then
             If lvListView.ListItems(i).ListSubItems.count >= 2 Then
                 If InStr(1, lvListView.ListItems(i).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then bCarriedAddedOrRemoved = True
+                If InStr(1, lvListView.ListItems(i).ListSubItems(2).Text, "STASH", vbTextCompare) > 0 Then bStashChanged = True
             End If
             lvListView.ListItems.Remove i
         End If
     Next i
     
-    If bCarriedAddedOrRemoved Then
+    If bCarriedAddedOrRemoved Or bStashChanged Then
         If bCharLoaded And Not bStartup Then bPromptSave = True
-        Call frmMain.RefreshAll
+        If bCarriedAddedOrRemoved Then Call frmMain.RefreshAll
     End If
     
     ' If nothing remains, we're done
@@ -457,6 +459,7 @@ On Error GoTo done
     Dim qty As Long, QTYfield As Long
     Dim anySelected As Boolean
     Dim bCarriedAddedOrRemoved As Boolean
+    Dim bStashChanged As Boolean
     Dim nEnc As Long, q As Integer
     
     If lvListView Is Nothing Then Exit Sub
@@ -477,10 +480,6 @@ On Error GoTo done
             curText = Trim$(li.ListSubItems(2).Text)
             Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return; bare flag = qty 1
             If LenB(baseAction) = 0 And QTYfield > 1 Then qty = QTYfield ' blank flag: seed new action's qty from QTY column
-            
-            If actionIndex > 0 Then
-                If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
-            End If
             
             Select Case actionIndex
                 Case 9      ' DROP/HIDE/<clear> cycle
@@ -520,7 +519,7 @@ On Error GoTo done
                         newText = "CARRIED" & IIf(qty > 1, " x" & CStr(qty), "")
                     End If
 
-                Case 17     ' STASH toggle (qty allowed via +/- later)
+                Case 17     ' STASH toggle
                     If baseAction = "STASH" Then
                         newText = ""                                  ' clear
                         ' (shop repopulation intentionally removed)
@@ -558,25 +557,29 @@ On Error GoTo done
                     GoTo nextItem
             End Select
             
-            If baseAction <> "CARRIED" And Left$(newText, 7) = "CARRIED" Then
-                nEnc = GetItemWeight(val(li.Text))
-                If nEnc > 0 And val(frmMain.txtInvenAddWeight.Text) >= (nEnc * qty) And InStr(1, li.ListSubItems(4).Text, "Inventory", vbTextCompare) > 0 Then
-                    q = MsgBox("Subtract " & li.ListSubItems(1).Text & "'s encumbrance from the 'Additional Item Weight' field on EQ tab? e.g. Is its weight currently included in that value?" & vbCrLf & vbCrLf _
-                            & "If you recently did a 'Paste Character' (different from 'Paste Items' here) where this item was in your inventory, then you probably want to answer yes." & vbCrLf & vbCrLf _
-                            & "Carried items are counted in the encumbrance calculation along with equipped items. If you answer no and it's currently included in the additional weight field, it will effectively be calculated twice, putting your calculated encumbrance over what it should be.", vbYesNo + vbDefaultButton1 + vbQuestion)
-                    If q = vbYes Then frmMain.txtInvenAddWeight.Text = val(frmMain.txtInvenAddWeight.Text) - (nEnc * qty)
+            If newText <> curText Then
+                If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
+                If actionIndex = 17 Or baseAction = "STASH" Then bStashChanged = True
+                If baseAction <> "CARRIED" And Left$(newText, 7) = "CARRIED" Then
+                    nEnc = GetItemWeight(val(li.Text))
+                    If nEnc > 0 And val(frmMain.txtInvenAddWeight.Text) >= (nEnc * qty) And InStr(1, li.ListSubItems(4).Text, "Inventory", vbTextCompare) > 0 Then
+                        q = MsgBox("Subtract " & li.ListSubItems(1).Text & "'s encumbrance from the 'Additional Item Weight' field on EQ tab? e.g. Is its weight currently included in that value?" & vbCrLf & vbCrLf _
+                                & "If you recently did a 'Paste Character' (different from 'Paste Items' here) where this item was in your inventory, then you probably want to answer yes." & vbCrLf & vbCrLf _
+                                & "Carried items are counted in the encumbrance calculation along with equipped items. If you answer no and it's currently included in the additional weight field, it will effectively be calculated twice, putting your calculated encumbrance over what it should be.", vbYesNo + vbDefaultButton1 + vbQuestion)
+                        If q = vbYes Then frmMain.txtInvenAddWeight.Text = val(frmMain.txtInvenAddWeight.Text) - (nEnc * qty)
+                    End If
                 End If
+                li.ListSubItems(2).Text = newText
             End If
-            li.ListSubItems(2).Text = newText
         End If
 nextItem:
     Next i
 
     If anySelected Then lvListView.SetFocus
 done:
-    If bCarriedAddedOrRemoved Then
+    If bCarriedAddedOrRemoved Or bStashChanged Then
         If bCharLoaded And Not bStartup Then bPromptSave = True
-        Call frmMain.RefreshAll
+        If bCarriedAddedOrRemoved Then Call frmMain.RefreshAll
     End If
     Exit Sub
 ErrHandler:
@@ -658,6 +661,8 @@ End Sub
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
 '--- helper: parse action + optional trailing quantity "x#"
+'--- optional nFieldQTY seeds qtyOut when the flag has no " xN" suffix (used at row creation to
+'    render the suffix from the QTY column); when omitted, a bare flag parses as qty 1
 Public Sub ParseActionAndQty(ByVal sIn As String, ByRef actionOut As String, ByRef qtyOut As Long, Optional ByVal nFieldQTY As Long)
     Dim s As String, pos As Long, tail As String, maybeNum As String
     s = Trim$(sIn)
