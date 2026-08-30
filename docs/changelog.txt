@@ -10,7 +10,7 @@ v2.3.4 (08/##/2026)
 - FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
 - FIX: Paste Character treating item stat bonuses as part of your base stats  
 - FIX: "Copy Name to Clipboard" now works when right-clicking a reference on the Sundry tab  
-- FIX: Item Manager flags now show the true quantity (e.g. "CARRIED x3") when loading a character or flagging a multi-QTY item; +/- now adjust from that count  
+- FIX: Saved Item Manager rows now reflect proper QTY and fixed adjusting QTY of pasted items  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------------------------------------------------  
