@@ -447,7 +447,7 @@ End Sub
 '--- UPDATED: apply action to SubItem(2), with +/- quantity handling for indices 15/16
 '--- UPDATED: apply action to SubItem(2) (main action) and SubItem(10) (CARRIED/STASH),
 '             with +/- quantity handling for indices 15/16 (incl. PICKUP now)
-'--- UPDATED: all actions in SubItem(2); +/- qty for DROP/HIDE/SELL/PICKUP/STASH; CARRIED no qty
+'--- UPDATED: all actions in SubItem(2); +/- qty for all actions; flag " xN" suffix is qty source of truth (bare = 1)
 Public Sub LV_SetActionCell(ByRef lvListView As ListView, ByVal actionIndex As Long)
 On Error GoTo done
     Dim i As Long
@@ -475,7 +475,8 @@ On Error GoTo done
             
             QTYfield = val(li.ListSubItems(3).Text)
             curText = Trim$(li.ListSubItems(2).Text)
-            Call ParseActionAndQty(curText, baseAction, qty, QTYfield) ' qty>=1 on return
+            Call ParseActionAndQty(curText, baseAction, qty) ' qty>=1 on return; bare flag = qty 1
+            If LenB(baseAction) = 0 And QTYfield > 1 Then qty = QTYfield ' blank flag: seed new action's qty from QTY column
             
             If actionIndex > 0 Then
                 If actionIndex = 12 Or baseAction = "CARRIED" Then bCarriedAddedOrRemoved = True
@@ -484,17 +485,17 @@ On Error GoTo done
             Select Case actionIndex
                 Case 9      ' DROP/HIDE/<clear> cycle
                     Select Case baseAction
-                        Case "DROP":   newText = "HIDE"
+                        Case "DROP":   newText = "HIDE" & IIf(qty > 1, " x" & CStr(qty), "")
                         Case "HIDE":   newText = ""                  ' clear (qty discarded)
-                        Case Else:     newText = "DROP"
+                        Case Else:     newText = "DROP" & IIf(qty > 1, " x" & CStr(qty), "")
                     End Select
                     
                     
                 Case 10     ' PICKUP/USE/<clear> cycle
                     Select Case baseAction
-                        Case "PICKUP": newText = "USE"
+                        Case "PICKUP": newText = "USE" & IIf(qty > 1, " x" & CStr(qty), "")
                         Case "USE":    newText = ""                  ' clear (qty discarded)
-                        Case Else:     newText = "PICKUP"
+                        Case Else:     newText = "PICKUP" & IIf(qty > 1, " x" & CStr(qty), "")
                     End Select
 
                     
@@ -505,18 +506,18 @@ On Error GoTo done
 '                        newText = "SELL"
 '                    End If
                     Select Case baseAction
-                        Case "SELL":   newText = "BUY"
+                        Case "SELL":   newText = "BUY" & IIf(qty > 1, " x" & CStr(qty), "")
                         Case "BUY":    newText = ""                  ' clear (qty discarded)
-                        Case Else:     newText = "SELL"
+                        Case Else:     newText = "SELL" & IIf(qty > 1, " x" & CStr(qty), "")
                     End Select
                     
-                Case 12     ' CARRIED toggle (no qty)
+                Case 12     ' CARRIED toggle
                     If baseAction = "CARRIED" Then
                         newText = ""                                  ' clear
                         ' (shop repopulation intentionally removed)
                         ' li.ListSubItems(2).Text = GetShopRoomNames(Val(li.Text), , bHideRecordNumbers)
                     Else
-                        newText = "CARRIED"
+                        newText = "CARRIED" & IIf(qty > 1, " x" & CStr(qty), "")
                     End If
 
                 Case 17     ' STASH toggle (qty allowed via +/- later)
@@ -525,14 +526,14 @@ On Error GoTo done
                         ' (shop repopulation intentionally removed)
                         ' li.ListSubItems(2).Text = GetShopRoomNames(Val(li.Text), , bHideRecordNumbers)
                     Else
-                        newText = "STASH"
+                        newText = "STASH" & IIf(qty > 1, " x" & CStr(qty), "")
                     End If
 
                 Case 15     ' minus: adjust qty for DROP/HIDE/SELL/PICKUP/STASH
                     Select Case baseAction
                         Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             If qty > 1 Then qty = qty - 1
-                            If qty <= 1 And baseAction <> "CARRIED" Then
+                            If qty <= 1 Then
                                 newText = baseAction
                             Else
                                 newText = baseAction & " x" & CStr(qty)
@@ -545,11 +546,7 @@ On Error GoTo done
                     Select Case baseAction
                         Case "DROP", "HIDE", "BUY", "SELL", "PICKUP", "USE", "STASH", "CARRIED"
                             qty = qty + 1
-                            If qty <= 1 And baseAction <> "CARRIED" Then
-                                newText = baseAction
-                            Else
-                                newText = baseAction & " x" & CStr(qty)
-                            End If
+                            newText = baseAction & " x" & CStr(qty)
                         Case Else
                             GoTo nextItem
                     End Select
@@ -561,7 +558,7 @@ On Error GoTo done
                     GoTo nextItem
             End Select
             
-            If baseAction <> "CARRIED" And newText = "CARRIED" Then
+            If baseAction <> "CARRIED" And Left$(newText, 7) = "CARRIED" Then
                 nEnc = GetItemWeight(val(li.Text))
                 If nEnc > 0 And val(frmMain.txtInvenAddWeight.Text) >= (nEnc * qty) And InStr(1, li.ListSubItems(4).Text, "Inventory", vbTextCompare) > 0 Then
                     q = MsgBox("Subtract " & li.ListSubItems(1).Text & "'s encumbrance from the 'Additional Item Weight' field on EQ tab? e.g. Is its weight currently included in that value?" & vbCrLf & vbCrLf _

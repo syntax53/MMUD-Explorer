@@ -1129,7 +1129,7 @@ Private Function SumInvOrCarriedQtyForName(ByRef lv As ListView, ByVal itemName 
                 If LCase(mid(src, Len("CARRIED") + 1, 2)) = " x" Then
                     q = val(mid(src, Len("CARRIED") + 3, 999))
                 Else
-                    q = val(SafeSubText(li, 3))
+                    q = 1
                 End If
                 If q > 0 Then SumInvOrCarriedQtyForName = SumInvOrCarriedQtyForName + q
             End If
@@ -1367,14 +1367,14 @@ Private Sub AddOneRow(ByRef lv As ListView, ByRef hit As ItemMatch, ByVal sectio
     End If
     
     Dim sFlagBase As String, tmpQty As Long
-    Call ParseActionAndQty(NzStr(sFlag), sFlagBase, tmpQty) ' lives in modListViewExt
+    Call ParseActionAndQty(NzStr(sFlag), sFlagBase, tmpQty, qty) ' seed suffix from row QTY; lives in modListViewExt
     
     Set oLI = lv.ListItems.Add()
     Call LV_AssignRowSeqIfMissing(lv, oLI)
     oLI.Text = CStr(hit.Number)                                  ' Col 1: Number
 
     oLI.ListSubItems.Add 1, "Name", hit.name                     ' Col 2
-    oLI.ListSubItems.Add 2, "Flag", sFlagBase & IIf(tmpQty > 1, " x" & CStr(tmpQty), "")
+    oLI.ListSubItems.Add 2, "Flag", IIf(LenB(sFlagBase) = 0, "", sFlagBase & IIf(tmpQty > 1, " x" & CStr(tmpQty), ""))
     oLI.ListSubItems.Add 3, "QTY", CStr(qty)                     ' Col 4
     oLI.ListSubItems.Add 4, "Source", sectionName                ' Col 5
     oLI.ListSubItems.Add 5, "Enc", CStr(encum)                   ' Col 6

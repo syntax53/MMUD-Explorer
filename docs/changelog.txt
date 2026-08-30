@@ -3,12 +3,14 @@ v2.3.4 (08/##/2026)
 - UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
 - UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  
 - UP: New toggle option in menu to initially always show shops first when listing item references  
+- UP: Item Manager +/- quantity buttons now sit next to each other, after the action buttons  
 - FIX: Spell immunity now compared against the spell's required level instead of the level it was cast at  
 - FIX: Spells not filtering properly when in monster lair mode with party > 1  
 - FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
 - FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
 - FIX: Paste Character treating item stat bonuses as part of your base stats  
 - FIX: "Copy Name to Clipboard" now works when right-clicking a reference on the Sundry tab  
+- FIX: Item Manager flags now show the true quantity (e.g. "CARRIED x3") when loading a character or flagging a multi-QTY item; +/- now adjust from that count  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------------------------------------------------  
