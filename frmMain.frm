@@ -15244,9 +15244,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   17
-            Left            =   8400
+            Left            =   8040
             Style           =   1  'Graphical
-            TabIndex        =   1312
+            TabIndex        =   1311
             Top             =   240
             Width           =   855
          End
@@ -15263,9 +15263,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   11
-            Left            =   7320
+            Left            =   6960
             Style           =   1  'Graphical
-            TabIndex        =   1311
+            TabIndex        =   1310
             Top             =   240
             Width           =   1095
          End
@@ -15304,9 +15304,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   10
-            Left            =   6000
+            Left            =   5640
             Style           =   1  'Graphical
-            TabIndex        =   1310
+            TabIndex        =   1309
             Top             =   240
             Width           =   1335
          End
@@ -15323,9 +15323,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   9
-            Left            =   4740
+            Left            =   4380
             Style           =   1  'Graphical
-            TabIndex        =   1309
+            TabIndex        =   1308
             Top             =   240
             Width           =   1275
          End
@@ -15342,9 +15342,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   15
-            Left            =   4380
+            Left            =   8880
             Style           =   1  'Graphical
-            TabIndex        =   1308
+            TabIndex        =   1312
             ToolTipText     =   "Minus"
             Top             =   240
             Width           =   375
@@ -19839,8 +19839,6 @@ Select Case Index
                         If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                             sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                             If UBound(sArr) >= 1 Then y = val(sArr(1))
-                        ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                            y = val(lvItemManager.ListItems(x).ListSubItems(3))
                         End If
                         If y < 1 Then y = 1
                         nEncum = nEncum + (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
@@ -27271,8 +27269,6 @@ If lvItemManager.ListItems.count > 0 Then
                 If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                     sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                     If UBound(sArr) >= 1 Then y = val(sArr(1))
-                ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                    y = val(lvItemManager.ListItems(x).ListSubItems(3))
                 End If
                 If y < 1 Then y = 1
                 nCarriedItemsQTY(x) = y
@@ -35777,8 +35773,6 @@ If x < 20 Or val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then
                     If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                         sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                         If UBound(sArr) >= 1 Then y = val(sArr(1))
-                    ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                        y = val(lvItemManager.ListItems(x).ListSubItems(3))
                     End If
                     If y < 1 Then y = 1
                     
@@ -37459,8 +37453,6 @@ If nEncum > 0 Then
                         If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                             sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                             If UBound(sArr) >= 1 Then y = val(sArr(1))
-                        ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                            y = val(lvItemManager.ListItems(x).ListSubItems(3))
                         End If
                         If y < 1 Then y = 1
                         nEncum = nEncum - (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
@@ -39430,9 +39422,8 @@ For Each oLI In lvItemManager.ListItems
             If InStr(1, oLI.ListSubItems(2), " x", vbTextCompare) > 0 Then
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
-            ElseIf val(oLI.ListSubItems(3)) > 1 Then
-                y = val(oLI.ListSubItems(3))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
@@ -39451,9 +39442,8 @@ For Each oLI In lvItemManager.ListItems
             If InStr(1, oLI.ListSubItems(2), " x", vbTextCompare) > 0 Then
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
-            ElseIf val(oLI.ListSubItems(3)) > 1 Then
-                y = val(oLI.ListSubItems(3))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
