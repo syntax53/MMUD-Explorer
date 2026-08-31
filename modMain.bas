@@ -949,6 +949,7 @@ On Error GoTo error:
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
+LocationLV.ListItems.clear
 
 nNumber = tabItems.Fields("Number")
 
@@ -1695,7 +1696,7 @@ End If
 
 '#################
 
-Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
+Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, True, , nNumber, , , True)
 If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
 If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
