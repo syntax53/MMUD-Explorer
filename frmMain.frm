@@ -26670,7 +26670,7 @@ Else
     sLocationText = oliSource.Tag
 End If
 
-nNum = 16 'number of sStr's listed below +1
+nNum = 17 'number of sStr's listed below +1
 For iGotoType = 1 To nNum
     Select Case iGotoType
         Case 1: sStr = "Room"
@@ -26688,6 +26688,7 @@ For iGotoType = 1 To nNum
         Case 13: sStr = "Execute"
         Case 14: sStr = "Casts"
         Case 15: sStr = "Summon"
+        Case 16: sStr = "Greet"
     End Select
     
     If Left(sText, Len(sStr)) = sStr Then Exit For
@@ -26786,6 +26787,20 @@ Select Case iGotoType
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
             IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, False)
+        frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
+        'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
+        If objFormOwner Is frmMap Then
+            If frmMap.chkMapOptions(6).Value = 0 Then
+                Call SetTopMostWindow(frmMap.hWnd, True)
+            End If
+        End If
+        GoTo out:
+
+    Case 16: 'npc greet commands
+        'Load frmResults
+        Call frmResults.SetupResultsWindow(True, objFormOwner, _
+            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+        Call frmResults.CreateCommandTree(nNum, False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
@@ -33266,6 +33281,7 @@ Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
 Dim oLI As ListItem, RoomExit2 As RoomExitType, sArray() As String, nDmg As Long, sDmgVS As String
 Dim nRecNum As Long, y As Long, sNumbers As String, sData As String, sCommand As String
 Dim nMap As Long, nRoom As Long, sChar As String, nDataPos As Long, sLine As String
+Dim nNPC As Long
 
 '=============================================================================
 '
@@ -33286,6 +33302,7 @@ nDataPos = 1
 
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    nNPC = tabRooms.Fields("NPC")
     Set oLI = lvMapLoc.ListItems.Add()
     oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
     oLI.Tag = tabRooms.Fields("NPC")
@@ -33332,7 +33349,7 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         
         Do While nDataPos < Len(sData)
             x = InStr(nDataPos, sData, Chr(10))
-            If x = 0 Then x = Len(sData)
+            If x = 0 Then x = Len(sData) + 1
             sLine = mid(sData, nDataPos, x - nDataPos)
             nDataPos = x + 1
             
@@ -33400,6 +33417,14 @@ skiptele:
             oLI.Tag = tabRooms.Fields("CMD")
         Next x
     End If
+End If
+
+'greet commands of the NPC assigned to this room. added after the room commands so the
+'teleport de-dupe above only ever sees the room's own commands.
+If nNPC > 0 Then
+    Call AddRoomNPCCommandRefs(lvMapLoc, nNPC, nMapNumber)
+    tabRooms.Index = "idxRooms"
+    tabRooms.Seek "=", nMapNumber, nRoomNumber
 End If
 
 For x = 0 To 9

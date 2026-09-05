@@ -5719,7 +5719,7 @@ nDataPos = 1
 
 Do While nDataPos < Len(sData)
     x = InStr(nDataPos, sData, Chr(10))
-    If x = 0 Then x = Len(sData)
+    If x = 0 Then x = Len(sData) + 1
     sLine = mid(sData, nDataPos, x - nDataPos)
     nDataPos = x + 1
     
@@ -5773,5 +5773,85 @@ On Error Resume Next
 Exit Function
 error:
 Call HandleError("TextBlockHasTeleport")
+Resume out:
+End Function
+
+Public Function GetTextblockTeleport(ByVal nTextblock As Long, ByRef nOutRoom As Long, ByRef nOutMap As Long) As Boolean
+'returns the destination of the FIRST "teleport <room> [map]" found in the textblock's action.
+'nOutMap is left 0 when the teleport command did not name a map (caller should assume the current map).
+On Error GoTo error:
+Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
+Dim x As Integer, y As Integer
+
+nOutRoom = 0
+nOutMap = 0
+
+If nTextblock <= 0 Then Exit Function
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nTextblock
+If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
+    Exit Function
+End If
+
+sData = tabTBInfo.Fields("Action")
+nDataPos = 1
+
+Do While nDataPos < Len(sData)
+    x = InStr(nDataPos, sData, Chr(10))
+    If x = 0 Then x = Len(sData) + 1
+    sLine = mid(sData, nDataPos, x - nDataPos)
+    nDataPos = x + 1
+    
+    x = InStr(1, sLine, "teleport ")
+    If x > 0 Then
+        y = x + Len("teleport ")
+        x = y
+        
+        Do While y <= Len(sLine)
+            sChar = mid(sLine, y, 1)
+            Select Case sChar
+                Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+                Case " ":
+                    If y > x And nRoom = 0 Then
+                        nRoom = val(mid(sLine, x, y - x))
+                        x = y + 1
+                    Else
+                        nMap = val(mid(sLine, x, y - x))
+                        Exit Do
+                    End If
+                Case Else:
+                    If y > x And nRoom = 0 Then
+                        nRoom = val(mid(sLine, x, y - x))
+                        Exit Do
+                    Else
+                        nMap = val(mid(sLine, x, y - x))
+                        Exit Do
+                    End If
+                    Exit Do
+            End Select
+            y = y + 1
+        Loop
+        
+        If y > Len(sLine) And y > x And nRoom > 0 And nMap = 0 Then nMap = val(mid(sLine, x, y - x))
+        
+        If nRoom > 0 Then
+            nOutRoom = nRoom
+            nOutMap = nMap
+            GetTextblockTeleport = True
+            Exit Function
+        End If
+        
+        nRoom = 0
+        nMap = 0
+    End If
+Loop
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetTextblockTeleport")
 Resume out:
 End Function
