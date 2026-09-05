@@ -1,4 +1,4 @@
-v2.3.4 (08/##/2026)  
+v2.3.4 (09/##/2026)  
 ------------------------------------------------------------------------------------  
 - UP: NPC greet commands now show in the map's room references  
 - UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
