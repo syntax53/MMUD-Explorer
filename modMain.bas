@@ -2117,10 +2117,12 @@ End Sub
 Public Sub AddRoomNPCCommandRefs(oLV As ListView, ByVal nNPCNumber As Long, ByVal nCurrentMap As Long)
 'adds the greet commands of a room's assigned NPC (tabRooms "NPC") to a map reference list (lvMapLoc).
 'a command that leads to a teleport gets a "Teleport: (NPC) " row which navigates the map,
-'anything else gets a "Greet: " row which opens that monster's greet command tree.
+'every other command is collected onto a single comma separated "Greet: " row which
+'opens that monster's greet command tree.
 'NOTE: this moves tabMonsters/tabTBInfo and (via GetRoomName) tabRooms - the caller must re-seek tabRooms.
 On Error GoTo error:
 Dim sData As String, sLine As String, sCommand As String, sKeys As String, sKey As String
+Dim sGreets As String
 Dim nDataPos As Long, x2 As Long, nGreetTB As Long, nSubTB As Long, nLink As Long
 Dim nRoom As Long, nMap As Long, bTele As Boolean, oLI As ListItem
 
@@ -2199,9 +2201,11 @@ Do While nDataPos < Len(sData) 'loops through lines
             oLI.Tag = nMap & "/" & nRoom
         End If
     Else
-        Set oLI = oLV.ListItems.Add()
-        oLI.Text = "Greet: " & sCommand
-        oLI.Tag = nGreetTB
+        If sGreets = "" Then
+            sGreets = sCommand
+        Else
+            sGreets = sGreets & ", " & sCommand
+        End If
     End If
     
 next_line:
@@ -2215,6 +2219,13 @@ next_line:
     
     nDataPos = x2 + 1
 Loop
+
+'the commands that don't teleport anywhere all share one row
+If Not sGreets = "" Then
+    Set oLI = oLV.ListItems.Add()
+    oLI.Text = "Greet: " & sGreets
+    oLI.Tag = nGreetTB
+End If
 
 out:
 On Error Resume Next
