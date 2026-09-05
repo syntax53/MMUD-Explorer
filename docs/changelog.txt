@@ -1,5 +1,6 @@
 v2.3.4 (09/##/2026)  
 ------------------------------------------------------------------------------------  
+- UP: Spell details now show a difficulty of 0 for learnable spells instead of omitting it  
 - UP: NPC greet commands now show in the map's room references  
 - UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
 - UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  

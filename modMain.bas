@@ -4312,7 +4312,7 @@ Dim sSpellDetail As String, sRemoves As String, sArr() As String, x As Integer '
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tSpellcast As tSpellCastValues, bBR As Boolean
 Dim nCastLVL As Long, sSpellEQ As String
-Dim tChar As tCharacterProfile, sBonusDamage As String, bSpellIsUsable As Boolean
+Dim tChar As tCharacterProfile, sBonusDamage As String, bSpellIsUsable As Boolean, bSpellCanBeLearned As Boolean
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -4429,7 +4429,13 @@ End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 sSpellDetail = sSpellDetail & vbCrLf & vbCrLf & "Target: " & GetSpellTargetsEnum(tabSpells.Fields("Targets"))
-If tabSpells.Fields("Diff") <> 0 And tabSpells.Fields("Diff") < 200 Then sSpellDetail = AutoAppend(sSpellDetail, "Difficulty: " & tabSpells.Fields("Diff"))
+bSpellCanBeLearned = (tabSpells.Fields("Learnable") = 1 _
+    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn = False And tabSpells.Fields("ReqLevel") > 0))
+
+'show difficulty even when it is 0, but only for spells that can actually be learned
+If tabSpells.Fields("Diff") < 200 And (tabSpells.Fields("Diff") <> 0 Or bSpellCanBeLearned) Then
+    sSpellDetail = AutoAppend(sSpellDetail, "Difficulty: " & tabSpells.Fields("Diff"))
+End If
 sSpellDetail = AutoAppend(sSpellDetail, "Attack Type: " & SpellAttackTypeEnum(tabSpells.Fields("AttType")))
 
 If nNMRVer >= 1.8 Then
