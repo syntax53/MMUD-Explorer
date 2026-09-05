@@ -2114,6 +2114,129 @@ error:
 Call HandleError("PullRaceDetail")
 Resume out:
 End Sub
+Public Sub AddRoomNPCCommandRefs(oLV As ListView, ByVal nNPCNumber As Long, ByVal nCurrentMap As Long)
+'adds the greet commands of a room's assigned NPC (tabRooms "NPC") to a map reference list (lvMapLoc).
+'a command that leads to a teleport gets a "Teleport: (NPC) " row which navigates the map,
+'every other command is collected onto a single comma separated "Greet: " row which
+'opens that monster's greet command tree.
+'NOTE: this moves tabMonsters/tabTBInfo and (via GetRoomName) tabRooms - the caller must re-seek tabRooms.
+On Error GoTo error:
+Dim sData As String, sLine As String, sCommand As String, sKeys As String, sKey As String
+Dim sGreets As String
+Dim nDataPos As Long, x2 As Long, nGreetTB As Long, nSubTB As Long, nLink As Long
+Dim nRoom As Long, nMap As Long, bTele As Boolean, oLI As ListItem
+
+If nNPCNumber <= 0 Then Exit Sub
+
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNPCNumber
+If tabMonsters.NoMatch Then
+    tabMonsters.MoveFirst
+    Exit Sub
+End If
+
+nGreetTB = tabMonsters.Fields("GreetTXT")
+If nGreetTB <= 0 Then GoTo out:
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nGreetTB
+If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
+    GoTo out:
+End If
+
+'same bogus greet filter PullMonsterDetail uses, so the map list agrees with the monster detail pane
+If LCase(Left(tabTBInfo.Fields("Action"), 4)) = "heh:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 8)) = "nothing:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "yada:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "hehe:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "shit:" Then GoTo out:
+
+If tabTBInfo.Fields("Action") = Chr(0) Then GoTo out:
+
+sData = tabTBInfo.Fields("Action")
+
+'get first command
+nDataPos = 1
+nDataPos = InStr(nDataPos, sData, ":")
+If nDataPos = 0 Then GoTo out:
+
+sCommand = mid(sData, 1, nDataPos - 1)
+
+nDataPos = nDataPos + 1
+Do While nDataPos < Len(sData) 'loops through lines
+    
+    sCommand = Replace(sCommand, "*", "")
+    sCommand = Replace(sCommand, "|", " OR ")
+    
+    x2 = InStr(nDataPos, sData, Chr(10))
+    If x2 = 0 Then x2 = Len(sData) + 1
+    sLine = mid(sData, nDataPos, x2 - nDataPos)
+    
+    If sLine = "" Then GoTo next_line:
+    If val(sLine) < 1 Then GoTo next_line:
+    If sCommand = "" Then GoTo next_line:
+    
+    nSubTB = val(sLine)
+    
+    'the teleport nearly always sits one LinkTo deeper than the greet command's own textblock
+    bTele = GetTextblockTeleport(nSubTB, nRoom, nMap)
+    If Not bTele Then
+        nLink = GetTextblockLinkTo(nSubTB)
+        If nLink > 0 Then bTele = GetTextblockTeleport(nLink, nRoom, nMap)
+    End If
+    
+    If bTele And nRoom > 0 Then
+        If nMap = 0 Then nMap = nCurrentMap
+        sKey = "<" & nMap & "/" & nRoom & ">"
+        
+        'only de-dupe against the other NPC rows added here - a room command to the same
+        'destination is a different way to get there and keeps its own row
+        If InStr(1, sKeys, sKey) = 0 Then
+            sKeys = sKeys & sKey
+            
+            Set oLI = oLV.ListItems.Add()
+            oLI.Text = "Teleport: (NPC) " & sCommand _
+                & " --> " & GetRoomName(, nMap, nRoom, False)
+            oLI.Tag = nMap & "/" & nRoom
+        End If
+    Else
+        If sGreets = "" Then
+            sGreets = sCommand
+        Else
+            sGreets = sGreets & ", " & sCommand
+        End If
+    End If
+    
+next_line:
+    nDataPos = InStr(nDataPos, sData, Chr(10)) + 1
+    If nDataPos = 1 Then Exit Do
+    
+    x2 = InStr(nDataPos, sData, ":")
+    If x2 = 0 Then x2 = Len(sData) + 1
+    If x2 = nDataPos Then GoTo next_line:
+    sCommand = mid(sData, nDataPos, x2 - nDataPos)
+    
+    nDataPos = x2 + 1
+Loop
+
+'the commands that don't teleport anywhere all share one row
+If Not sGreets = "" Then
+    Set oLI = oLV.ListItems.Add()
+    oLI.Text = "Greet: " & sGreets
+    oLI.Tag = nGreetTB
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+tabTBInfo.MoveFirst
+tabMonsters.MoveFirst
+Exit Sub
+error:
+Call HandleError("AddRoomNPCCommandRefs")
+Resume out:
+End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTemp As Long, tExpInfo As tExpPerHourInfo
