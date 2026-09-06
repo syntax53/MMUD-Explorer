@@ -1,5 +1,6 @@
 v2.3.4 (09/##/2026)  
 ------------------------------------------------------------------------------------  
+- NEW: Find Best now offers VileWard (GreaterMUD/Paramud only), Perception, All Elemental resistance, and an Attributes category (Str/Agi/Int/Wis/Hea/Chm)  
 - UP: Spell details now show a difficulty of 0 for learnable spells instead of omitting it  
 - UP: NPC greet commands now show in the map's room references  
 - UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
@@ -7,6 +8,7 @@ v2.3.4 (09/##/2026)
 - UP: New toggle option in menu to initially always show shops first when listing item references  
 - UP: Item Manager +/- quantity buttons now sit next to each other, after the action buttons  
 - UP: Extra damage column on Weapon lists will now be reflective of hit percentage (xSwings + Extra = Avg Round)
+- UP: Find Best evaluates each item once and sums multi-part criteria the same way for Find Best and Next Best  
 - FIX: Teleport destination on the last line of a textblock could lose its map number  
 - FIX: Spell immunity now compared against the spell's required level instead of the level it was cast at  
 - FIX: Spells not filtering properly when in monster lair mode with party > 1  
@@ -16,6 +18,10 @@ v2.3.4 (09/##/2026)
 - FIX: "Copy Name to Clipboard" now works when right-clicking a reference on the Sundry tab  
 - FIX: Saved Item Manager rows now reflect proper QTY and fixed adjusting QTY of pasted items  
 - FIX: Spells taught by an item (LearnSp) now appear in the item's reference list  
+- FIX: Find Best could lose the best ring/bracelet on re-run because the paired-slot check rejected the item already worn in that slot  
+- FIX: Find Best no longer leaves a 2-handed weapon next to a newly chosen off-hand item (and clears the off-hand when the weapon is held)  
+- FIX: Ability 1102 (UseSpell) now shows its name in GreaterMUD  
+- FIX: Item ability lookups (ItemHasAbility) now scan all 20 ability slots  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------------------------------------------------  
