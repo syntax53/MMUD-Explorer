@@ -29376,7 +29376,9 @@ If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'weapon and off-hand bot
             If tItem(nEquippedItem(16)).b2Handed Then 'the equipped weapon is 2-handed
 
                 If chkEquipHold(15).Value = 0 And chkEquipHold(16).Value = 0 Then 'neither held
-                    If tBest(15).Value >= tBest(16).Value Then
+                    If tBest(16).Number > 0 And tBest(15).Value >= tBest(16).Value Then
+                        'we picked the 2-hander ourselves and the off-hand is worth more,
+                        'so drop it and look for the best 1-handed weapon instead
                         cmbEquip(16).ListIndex = 0
                         tBest(16).Value = 0
                         tBest(16).Number = 0
@@ -29386,6 +29388,8 @@ If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'weapon and off-hand bot
                         nStart = 16
                         GoTo recheck:
                     Else
+                        'the weapon stays (we either chose it, or this pass never scored a
+                        'weapon at all and it was already equipped), so the off-hand goes
                         cmbEquip(15).ListIndex = 0
                     End If
 
