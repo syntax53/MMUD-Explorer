@@ -6292,11 +6292,17 @@ nIndex = nIndex + 1 '15 (14 < 1.82)
 oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
 
-nIndex = nIndex + 1 '16 (15 < 1.82)
+If nNMRVer >= 1.83 Then
+    nIndex = nIndex + 1 '16 (1.83+ only)
+    oLI.ListSubItems.Add (nIndex), "BS Defense", IIf(tabMonsters.Fields("BSDefense") > 0, tabMonsters.Fields("BSDefense"), "")
+    oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("BSDefense")
+End If
+
+nIndex = nIndex + 1 '17 (16 = 1.82, 15 < 1.82)
 oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
 
-nIndex = nIndex + 1 '17 (16 < 1.82)
+nIndex = nIndex + 1 '18 (17 = 1.82, 16 < 1.82)
 If Len(tMonAtkSummary.sSpellExtraTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = tMonAtkSummary.sSpellAttackTypes & "+" & tMonAtkSummary.sSpellExtraTypes
 If Len(tMonAtkSummary.sSpellAttackTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = SortLettersWithSeparator(tMonAtkSummary.sSpellAttackTypes, "+")
 oLI.ListSubItems.Add (nIndex), "Spell Atk.", tMonAtkSummary.sSpellAttackTypes
