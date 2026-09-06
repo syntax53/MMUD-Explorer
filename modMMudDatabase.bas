@@ -3287,7 +3287,7 @@ If bGreaterMUD Then
     End If
 End If
 
-For x = 0 To 9
+For x = 0 To 19
     If nAbility = -1 Then
         If tabItems.Fields("Abil-" & x) > 0 Then
             If AbilityEffectsCharStats(tabItems.Fields("Abil-" & x)) Then
