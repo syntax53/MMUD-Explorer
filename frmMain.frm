@@ -32243,7 +32243,11 @@ Select Case ColumnHeader.Index
     Case Else: nSortType = ldtnumber
 End Select
 
-If ColumnHeader.Index > 2 Then bSortTag = True
+If ColumnHeader.Key = "Spell Atk." Then
+    nSortType = ldtstring
+ElseIf ColumnHeader.Index > 2 Then
+    bSortTag = True
+End If
 
 Call LV_Sort_ColumnClick(lvMonsterCompare, ColumnHeader, nSortType, bSortTag)
 
@@ -32397,9 +32401,7 @@ Select Case ColumnHeader.Index
     Case Else: nSortType = ldtnumber
 End Select
 
-If ColumnHeader.Index = 17 And nNMRVer >= 1.82 Then
-    nSortType = ldtstring
-ElseIf ColumnHeader.Index = 16 And nNMRVer < 1.82 Then
+If ColumnHeader.Key = "Spell Atk." Then
     nSortType = ldtstring
 ElseIf ColumnHeader.Index > 2 Then
     bSortTag = True
@@ -40457,8 +40459,11 @@ ElseIf nNMRVer >= 1.82 Then
     x = x + 1: lvMonsters.ColumnHeaders.Add x, "#Mobs", "#Mobs", 700, lvwColumnCenter '14
 End If
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mag.", "Mag.", 600, lvwColumnCenter '15 (14 < 1.82)
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter '16 (15 < 1.82)
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvwColumnCenter '17 (16 < 1.82)
+If nNMRVer >= 1.83 Then
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "BS Defense", "BS Defense", 1100, lvwColumnCenter '16 (1.83+ only)
+End If
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter '17 (16 = 1.82, 15 < 1.82)
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvwColumnCenter '18 (17 = 1.82, 16 < 1.82)
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders

@@ -4,6 +4,7 @@ v2.3.4 (09/##/2026)
 - UP: Spell details now show a difficulty of 0 for learnable spells instead of omitting it  
 - UP: NPC greet commands now show in the map's room references  
 - UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
+- UP: Monsters / Monster Compare lists now have a sortable BS Defense column (after Mag.; 1.83+ data only)  
 - UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  
 - UP: New toggle option in menu to initially always show shops first when listing item references  
 - UP: Item Manager +/- quantity buttons now sit next to each other, after the action buttons  
