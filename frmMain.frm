@@ -29134,7 +29134,7 @@ End Sub
 
 Private Sub InvenFindBest(ByVal Index As Integer, ByVal nFindBestEnm As enmFindBest)
 Dim x As Integer, y As Integer, z As Integer
-Dim nNum As Long, nMaxItemNum As Long, nVal As Long
+Dim nNum As Long, nMaxItemNum As Long, nVal As Long, nPrev As Long
 Dim nStart As Integer, nPair As Integer
 Dim sField As String, bACDR As Boolean, bNo2Handed As Boolean, bFound As Boolean
 Dim nAbils() As Integer
@@ -29345,11 +29345,13 @@ nextItem:
     Next y 'next item in list
 
     If tBest(x).Number > 0 Then 'if we found a winner
+        nPrev = nEquippedItem(x)
         cmbEquip(x).ListIndex = tBest(x).ListIdx
         LastFindBest(x) = tBest(x).Value
 
-        'if the paired slot is still wearing the item we just moved here, empty it so it
-        'gets re-decided below (the dupe rule stops the item being picked there again)
+        'wrists and fingers share one item list, so our winner can be the very item the
+        'paired slot is still wearing.  hand our previous item over to it rather than
+        'emptying it, or a pass that finds only one useful item strips the pair down to it
         nPair = -1
         Select Case x
             Case 6: nPair = 7
@@ -29358,7 +29360,10 @@ nextItem:
             Case 10: nPair = 9
         End Select
         If nPair > x Then
-            If chkEquipHold(nPair).Value = 0 And nEquippedItem(nPair) = tBest(x).Number Then cmbEquip(nPair).ListIndex = 0
+            If chkEquipHold(nPair).Value = 0 And nEquippedItem(nPair) = tBest(x).Number Then
+                If nPrev = tBest(x).Number Then nPrev = 0 'both slots already had it
+                Call InvenFindBestSelectItem(nPair, nPrev)
+            End If
         End If
     End If
 skip:
@@ -29535,6 +29540,23 @@ If InvenFindBestIsExcluded(nNum) Then Exit Sub
 z = UBound(nInvenExcludedItems()) + 1
 ReDim Preserve nInvenExcludedItems(0 To z)
 nInvenExcludedItems(z) = nNum
+
+End Sub
+
+'Selects item nItemNum in an equipment combo, or "(none)" if it is not in that list.
+Private Sub InvenFindBestSelectItem(ByVal nSlot As Integer, ByVal nItemNum As Long)
+Dim y As Integer
+
+If nItemNum > 0 Then
+    For y = 0 To cmbEquip(nSlot).ListCount - 1
+        If cmbEquip(nSlot).ItemData(y) = nItemNum Then
+            cmbEquip(nSlot).ListIndex = y
+            Exit Sub
+        End If
+    Next y
+End If
+
+cmbEquip(nSlot).ListIndex = 0
 
 End Sub
 
