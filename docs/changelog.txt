@@ -1,4 +1,4 @@
-v2.3.4 (09/##/2026)  
+v2.3.4 (09/06/2026)  
 ------------------------------------------------------------------------------------  
 - UP: New toggle option in menu to initially always show shops first when listing item references  
 - UP: NPC greet commands now show in the map's room references  
