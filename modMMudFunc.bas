@@ -137,6 +137,7 @@ Public Type tSpellCastValues
     sSpellName As String
     nCastLevel As Integer
     nSpellAttackType As Integer
+    nRequiredLevel As Integer
 End Type
 
 Public Type tAttackDamage
@@ -815,6 +816,7 @@ End If
 If nCastLVL < tabSpells.Fields("ReqLevel") Then nCastLVL = tabSpells.Fields("ReqLevel")
 If nCastLVL > tabSpells.Fields("Cap") And tabSpells.Fields("Cap") > 0 Then nCastLVL = tabSpells.Fields("Cap")
 CalculateSpellCast.nCastLevel = nCastLVL
+CalculateSpellCast.nRequiredLevel = tabSpells.Fields("ReqLevel")
 
 If (tabSpells.Fields("Cap") = 0 Or tabSpells.Fields("Cap") > tabSpells.Fields("ReqLevel")) _
     And ((tabSpells.Fields("MinInc") <> 0 And tabSpells.Fields("MinIncLVLs") > 0) _
@@ -3690,7 +3692,7 @@ Select Case nNum
                 Case 1004: GetAbilityName = "GrantTracking"
                 Case 1100: GetAbilityName = "AntiMagicNotOK"
                 Case 1101: GetAbilityName = "MeetsReqToHit"
-                Case 1101: GetAbilityName = "UseSpell"
+                Case 1102: GetAbilityName = "UseSpell"
                 Case 1103: GetAbilityName = "ShadowRest"
                 Case 1104: GetAbilityName = "AlterSpellHeal"
                 Case 1105: GetAbilityName = "AlterSpells"
@@ -4011,7 +4013,7 @@ Select Case nNum
                 Case 1004: sAbility = "GrantTracking"
                 Case 1100: 'sAbility = "AntiMagicNotOK"
                 Case 1101: 'sAbility = "MeetsReqToHit"
-                Case 1101: 'sAbility = "UseSpell"
+                Case 1102: 'sAbility = "UseSpell"
                 Case 1103: sAbility = "ShadowRest"
                 Case 1104: sAbility = "AlterSpellHeal"
                 Case 1105: sAbility = "AlterSpells"

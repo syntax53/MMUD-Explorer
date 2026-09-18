@@ -949,6 +949,7 @@ On Error GoTo error:
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
+LocationLV.ListItems.clear
 
 nNumber = tabItems.Fields("Number")
 
@@ -1695,7 +1696,7 @@ End If
 
 '#################
 
-Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, , , nNumber, , , True)
+Call GetLocations(tabItems.Fields("Obtained From"), LocationLV, True, , nNumber, , , True)
 If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
 If nNMRVer >= 1.7 Then Call GetLocations(tabItems.Fields("References"), LocationLV, True, , , , , True)
 If Not tabItems.Fields("Number") = nNumber Then tabItems.Seek "=", nNumber
@@ -1895,7 +1896,11 @@ If LocationLV.ListItems.count > 0 Then
 '        Call SortListView(LocationLV, nLastItemSortCol, ldtstring, False)
 '    End If
     
-    Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    If frmMain.mnuShopsFirst.Checked Then
+        Call LV_RefreshSort_ShopsFirst(LocationLV, 1, ldtnumber, True, False)
+    Else
+        Call LV_RefreshSort(LocationLV, 1, ldtnumber, True, False)
+    End If
 End If
 
 out:
@@ -2107,6 +2112,129 @@ On Error Resume Next
 Exit Sub
 error:
 Call HandleError("PullRaceDetail")
+Resume out:
+End Sub
+Public Sub AddRoomNPCCommandRefs(oLV As ListView, ByVal nNPCNumber As Long, ByVal nCurrentMap As Long)
+'adds the greet commands of a room's assigned NPC (tabRooms "NPC") to a map reference list (lvMapLoc).
+'a command that leads to a teleport gets a "Teleport: (NPC) " row which navigates the map,
+'every other command is collected onto a single comma separated "Greet: " row which
+'opens that monster's greet command tree.
+'NOTE: this moves tabMonsters/tabTBInfo and (via GetRoomName) tabRooms - the caller must re-seek tabRooms.
+On Error GoTo error:
+Dim sData As String, sLine As String, sCommand As String, sKeys As String, sKey As String
+Dim sGreets As String
+Dim nDataPos As Long, x2 As Long, nGreetTB As Long, nSubTB As Long, nLink As Long
+Dim nRoom As Long, nMap As Long, bTele As Boolean, oLI As ListItem
+
+If nNPCNumber <= 0 Then Exit Sub
+
+tabMonsters.Index = "pkMonsters"
+tabMonsters.Seek "=", nNPCNumber
+If tabMonsters.NoMatch Then
+    tabMonsters.MoveFirst
+    Exit Sub
+End If
+
+nGreetTB = tabMonsters.Fields("GreetTXT")
+If nGreetTB <= 0 Then GoTo out:
+
+tabTBInfo.Index = "pkTBInfo"
+tabTBInfo.Seek "=", nGreetTB
+If tabTBInfo.NoMatch Then
+    tabTBInfo.MoveFirst
+    GoTo out:
+End If
+
+'same bogus greet filter PullMonsterDetail uses, so the map list agrees with the monster detail pane
+If LCase(Left(tabTBInfo.Fields("Action"), 4)) = "heh:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 8)) = "nothing:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "yada:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "hehe:" _
+    Or LCase(Left(tabTBInfo.Fields("Action"), 5)) = "shit:" Then GoTo out:
+
+If tabTBInfo.Fields("Action") = Chr(0) Then GoTo out:
+
+sData = tabTBInfo.Fields("Action")
+
+'get first command
+nDataPos = 1
+nDataPos = InStr(nDataPos, sData, ":")
+If nDataPos = 0 Then GoTo out:
+
+sCommand = mid(sData, 1, nDataPos - 1)
+
+nDataPos = nDataPos + 1
+Do While nDataPos < Len(sData) 'loops through lines
+    
+    sCommand = Replace(sCommand, "*", "")
+    sCommand = Replace(sCommand, "|", " OR ")
+    
+    x2 = InStr(nDataPos, sData, Chr(10))
+    If x2 = 0 Then x2 = Len(sData) + 1
+    sLine = mid(sData, nDataPos, x2 - nDataPos)
+    
+    If sLine = "" Then GoTo next_line:
+    If val(sLine) < 1 Then GoTo next_line:
+    If sCommand = "" Then GoTo next_line:
+    
+    nSubTB = val(sLine)
+    
+    'the teleport nearly always sits one LinkTo deeper than the greet command's own textblock
+    bTele = GetTextblockTeleport(nSubTB, nRoom, nMap)
+    If Not bTele Then
+        nLink = GetTextblockLinkTo(nSubTB)
+        If nLink > 0 Then bTele = GetTextblockTeleport(nLink, nRoom, nMap)
+    End If
+    
+    If bTele And nRoom > 0 Then
+        If nMap = 0 Then nMap = nCurrentMap
+        sKey = "<" & nMap & "/" & nRoom & ">"
+        
+        'only de-dupe against the other NPC rows added here - a room command to the same
+        'destination is a different way to get there and keeps its own row
+        If InStr(1, sKeys, sKey) = 0 Then
+            sKeys = sKeys & sKey
+            
+            Set oLI = oLV.ListItems.Add()
+            oLI.Text = "Teleport: (NPC) " & sCommand _
+                & " --> " & GetRoomName(, nMap, nRoom, False)
+            oLI.Tag = nMap & "/" & nRoom
+        End If
+    Else
+        If sGreets = "" Then
+            sGreets = sCommand
+        Else
+            sGreets = sGreets & ", " & sCommand
+        End If
+    End If
+    
+next_line:
+    nDataPos = InStr(nDataPos, sData, Chr(10)) + 1
+    If nDataPos = 1 Then Exit Do
+    
+    x2 = InStr(nDataPos, sData, ":")
+    If x2 = 0 Then x2 = Len(sData) + 1
+    If x2 = nDataPos Then GoTo next_line:
+    sCommand = mid(sData, nDataPos, x2 - nDataPos)
+    
+    nDataPos = x2 + 1
+Loop
+
+'the commands that don't teleport anywhere all share one row
+If Not sGreets = "" Then
+    Set oLI = oLV.ListItems.Add()
+    oLI.Text = "Greet: " & sGreets
+    oLI.Tag = nGreetTB
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+tabTBInfo.MoveFirst
+tabMonsters.MoveFirst
+Exit Sub
+error:
+Call HandleError("AddRoomNPCCommandRefs")
 Resume out:
 End Sub
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
@@ -3201,7 +3329,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                                 nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, nCalcElementalResist(0), nCalcElementalResist(1), _
                                 nCalcElementalResist(2), nCalcElementalResist(3), nCalcElementalResist(5))
                 
-                If nCalcSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nCalcSpellImmuLVL Then
+                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nCalcSpellImmuLVL)) Then
                     If eAttackFlags = AR000_Unknown Then
                         If SpellSeek(nGlobalAttackSpellNum) Then
                             For x = 0 To 9
@@ -3242,7 +3370,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nDamageOut = 0
                     nFirstRoundDamageOut = 0
                     nMinDamageOut = 0
-                    If (nCalcSpellImmuLVL > 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
+                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
                     If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
                     If ((eAttackFlags And AR108_Living) <> 0 And (DF_Flags And DF109_IsLiving) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotLiving", "+")
@@ -3771,7 +3899,7 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", sTemp
         
         If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-            If tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL Then
+            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Then
                 oLI.ForeColor = TColor(RGB(204, 0, 0))
                 oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
@@ -4184,7 +4312,7 @@ Dim sSpellDetail As String, sRemoves As String, sArr() As String, x As Integer '
 Dim bCalcCombat As Boolean, bUseCharacter As Boolean
 Dim tSpellcast As tSpellCastValues, bBR As Boolean
 Dim nCastLVL As Long, sSpellEQ As String
-Dim tChar As tCharacterProfile, sBonusDamage As String, bSpellIsUsable As Boolean
+Dim tChar As tCharacterProfile, sBonusDamage As String, bSpellIsUsable As Boolean, bSpellCanBeLearned As Boolean
 
 DetailTB.Text = ""
 If bStartup Then Exit Sub
@@ -4301,7 +4429,13 @@ End If
 If Not tabSpells.Fields("Number") = nSpellNum Then tabSpells.Seek "=", nSpellNum
 
 sSpellDetail = sSpellDetail & vbCrLf & vbCrLf & "Target: " & GetSpellTargetsEnum(tabSpells.Fields("Targets"))
-If tabSpells.Fields("Diff") <> 0 And tabSpells.Fields("Diff") < 200 Then sSpellDetail = AutoAppend(sSpellDetail, "Difficulty: " & tabSpells.Fields("Diff"))
+bSpellCanBeLearned = (tabSpells.Fields("Learnable") = 1 _
+    Or (tabSpells.Fields("Magery") = 5 And bDisableKaiAutolearn = False And tabSpells.Fields("ReqLevel") > 0))
+
+'show difficulty even when it is 0, but only for spells that can actually be learned
+If tabSpells.Fields("Diff") < 200 And (tabSpells.Fields("Diff") <> 0 Or bSpellCanBeLearned) Then
+    sSpellDetail = AutoAppend(sSpellDetail, "Difficulty: " & tabSpells.Fields("Diff"))
+End If
 sSpellDetail = AutoAppend(sSpellDetail, "Attack Type: " & SpellAttackTypeEnum(tabSpells.Fields("AttType")))
 
 If nNMRVer >= 1.8 Then
@@ -4569,6 +4703,54 @@ Else
 End If
 
 End Function
+Public Sub SetArmourACDRSortTags(ByVal lv As ListView, ByVal bByDR As Boolean)
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If bByDR Then
+            lv.ListItems(i).ListSubItems(6).Tag = (nDR * 100000) + nAC
+        Else
+            lv.ListItems(i).ListSubItems(6).Tag = (nAC * 100000) + nDR
+        End If
+    End If
+Next i
+
+out:
+Exit Sub
+error:
+Call HandleError("SetArmourACDRSortTags")
+Resume out:
+End Sub
+Public Function ArmourACDRTagsAreByDR(ByVal lv As ListView) As Boolean
+'reports which of the two modes the ac/dr sort tags are currently built for.
+'a row where ac = dr builds an identical tag either way, so keep looking until
+'we find one that can actually tell them apart
+On Error GoTo error:
+Dim i As Long, nAC As Long, nDR As Long, sParts() As String
+
+For i = 1 To lv.ListItems.count
+    sParts = Split(lv.ListItems(i).ListSubItems(6).Text, "/")
+    If UBound(sParts) = 1 Then
+        nAC = CLng(CDbl(sParts(0)) * 10)
+        nDR = CLng(CDbl(sParts(1)) * 10)
+        If nAC <> nDR Then
+            ArmourACDRTagsAreByDR = (val(lv.ListItems(i).ListSubItems(6).Tag) = ((nDR * 100000) + nAC))
+            Exit Function
+        End If
+    End If
+Next i
+
+out:
+Exit Function
+error:
+Call HandleError("ArmourACDRTagsAreByDR")
+Resume out:
+End Function
 Public Sub AddArmour2LV(lv As ListView, Optional AddToInven As Boolean, Optional nAbility As Integer)
 On Error GoTo error:
 Dim oLI As ListItem, x As Integer, sName As String, nAbilityVal As Integer
@@ -4587,7 +4769,7 @@ oLI.ListSubItems.Add (3), "Armr Type", GetArmourTypeEnum(tabItems.Fields("Armour
 oLI.ListSubItems.Add (4), "Level", 0
 oLI.ListSubItems.Add (5), "Enc", tabItems.Fields("Encum")
 oLI.ListSubItems.Add (6), "AC", (tabItems.Fields("ArmourClass") / 10) & "/" & (tabItems.Fields("DamageResist") / 10)
-oLI.ListSubItems(6).Tag = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+oLI.ListSubItems(6).Tag = (CLng(tabItems.Fields("ArmourClass")) * 100000) + tabItems.Fields("DamageResist")
 
 oLI.ListSubItems.Add (7), "Acc", tabItems.Fields("Accy")
 oLI.ListSubItems.Add (8), "Crits", 0
@@ -4779,7 +4961,12 @@ If nAttackTypeMUD = 4 Then 'backstab
 Else
     oLI.ListSubItems.Add (16), "xSwings", tWeaponDmg.nRoundPhysical
 End If
-oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings)
+If tWeaponDmg.nAvgExtraSwing > 0 And tWeaponDmg.nSwings > 0 And tWeaponDmg.nHitChance > 0 Then
+    oLI.ListSubItems.Add (17), "Extra", Round(tWeaponDmg.nAvgExtraSwing * tWeaponDmg.nSwings * (tWeaponDmg.nHitChance / 100))
+Else
+    oLI.ListSubItems.Add (17), "Extra", 0
+End If
+
 oLI.ListSubItems.Add (18), "Dmg/Rnd", tWeaponDmg.nRoundTotal
 oLI.ListSubItems.Add (19), "Dmg/1st", tWeaponDmg.nFirstRoundDamage
 oLI.ListSubItems(19).Tag = tWeaponDmg.nFirstRoundDamage + Round(tWeaponDmg.nRoundTotal / 100, 2)
@@ -5071,7 +5258,7 @@ Select Case nGlobalAttackTypeMME
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
                             nVSrcol, nVSrfir, nVSrsto, nVSrlit, nVSrwat)
             
-            If nSpellImmuLVL = 0 Or tSpellcast.nCastLevel > nSpellImmuLVL Then
+            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nSpellImmuLVL)) Then
                 If eAttackFlags = AR000_Unknown Then
                     If SpellSeek(nGlobalAttackSpellNum) Then
                         For x = 0 To 9
@@ -5187,7 +5374,7 @@ Dim nNormAccyAdj As Integer, nBSAccyAdj As Integer
 
 If frmMain.chkGlobalFilter.Value = 1 Or bForceUseChar Then bUseCharacter = True
 
-If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+If Not bForceNoParty And frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
     tChar.nParty = val(frmMain.txtMonsterLairFilter(0).Text)
 End If
 If tChar.nParty < 1 Then tChar.nParty = 1
@@ -5760,12 +5947,12 @@ oLI.ListSubItems(nIndex).Tag = nExp
 
 nIndex = nIndex + 1 '5
 sTemp = ""
-If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
-    nHP = tAvgLairInfo.nAvgHP
-    sTemp = "*"
-Else
+'If tAvgLairInfo.nTotalLairs > 0 And tabMonsters.Fields("RegenTime") = 0 Then
+'    nHP = tAvgLairInfo.nAvgHP
+'    sTemp = "*"
+'Else
     nHP = tabMonsters.Fields("HP")
-End If
+'End If
 oLI.ListSubItems.Add (nIndex), "HP", IIf(nHP > 0, Format(nHP, "#,#"), 0) & sTemp
 oLI.ListSubItems(nIndex).Tag = nHP
 
@@ -6105,11 +6292,17 @@ nIndex = nIndex + 1 '15 (14 < 1.82)
 oLI.ListSubItems.Add (nIndex), "Mag.", IIf(nMagicLVL > 0, nMagicLVL, "")
 oLI.ListSubItems(nIndex).Tag = nMagicLVL
 
-nIndex = nIndex + 1 '16 (15 < 1.82)
+If nNMRVer >= 1.83 Then
+    nIndex = nIndex + 1 '16 (1.83+ only)
+    oLI.ListSubItems.Add (nIndex), "BS Defense", IIf(tabMonsters.Fields("BSDefense") > 0, tabMonsters.Fields("BSDefense"), "")
+    oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("BSDefense")
+End If
+
+nIndex = nIndex + 1 '17 (16 = 1.82, 15 < 1.82)
 oLI.ListSubItems.Add (nIndex), "Undead", IIf(tabMonsters.Fields("Undead") > 0, "X", "")
 oLI.ListSubItems(nIndex).Tag = tabMonsters.Fields("Undead")
 
-nIndex = nIndex + 1 '17 (16 < 1.82)
+nIndex = nIndex + 1 '18 (17 = 1.82, 16 < 1.82)
 If Len(tMonAtkSummary.sSpellExtraTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = tMonAtkSummary.sSpellAttackTypes & "+" & tMonAtkSummary.sSpellExtraTypes
 If Len(tMonAtkSummary.sSpellAttackTypes) > 0 Then tMonAtkSummary.sSpellAttackTypes = SortLettersWithSeparator(tMonAtkSummary.sSpellAttackTypes, "+")
 oLI.ListSubItems.Add (nIndex), "Spell Atk.", tMonAtkSummary.sSpellAttackTypes

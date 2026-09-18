@@ -15244,9 +15244,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   17
-            Left            =   8400
+            Left            =   8040
             Style           =   1  'Graphical
-            TabIndex        =   1312
+            TabIndex        =   1311
             Top             =   240
             Width           =   855
          End
@@ -15263,9 +15263,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   11
-            Left            =   7320
+            Left            =   6960
             Style           =   1  'Graphical
-            TabIndex        =   1311
+            TabIndex        =   1310
             Top             =   240
             Width           =   1095
          End
@@ -15304,9 +15304,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   10
-            Left            =   6000
+            Left            =   5640
             Style           =   1  'Graphical
-            TabIndex        =   1310
+            TabIndex        =   1309
             Top             =   240
             Width           =   1335
          End
@@ -15323,9 +15323,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   9
-            Left            =   4740
+            Left            =   4380
             Style           =   1  'Graphical
-            TabIndex        =   1309
+            TabIndex        =   1308
             Top             =   240
             Width           =   1275
          End
@@ -15342,9 +15342,9 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   375
             Index           =   15
-            Left            =   4380
+            Left            =   8880
             Style           =   1  'Graphical
-            TabIndex        =   1308
+            TabIndex        =   1312
             ToolTipText     =   "Minus"
             Top             =   240
             Width           =   375
@@ -18809,6 +18809,9 @@ Begin VB.Form frmMain
          Checked         =   -1  'True
          Shortcut        =   ^J
       End
+      Begin VB.Menu mnuShopsFirst 
+         Caption         =   "Show shops first in item references"
+      End
    End
    Begin VB.Menu mnuMain 
       Caption         =   "&Tools"
@@ -19034,6 +19037,11 @@ Begin VB.Form frmMain
             Caption         =   "Prot. from Good"
             Index           =   5
          End
+         Begin VB.Menu mnuFindBestArmour 
+            Caption         =   "VileWard"
+            Index           =   6
+            Visible         =   0   'False
+         End
       End
       Begin VB.Menu mnuFindBestItem 
          Caption         =   "Attacking"
@@ -19073,7 +19081,7 @@ Begin VB.Form frmMain
                Index           =   0
             End
             Begin VB.Menu mnuFindBestMystics 
-               Caption         =   "Jumpkcik DMG"
+               Caption         =   "JumpKick DMG"
                Index           =   1
             End
             Begin VB.Menu mnuFindBestMystics 
@@ -19095,38 +19103,70 @@ Begin VB.Form frmMain
          End
       End
       Begin VB.Menu mnuFindBestItem 
-         Caption         =   "Resistances"
+         Caption         =   "Attributes"
          Index           =   2
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "All Magic (MR)"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Agility"
             Index           =   0
          End
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "Cold"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Charm"
             Index           =   1
          End
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "Fire"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Health"
             Index           =   2
          End
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "Lightning"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Intellect"
             Index           =   3
          End
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "Stone"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Strength"
             Index           =   4
          End
-         Begin VB.Menu mnuFindBestResist 
-            Caption         =   "Water"
+         Begin VB.Menu mnuFindBestAttrib 
+            Caption         =   "Wisdom"
             Index           =   5
          End
       End
       Begin VB.Menu mnuFindBestItem 
-         Caption         =   "Stats"
+         Caption         =   "Resistances"
          Index           =   3
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "All Elemental"
+            Index           =   0
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "All Magic (MR)"
+            Index           =   1
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "Cold"
+            Index           =   2
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "Fire"
+            Index           =   3
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "Lightning"
+            Index           =   4
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "Stone"
+            Index           =   5
+         End
+         Begin VB.Menu mnuFindBestResist 
+            Caption         =   "Water"
+            Index           =   6
+         End
+      End
+      Begin VB.Menu mnuFindBestItem 
+         Caption         =   "Stats"
+         Index           =   4
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Encumberance"
+            Caption         =   "Encumbrance"
             Index           =   0
          End
          Begin VB.Menu mnuFindBestStats 
@@ -19150,24 +19190,28 @@ Begin VB.Form frmMain
             Index           =   5
          End
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Picklocks"
+            Caption         =   "Perception"
             Index           =   6
          End
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Spellcasting"
+            Caption         =   "Picklocks"
             Index           =   7
          End
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Stealth"
+            Caption         =   "Spellcasting"
             Index           =   8
          End
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Thievery"
+            Caption         =   "Stealth"
             Index           =   9
          End
          Begin VB.Menu mnuFindBestStats 
-            Caption         =   "Traps"
+            Caption         =   "Thievery"
             Index           =   10
+         End
+         Begin VB.Menu mnuFindBestStats 
+            Caption         =   "Traps"
+            Index           =   11
          End
       End
    End
@@ -19361,12 +19405,24 @@ Private Enum enmFindBest
     Resist = 2
     stats = 3
     Mystics = 4
+    Attribs = 5
 End Enum
 
 Private Type TypeEquipWinner
     Value As Long
     Number As Long
     Enc_Ratio As Currency
+    ListIdx As Integer
+End Type
+
+'per-call item cache used by InvenFindBest, indexed by Items.Number
+Private Type TypeFindBestItem
+    bDone As Boolean
+    bMissing As Boolean         'Seek -> NoMatch
+    nValue As Long              'criterion value (SUM semantics, see InvenFindBestItemValue)
+    nEncRatio As Currency       'Get_Enc_Ratio(Encum, ArmourClass, DamageResist)
+    bLimited As Boolean         'Limit > 0
+    b2Handed As Boolean         'ItemType = 1 And WeaponType is 1 or 3
 End Type
 
 'as of this writing, only 0-45 are used for the basic stat labels
@@ -19836,8 +19892,6 @@ Select Case Index
                         If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                             sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                             If UBound(sArr) >= 1 Then y = val(sArr(1))
-                        ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                            y = val(lvItemManager.ListItems(x).ListSubItems(3))
                         End If
                         If y < 1 Then y = 1
                         nEncum = nEncum + (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
@@ -19919,6 +19973,7 @@ Select Case Index
     
     Case 11: 'find best
         bInvenNextBest = False
+        mnuFindBestArmour(6).Visible = bGreaterMUD 'VileWard is GreaterMUD/Paramud-only
         PopupMenu mnuFindBest
         
     Case 12: 'next best
@@ -21052,7 +21107,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-'sNormalCaption = sNormalCaption & " v260610a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
+'sNormalCaption = sNormalCaption & " v260906a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -26669,7 +26724,7 @@ Else
     sLocationText = oliSource.Tag
 End If
 
-nNum = 16 'number of sStr's listed below +1
+nNum = 17 'number of sStr's listed below +1
 For iGotoType = 1 To nNum
     Select Case iGotoType
         Case 1: sStr = "Room"
@@ -26687,6 +26742,7 @@ For iGotoType = 1 To nNum
         Case 13: sStr = "Execute"
         Case 14: sStr = "Casts"
         Case 15: sStr = "Summon"
+        Case 16: sStr = "Greet"
     End Select
     
     If Left(sText, Len(sStr)) = sStr Then Exit For
@@ -26785,6 +26841,20 @@ Select Case iGotoType
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
             IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, False)
+        frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
+        'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
+        If objFormOwner Is frmMap Then
+            If frmMap.chkMapOptions(6).Value = 0 Then
+                Call SetTopMostWindow(frmMap.hWnd, True)
+            End If
+        End If
+        GoTo out:
+
+    Case 16: 'npc greet commands
+        'Load frmResults
+        Call frmResults.SetupResultsWindow(True, objFormOwner, _
+            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+        Call frmResults.CreateCommandTree(nNum, False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
         If objFormOwner Is frmMap Then
@@ -27268,8 +27338,6 @@ If lvItemManager.ListItems.count > 0 Then
                 If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                     sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                     If UBound(sArr) >= 1 Then y = val(sArr(1))
-                ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                    y = val(lvItemManager.ListItems(x).ListSubItems(3))
                 End If
                 If y < 1 Then y = 1
                 nCarriedItemsQTY(x) = y
@@ -29065,379 +29133,302 @@ Resume out:
 End Sub
 
 Private Sub InvenFindBest(ByVal Index As Integer, ByVal nFindBestEnm As enmFindBest)
-Dim nAbility As Integer, nAbility2 As Integer, nAbility3 As Integer, sField As String
-Dim x As Integer, y As Integer, z As Integer, LastFindBest(19) As Long
-Dim tWinner(19) As TypeEquipWinner, tPosWinner(19) As TypeEquipWinner
-Dim bNo2Handed As Boolean, nStart As Integer, nResult As Boolean, nEnc_Ratio As Currency
+Dim x As Integer, y As Integer, z As Integer
+Dim nNum As Long, nMaxItemNum As Long, nVal As Long, nPrev As Long
+Dim nStart As Integer, nPair As Integer
+Dim sField As String, bACDR As Boolean, bNo2Handed As Boolean, bFound As Boolean
+Dim nAbils() As Integer
+Dim LastFindBest(19) As Long
+Dim tBest(19) As TypeEquipWinner
+Dim tItem() As TypeFindBestItem
+Dim fldAbil(19) As DAO.Field, fldAbilVal(19) As DAO.Field
 On Error GoTo error:
 
-'.... very confusing.  tposwinner is the possible winner that it finds when searching
-'.... twinner is the current winning item (best item)
-'.... lastfindbest is the value of the last item selected
-
-Me.Enabled = False
-Me.MousePointer = vbHourglass
-DoEvents
+'tBest(x)         = best candidate found so far for equipment slot x
+'LastFindBest(x)  = criterion value of the item selected in slot x (bounds "Next Best")
+'tItem(n)         = per-call cache of everything we need to know about item number n
 
 nInvenLastIndex(0) = Index
 nInvenLastIndex(1) = nFindBestEnm
 
-bDontRefresh = True
-
-nAbility = 0
-nAbility2 = 0
+'---- phase A: resolve the criterion ----------------------------------------
 sField = ""
+bACDR = False
+nAbils = InvenFindBestAbils()
 
 Select Case nFindBestEnm
-    Case 0: 'Armour
+    Case Armour
         Select Case Index
-            Case 0: 'ac/dr
-                
+            Case 0: 'ac/dr combo
+                bACDR = True
             Case 1: 'ac
                 sField = "ArmourClass"
             Case 2: 'dr
                 sField = "DamageResist"
             Case 3: 'dodge
-                nAbility = 34
+                nAbils = InvenFindBestAbils(34)
             Case 4: 'prot evil
-                nAbility = 24
+                nAbils = InvenFindBestAbils(24)
             Case 5: 'prot good
-                nAbility = 25
+                nAbils = InvenFindBestAbils(25)
+            Case 6: 'vileward (greatermud/paramud only)
+                nAbils = InvenFindBestAbils(1113)
         End Select
-    Case 1: 'Attack
+    Case attack
         Select Case Index
-            Case 0: 'acc
-                nAbility = 22
-                nAbility2 = 105
-                nAbility3 = 106
+            Case 0: 'accuracy
+                nAbils = InvenFindBestAbils(22, 105, 106)
                 sField = "Accy"
-                
-            Case 1: 'bs acc
-                nAbility = 116
+            Case 1: 'bs accuracy
+                nAbils = InvenFindBestAbils(116)
             Case 2: 'bs min
-                nAbility = 117
+                nAbils = InvenFindBestAbils(117)
             Case 3: 'bs max
-                nAbility = 118
-            Case 4: 'crit
-                nAbility = 58
-            Case 5: 'dam sh
-                nAbility = 72
-            Case 6: 'max dam
-                nAbility = 4
+                nAbils = InvenFindBestAbils(118)
+            Case 4: 'crits
+                nAbils = InvenFindBestAbils(58)
+            Case 5: 'damage shield
+                nAbils = InvenFindBestAbils(72)
+            Case 6: 'max damage
+                nAbils = InvenFindBestAbils(4)
         End Select
-    Case 2: 'Resist
+    Case Resist
         Select Case Index
-            Case 0: 'mr
-                nAbility = 36
-            Case 1: 'cold
-                nAbility = 3
-            Case 2: 'fire
-               nAbility = 5
-            Case 3: 'light
-                nAbility = 66
-            Case 4: 'stone
-                nAbility = 65
-            Case 5: 'water
-                nAbility = 147
+            Case 0: 'all elemental
+                nAbils = InvenFindBestAbils(3, 5, 66, 65, 147)
+            Case 1: 'all magic (mr)
+                nAbils = InvenFindBestAbils(36)
+            Case 2: 'cold
+                nAbils = InvenFindBestAbils(3)
+            Case 3: 'fire
+                nAbils = InvenFindBestAbils(5)
+            Case 4: 'lightning
+                nAbils = InvenFindBestAbils(66)
+            Case 5: 'stone
+                nAbils = InvenFindBestAbils(65)
+            Case 6: 'water
+                nAbils = InvenFindBestAbils(147)
         End Select
-    Case 3: 'Stat
+    Case stats
         Select Case Index
-            Case 0: 'enc
-                nAbility = 96
+            Case 0: 'encumbrance
+                nAbils = InvenFindBestAbils(96)
             Case 1: 'hp
-                nAbility = 88
-            Case 2: 'hp rgn
-                nAbility = 123
-            Case 3: 'ill
-                nAbility = 13
-                nAbility2 = 14
+                nAbils = InvenFindBestAbils(88)
+            Case 2: 'hp regen
+                nAbils = InvenFindBestAbils(123)
+            Case 3: 'illumination
+                nAbils = InvenFindBestAbils(13, 14)
             Case 4: 'mana
-                nAbility = 69
-            Case 5: 'mana rgn
-                nAbility = 145
-            Case 6: 'pick
-                nAbility = 37
-                nAbility2 = 180
-            Case 7: 'spell
-                nAbility = 70
-            Case 8: 'stealth
-                nAbility = 27
-            Case 9: 'thiev
-                nAbility = 39
-            Case 10: 'trap
-                nAbility = 40
-                nAbility2 = 41
-                nAbility3 = 179
+                nAbils = InvenFindBestAbils(69)
+            Case 5: 'mana regen
+                nAbils = InvenFindBestAbils(145)
+            Case 6: 'perception
+                nAbils = InvenFindBestAbils(77)
+            Case 7: 'picklocks
+                nAbils = InvenFindBestAbils(37, 180)
+            Case 8: 'spellcasting
+                nAbils = InvenFindBestAbils(70)
+            Case 9: 'stealth
+                nAbils = InvenFindBestAbils(27)
+            Case 10: 'thievery
+                nAbils = InvenFindBestAbils(39)
+            Case 11: 'traps
+                nAbils = InvenFindBestAbils(40, 41, 179)
         End Select
-    Case 4: 'Mystics
+    Case Mystics
         Select Case Index
-            Case 0: 'jump acc
-                nAbility = 91
-            Case 1: 'jump dmg
-                nAbility = 94
-            Case 2: 'kick acc
-                nAbility = 90
+            Case 0: 'jumpkick acy
+                nAbils = InvenFindBestAbils(91)
+            Case 1: 'jumpkick dmg
+                nAbils = InvenFindBestAbils(94)
+            Case 2: 'kick acy
+                nAbils = InvenFindBestAbils(90)
             Case 3: 'kick dmg
-                nAbility = 93
-            Case 4: 'punch acc
-                nAbility = 89
+                nAbils = InvenFindBestAbils(93)
+            Case 4: 'punch acy
+                nAbils = InvenFindBestAbils(89)
             Case 5: 'punch dmg
-                nAbility = 92
+                nAbils = InvenFindBestAbils(92)
+        End Select
+    Case Attribs
+        Select Case Index
+            Case 0: 'agility
+                nAbils = InvenFindBestAbils(48)
+            Case 1: 'charm
+                nAbils = InvenFindBestAbils(49)
+            Case 2: 'health
+                nAbils = InvenFindBestAbils(47)
+            Case 3: 'intellect
+                nAbils = InvenFindBestAbils(44)
+            Case 4: 'strength
+                nAbils = InvenFindBestAbils(46)
+            Case 5: 'wisdom
+                nAbils = InvenFindBestAbils(45)
         End Select
 End Select
 
+'abilities >= 1000 only exist in greatermud/paramud -- bail out quietly on a stock
+'database (protects the "next best" replay of nInvenLastIndex after a database switch)
+If Not bGreaterMUD Then
+    For z = 0 To UBound(nAbils)
+        If nAbils(z) >= 1000 Then Exit Sub
+    Next z
+End If
+
+Me.Enabled = False
+Me.MousePointer = vbHourglass
+DoEvents
+
+bDontRefresh = True
+
+tabItems.Index = "pkItems"
+If tabItems.RecordCount = 0 Then GoTo out:
+tabItems.MoveLast
+nMaxItemNum = tabItems.Fields("Number")
+ReDim tItem(0 To nMaxItemNum)
+
+'a table-type recordset's field objects follow the current record, so caching them
+'here saves ~40 string-keyed lookups per item evaluated
+For z = 0 To 19
+    Set fldAbil(z) = tabItems.Fields("Abil-" & z)
+    Set fldAbilVal(z) = tabItems.Fields("AbilVal-" & z)
+Next z
+
+'---- phase B: "next best" baseline -----------------------------------------
 If bInvenNextBest Then
     For x = 0 To UBound(nEquippedItem())
-        If nEquippedItem(x) < 1 Then GoTo next_nextbest:
-
-        tabItems.Index = "pkItems"
-        tabItems.Seek "=", nEquippedItem(x)
-        If tabItems.NoMatch Then GoTo next_nextbest:
-        
-        For z = 0 To UBound(nInvenExcludedItems())
-            If nInvenExcludedItems(z) = nEquippedItem(x) Then
-                Exit For
-            Else
-                If z = UBound(nInvenExcludedItems()) Then
-                    ReDim Preserve nInvenExcludedItems(0 To z + 1)
-                    nInvenExcludedItems(z + 1) = nEquippedItem(x)
-                End If
-            End If
-        Next z
-        
-        If nFindBestEnm = Armour And Index = 0 Then 'AC/DR
-            LastFindBest(x) = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
-        Else
-            For z = 0 To 19
-                If nAbility > 0 Then 'first ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
-                        GoTo next_nextbest:
-                    End If
-                End If
-
-                If nAbility2 > 0 Then 'second ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility2 Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
-                        GoTo next_nextbest:
-                    End If
-                End If
-                
-                If nAbility3 > 0 Then 'third ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility3 Then
-                        LastFindBest(x) = tabItems.Fields("AbilVal-" & z)
-                        GoTo next_nextbest:
-                    End If
-                End If
-            Next z
-
-            If Not sField = "" Then 'if we're checking on a non-ability
-                LastFindBest(x) = tabItems.Fields(sField)
-                GoTo next_nextbest:
+        If nEquippedItem(x) > 0 Then
+            If InvenFindBestEval(nEquippedItem(x), tItem(), fldAbil(), fldAbilVal(), nAbils(), sField, bACDR) Then
+                LastFindBest(x) = tItem(nEquippedItem(x)).nValue
+                Call InvenFindBestExclude(nEquippedItem(x))
             End If
         End If
-
-next_nextbest:
     Next x
 Else
     Erase nInvenExcludedItems()
     ReDim nInvenExcludedItems(0)
 End If
 
+'---- phase C: pick the best item for each slot -----------------------------
 nStart = 0
 recheck:
-'DoEvents
-For x = nStart To cmbEquip().UBound 'x=cmbequip()
+For x = nStart To cmbEquip().UBound 'x = cmbEquip() index
     If cmbEquip(x).ListCount = 0 Then GoTo skip:
     If chkEquipHold(x).Value = 1 Then GoTo skip:
-    
-    For y = 0 To cmbEquip(x).ListCount - 1 'y=listindex
-        tabItems.Index = "pkItems"
-        tabItems.Seek "=", cmbEquip(x).ItemData(y)
-        If tabItems.NoMatch Then GoTo nextItem:
-        
-        If chkInvenNoLimited.Value = 1 And tabItems.Fields("Limit") > 0 Then GoTo nextItem:
-        
-        If x = 16 And bNo2Handed = True Then 'weapon
-            If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then GoTo nextItem:
+
+    For y = 0 To cmbEquip(x).ListCount - 1 'y = listindex
+        nNum = cmbEquip(x).ItemData(y)
+        If Not InvenFindBestEval(nNum, tItem(), fldAbil(), fldAbilVal(), nAbils(), sField, bACDR) Then GoTo nextItem:
+
+        If chkInvenNoLimited.Value = 1 And tItem(nNum).bLimited Then GoTo nextItem:
+        If x = 16 And bNo2Handed And tItem(nNum).b2Handed Then GoTo nextItem:
+
+        nVal = tItem(nNum).nValue
+        If nVal <= 0 Then GoTo nextItem: 'never equip something that does nothing for us
+
+        If bInvenNextBest Then
+            If nVal > LastFindBest(x) Then GoTo nextItem: 'stepping down, must be <= what we have
+            If InvenFindBestIsExcluded(nNum) Then GoTo nextItem:
         End If
-        
-        nEnc_Ratio = Get_Enc_Ratio(tabItems.Fields("Encum"), tabItems.Fields("ArmourClass"), tabItems.Fields("DamageResist"))
-        
-        If nFindBestEnm = Armour And Index = 0 Then 'AC/DR
-            If (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") > tPosWinner(x).Value) _
-            Or (tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist") = tPosWinner(x).Value _
-                And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
-                
-                nResult = InvenFindBestDupeFail(x, y, tPosWinner())
-                If nResult = False Then GoTo nextItem:
-                tPosWinner(x).Value = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
-                tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                tPosWinner(x).Enc_Ratio = nEnc_Ratio
-            End If
-        Else
-            For z = 0 To 19
-                If nAbility > 0 Then 'first ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
-                            
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
-                            If nResult = False Then GoTo nextItem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
-                        End If
-                    End If
-                End If
-                
-                If nAbility2 > 0 Then 'second ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility2 Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
-                            
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
-                            If nResult = False Then GoTo nextItem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
-                        End If
-                    End If
-                End If
-                
-                If nAbility3 > 0 Then 'third ability check
-                    If tabItems.Fields("Abil-" & z) = nAbility3 Then
-                        If (tabItems.Fields("AbilVal-" & z) > tPosWinner(x).Value) _
-                        Or (tabItems.Fields("AbilVal-" & z) = tPosWinner(x).Value _
-                            And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
-                            
-                            nResult = InvenFindBestDupeFail(x, y, tPosWinner())
-                            If nResult = False Then GoTo nextItem:
-                            tPosWinner(x).Value = tabItems.Fields("AbilVal-" & z)
-                            tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                            tPosWinner(x).Enc_Ratio = nEnc_Ratio
-                        End If
-                    End If
-                End If
-            Next z
-            
-            If Not sField = "" Then 'if we're checking on a non-ability
-                If (tabItems.Fields(sField) > tPosWinner(x).Value) _
-                Or (tabItems.Fields(sField) = tPosWinner(x).Value _
-                    And nEnc_Ratio > tPosWinner(x).Enc_Ratio) Then
-                    
-                    nResult = InvenFindBestDupeFail(x, y, tPosWinner())
-                    If nResult = False Then GoTo nextItem:
-                    tPosWinner(x).Value = tabItems.Fields(sField)
-                    tPosWinner(x).Number = cmbEquip(x).ItemData(y)
-                    tPosWinner(x).Enc_Ratio = nEnc_Ratio
-                End If
-            End If
-        End If
-        
-        If tPosWinner(x).Number > 0 Then 'if we found an item
-            If bInvenNextBest Then
-                If tPosWinner(x).Value <= LastFindBest(x) Then
-                
-                    For z = 0 To UBound(nInvenExcludedItems())
-                        If nInvenExcludedItems(z) = cmbEquip(x).ItemData(y) Then
-                            tPosWinner(x).Number = 0
-                            tPosWinner(x).Value = 0
-                            tPosWinner(x).Enc_Ratio = 0
-                        End If
-                    Next z
-                    
-                    If (tPosWinner(x).Value > tWinner(x).Value) _
-                    Or (tPosWinner(x).Value = tWinner(x).Value _
-                        And tPosWinner(x).Enc_Ratio > tWinner(x).Enc_Ratio) Then
-                        
-                        tWinner(x).Number = tPosWinner(x).Number
-                        tWinner(x).Value = tPosWinner(x).Value
-                        tWinner(x).Enc_Ratio = tPosWinner(x).Enc_Ratio
-                    Else
-                        tPosWinner(x).Number = 0
-                        tPosWinner(x).Value = 0
-                        tPosWinner(x).Enc_Ratio = 0
-                    End If
-                Else
-                    tPosWinner(x).Number = 0
-                    tPosWinner(x).Value = 0
-                    tPosWinner(x).Enc_Ratio = 0
-                End If
-            Else
-                tWinner(x).Number = tPosWinner(x).Number
-                tWinner(x).Value = tPosWinner(x).Value
-                tWinner(x).Enc_Ratio = tPosWinner(x).Enc_Ratio
+
+        If (nVal > tBest(x).Value) _
+        Or (nVal = tBest(x).Value And tItem(nNum).nEncRatio > tBest(x).Enc_Ratio) Then
+            If InvenFindBestDupeOK(x, nNum, tBest()) Then
+                tBest(x).Value = nVal
+                tBest(x).Number = nNum
+                tBest(x).Enc_Ratio = tItem(nNum).nEncRatio
+                tBest(x).ListIdx = y
             End If
         End If
 nextItem:
     Next y 'next item in list
-    
-    If tWinner(x).Number > 0 Then 'if we found a winner
-           
-        'tWinner(x).Number = tPosWinner(x).Number
-        'tWinner(x).Value = tPosWinner(x).Value
-        
-        For y = 0 To cmbEquip(x).ListCount - 1
-            If cmbEquip(x).ItemData(y) = tWinner(x).Number Then
-                cmbEquip(x).ListIndex = y
-                LastFindBest(x) = tWinner(x).Value
-                Exit For
+
+    If tBest(x).Number > 0 Then 'if we found a winner
+        nPrev = nEquippedItem(x)
+        cmbEquip(x).ListIndex = tBest(x).ListIdx
+        LastFindBest(x) = tBest(x).Value
+
+        'wrists and fingers share one item list, so our winner can be the very item the
+        'paired slot is still wearing.  hand our previous item over to it rather than
+        'emptying it, or a pass that finds only one useful item strips the pair down to it
+        nPair = -1
+        Select Case x
+            Case 6: nPair = 7
+            Case 7: nPair = 6
+            Case 9: nPair = 10
+            Case 10: nPair = 9
+        End Select
+        If nPair > x Then
+            If chkEquipHold(nPair).Value = 0 And nEquippedItem(nPair) = tBest(x).Number Then
+                If nPrev = tBest(x).Number Then nPrev = 0 'both slots already had it
+                Call InvenFindBestSelectItem(nPair, nPrev)
             End If
-        Next y
+        End If
     End If
 skip:
 Next x 'next piece of equipment
 
-If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'if weapon and off-hand got selected
-    tabItems.Index = "pkItems"
-    tabItems.Seek "=", tWinner(16).Number
-    If Not tabItems.NoMatch Then
-        If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then 'if the weapon is 2-handed
+'---- phase E: 2-handed weapon vs. off-hand ---------------------------------
+If nEquippedItem(15) > 0 And nEquippedItem(16) > 0 Then 'weapon and off-hand both filled
+    If tBest(15).Number > 0 Or tBest(16).Number > 0 Then 'only if this pass touched the pair
+        If InvenFindBestEval(nEquippedItem(16), tItem(), fldAbil(), fldAbilVal(), nAbils(), sField, bACDR) Then
+            If tItem(nEquippedItem(16)).b2Handed Then 'the equipped weapon is 2-handed
 
-            If chkEquipHold(15).Value = 0 And chkEquipHold(16).Value = 0 Then 'neither held
-                If tWinner(15).Value >= tWinner(16).Value Then
-                    cmbEquip(16).ListIndex = 0
-                    tWinner(16).Value = 0
-                    tWinner(16).Number = 0
-                    tPosWinner(16).Number = 0
-                    tPosWinner(16).Value = 0
-                    bNo2Handed = True
-                    nStart = 16
-                    GoTo recheck:
-                Else
+                If chkEquipHold(15).Value = 0 And chkEquipHold(16).Value = 0 Then 'neither held
+                    If tBest(16).Number > 0 And tBest(15).Value >= tBest(16).Value Then
+                        'we picked the 2-hander ourselves and the off-hand is worth more,
+                        'so drop it and look for the best 1-handed weapon instead
+                        cmbEquip(16).ListIndex = 0
+                        tBest(16).Value = 0
+                        tBest(16).Number = 0
+                        tBest(16).Enc_Ratio = 0
+                        tBest(16).ListIdx = 0
+                        bNo2Handed = True
+                        nStart = 16
+                        GoTo recheck:
+                    Else
+                        'the weapon stays (we either chose it, or this pass never scored a
+                        'weapon at all and it was already equipped), so the off-hand goes
+                        cmbEquip(15).ListIndex = 0
+                    End If
+
+                ElseIf chkEquipHold(15).Value = 1 And chkEquipHold(16).Value = 0 Then 'off-hand held
+                    If tBest(16).Number > 0 Then
+                        cmbEquip(16).ListIndex = 0
+                        tBest(16).Value = 0
+                        tBest(16).Number = 0
+                        tBest(16).Enc_Ratio = 0
+                        tBest(16).ListIdx = 0
+                        bNo2Handed = True
+                        nStart = 16
+                        GoTo recheck:
+                    End If
+
+                ElseIf chkEquipHold(15).Value = 0 And chkEquipHold(16).Value = 1 Then 'weapon held
                     cmbEquip(15).ListIndex = 0
+
                 End If
-
-            ElseIf chkEquipHold(15).Value = 1 And chkEquipHold(16).Value = 0 Then 'off-hand held
-                cmbEquip(16).ListIndex = 0
-                tWinner(16).Value = 0
-                tWinner(16).Number = 0
-                tPosWinner(16).Number = 0
-                tPosWinner(16).Value = 0
-                bNo2Handed = True
-                nStart = 16
-                GoTo recheck:
-
-            ElseIf chkEquipHold(15).Value = 0 And chkEquipHold(16).Value = 1 Then 'weapon held
-                cmbEquip(15).ListIndex = 0
-
             End If
         End If
     End If
 End If
 
-For x = 0 To 19
-    If Not tWinner(x).Number = 0 Then
+'---- phase F ---------------------------------------------------------------
+bFound = False
+For x = 0 To UBound(tBest)
+    If tBest(x).Number > 0 Then
+        bFound = True
         Exit For
     End If
-    If x = 19 Then MsgBox "Nothing found.", vbInformation
 Next x
+If Not bFound Then MsgBox "Nothing found.", vbInformation
 
 out:
 On Error Resume Next
+Erase fldAbil
+Erase fldAbilVal
+Erase tItem
 tabItems.MoveFirst
 Me.MousePointer = vbDefault
 Me.Enabled = True
@@ -29449,48 +29440,157 @@ Call HandleError("InvenFindBest")
 Resume out:
 End Sub
 
-Private Function InvenFindBestDupeFail(ByVal nCmbEquipNum As Integer, _
-    ByVal nCmbEquipListIndex As Integer, ByRef tPosWinner() As TypeEquipWinner) As Boolean
+'Builds the ability list for a find-best criterion.  No arguments -> (0), "no abilities".
+Private Function InvenFindBestAbils(ParamArray vAbils() As Variant) As Integer()
+Dim k As Integer, nOut() As Integer
 
-On Error GoTo error:
+If UBound(vAbils) < 0 Then
+    ReDim nOut(0)
+    nOut(0) = 0
+Else
+    ReDim nOut(0 To UBound(vAbils))
+    For k = 0 To UBound(vAbils)
+        nOut(k) = CInt(vAbils(k))
+    Next k
+End If
 
-'before:
-'Select Case nCmbEquipNum
-'    Case 6, 7: 'wrists
-'        If nCmbEquipNum = 7 And Not bInvenUse2ndWrist Then Exit Function
-'        If tPosWinner(6).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If tPosWinner(7).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If cmbEquip(6).ItemData(cmbEquip(6).ListIndex) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If cmbEquip(7).ItemData(cmbEquip(7).ListIndex) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'    Case 9, 10: 'fingers
-'        If tPosWinner(10).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If tPosWinner(9).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If cmbEquip(10).ItemData(cmbEquip(10).ListIndex) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'        If cmbEquip(9).ItemData(cmbEquip(9).ListIndex) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-'End Select
+InvenFindBestAbils = nOut
 
-'after:
-Select Case nCmbEquipNum
-    Case 6, 7: 'wrists
-        If nCmbEquipNum = 7 And Not bInvenUse2ndWrist Then Exit Function
-        If tPosWinner(6).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If tPosWinner(7).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If nEquippedItem(6) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If nEquippedItem(7) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-    Case 9, 10: 'fingers
-        If tPosWinner(9).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If tPosWinner(10).Number = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If nEquippedItem(9) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
-        If nEquippedItem(10) = cmbEquip(nCmbEquipNum).ItemData(nCmbEquipListIndex) Then Exit Function
+End Function
+
+'Criterion value of the record tabItems is currently sitting on.  Multi-part criteria SUM.
+Private Function InvenFindBestItemValue(ByRef fldAbil() As DAO.Field, ByRef fldAbilVal() As DAO.Field, _
+    ByRef nAbils() As Integer, ByVal sField As String, ByVal bACDR As Boolean) As Long
+Dim z As Integer, k As Integer, nAbil As Long, nTotal As Long
+
+If bACDR Then
+    InvenFindBestItemValue = tabItems.Fields("ArmourClass") + tabItems.Fields("DamageResist")
+    Exit Function
+End If
+
+If nAbils(0) > 0 Then
+    For z = 0 To 19
+        nAbil = fldAbil(z).Value
+        If nAbil > 0 Then
+            For k = 0 To UBound(nAbils)
+                If nAbil = nAbils(k) Then
+                    nTotal = nTotal + fldAbilVal(z).Value
+                    Exit For
+                End If
+            Next k
+        End If
+    Next z
+End If
+
+If Len(sField) > 0 Then nTotal = nTotal + tabItems.Fields(sField)
+
+InvenFindBestItemValue = nTotal
+
+End Function
+
+'Scores item nNum the first time it is seen.  True = the item exists in the Items table.
+'tabItems is left positioned on the item whenever a seek was actually performed.
+Private Function InvenFindBestEval(ByVal nNum As Long, ByRef tItem() As TypeFindBestItem, _
+    ByRef fldAbil() As DAO.Field, ByRef fldAbilVal() As DAO.Field, ByRef nAbils() As Integer, _
+    ByVal sField As String, ByVal bACDR As Boolean) As Boolean
+
+If nNum < 1 Then Exit Function '"(none)" row
+
+If nNum > UBound(tItem) Then ReDim Preserve tItem(0 To nNum)
+
+If tItem(nNum).bDone Then
+    InvenFindBestEval = Not tItem(nNum).bMissing
+    Exit Function
+End If
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nNum
+If tabItems.NoMatch Then
+    tItem(nNum).bDone = True
+    tItem(nNum).bMissing = True
+    Exit Function
+End If
+
+tItem(nNum).nValue = InvenFindBestItemValue(fldAbil(), fldAbilVal(), nAbils(), sField, bACDR)
+tItem(nNum).nEncRatio = Get_Enc_Ratio(tabItems.Fields("Encum"), tabItems.Fields("ArmourClass"), tabItems.Fields("DamageResist"))
+tItem(nNum).bLimited = (tabItems.Fields("Limit") > 0)
+tItem(nNum).b2Handed = False
+If tabItems.Fields("ItemType") = 1 Then 'weapon
+    If tabItems.Fields("WeaponType") = 1 Or tabItems.Fields("WeaponType") = 3 Then tItem(nNum).b2Handed = True
+End If
+tItem(nNum).bDone = True
+
+InvenFindBestEval = True
+
+End Function
+
+Private Function InvenFindBestIsExcluded(ByVal nNum As Long) As Boolean
+Dim z As Long
+
+For z = 0 To UBound(nInvenExcludedItems())
+    If nInvenExcludedItems(z) = nNum Then
+        InvenFindBestIsExcluded = True
+        Exit Function
+    End If
+Next z
+
+End Function
+
+Private Sub InvenFindBestExclude(ByVal nNum As Long)
+Dim z As Long
+
+If InvenFindBestIsExcluded(nNum) Then Exit Sub
+
+z = UBound(nInvenExcludedItems()) + 1
+ReDim Preserve nInvenExcludedItems(0 To z)
+nInvenExcludedItems(z) = nNum
+
+End Sub
+
+'Selects item nItemNum in an equipment combo, or "(none)" if it is not in that list.
+Private Sub InvenFindBestSelectItem(ByVal nSlot As Integer, ByVal nItemNum As Long)
+Dim y As Integer
+
+If nItemNum > 0 Then
+    For y = 0 To cmbEquip(nSlot).ListCount - 1
+        If cmbEquip(nSlot).ItemData(y) = nItemNum Then
+            cmbEquip(nSlot).ListIndex = y
+            Exit Sub
+        End If
+    Next y
+End If
+
+cmbEquip(nSlot).ListIndex = 0
+
+End Sub
+
+'True = item nItemNum may be used in slot nSlot (paired finger/wrist duplicate rules).
+Private Function InvenFindBestDupeOK(ByVal nSlot As Integer, ByVal nItemNum As Long, _
+    ByRef tBest() As TypeEquipWinner) As Boolean
+Dim nPair As Integer
+
+'the 2nd wrist is never filled when the user has it turned off
+If nSlot = 7 And Not bInvenUse2ndWrist Then Exit Function
+
+Select Case nSlot
+    Case 6: nPair = 7
+    Case 7: nPair = 6
+    Case 9: nPair = 10
+    Case 10: nPair = 9
+    Case Else:
+        InvenFindBestDupeOK = True
+        Exit Function
 End Select
 
+'the paired slot already claimed this item on this pass
+If tBest(nPair).Number = nItemNum Then Exit Function
 
-proceed:
-InvenFindBestDupeFail = True
+'the paired slot is wearing it and is not going to give it up
+If nEquippedItem(nPair) = nItemNum Then
+    If nPair < nSlot Or chkEquipHold(nPair).Value = 1 Or (nPair = 7 And Not bInvenUse2ndWrist) Then Exit Function
+End If
 
-Exit Function
-error:
-Call HandleError("InvenFindBestDupeFail")
+InvenFindBestDupeOK = True
 
 End Function
 
@@ -31469,6 +31569,12 @@ Else
     mnuJumpToCompare.Checked = False
 End If
 
+If val(ReadINI("Settings", "ShopsFirstInRefs")) = 1 Then
+    mnuShopsFirst.Checked = True
+Else
+    mnuShopsFirst.Checked = False
+End If
+
 If val(ReadINI("Settings", "FilterAll")) = 1 And bCharLoaded Then Call FilterAll(True)
 
 sForceCharacterFile = ""
@@ -31712,9 +31818,16 @@ Else
     nSortType = ldtnumber
 End If
 
-If ColumnHeader.Index = 7 Then bSortTag = True 'ac/dr
-
-Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, nSortType, bSortTag)
+If ColumnHeader.Index = 7 Then 'ac/dr: alternate ac-desc / dr-desc on repeat clicks
+    If lvArmour.SortKey = 6 Then
+        Call SetArmourACDRSortTags(lvArmour, Not ArmourACDRTagsAreByDR(lvArmour))
+    Else
+        Call SetArmourACDRSortTags(lvArmour, False)
+    End If
+    Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, ldtnumber, True, , True)
+Else
+    Call LV_Sort_ColumnClick(lvArmour, ColumnHeader, nSortType, bSortTag)
+End If
 
 out:
 Exit Sub
@@ -31745,9 +31858,16 @@ Else
     nSortType = ldtnumber
 End If
 
-If ColumnHeader.Index = 7 Then bSortTag = True
-
-Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, nSortType, bSortTag)
+If ColumnHeader.Index = 7 Then 'ac/dr: alternate ac-desc / dr-desc on repeat clicks
+    If lvArmourCompare.SortKey = 6 Then
+        Call SetArmourACDRSortTags(lvArmourCompare, Not ArmourACDRTagsAreByDR(lvArmourCompare))
+    Else
+        Call SetArmourACDRSortTags(lvArmourCompare, False)
+    End If
+    Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, ldtnumber, True, , True)
+Else
+    Call LV_Sort_ColumnClick(lvArmourCompare, ColumnHeader, nSortType, bSortTag)
+End If
 
 out:
 Exit Sub
@@ -32123,7 +32243,11 @@ Select Case ColumnHeader.Index
     Case Else: nSortType = ldtnumber
 End Select
 
-If ColumnHeader.Index > 2 Then bSortTag = True
+If ColumnHeader.Key = "Spell Atk." Then
+    nSortType = ldtstring
+ElseIf ColumnHeader.Index > 2 Then
+    bSortTag = True
+End If
 
 Call LV_Sort_ColumnClick(lvMonsterCompare, ColumnHeader, nSortType, bSortTag)
 
@@ -32277,9 +32401,7 @@ Select Case ColumnHeader.Index
     Case Else: nSortType = ldtnumber
 End Select
 
-If ColumnHeader.Index = 17 And nNMRVer >= 1.82 Then
-    nSortType = ldtstring
-ElseIf ColumnHeader.Index = 16 And nNMRVer < 1.82 Then
+If ColumnHeader.Key = "Spell Atk." Then
     nSortType = ldtstring
 ElseIf ColumnHeader.Index > 2 Then
     bSortTag = True
@@ -33247,6 +33369,7 @@ Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType
 Dim oLI As ListItem, RoomExit2 As RoomExitType, sArray() As String, nDmg As Long, sDmgVS As String
 Dim nRecNum As Long, y As Long, sNumbers As String, sData As String, sCommand As String
 Dim nMap As Long, nRoom As Long, sChar As String, nDataPos As Long, sLine As String
+Dim nNPC As Long
 
 '=============================================================================
 '
@@ -33267,6 +33390,7 @@ nDataPos = 1
 
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    nNPC = tabRooms.Fields("NPC")
     Set oLI = lvMapLoc.ListItems.Add()
     oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
     oLI.Tag = tabRooms.Fields("NPC")
@@ -33313,7 +33437,7 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         
         Do While nDataPos < Len(sData)
             x = InStr(nDataPos, sData, Chr(10))
-            If x = 0 Then x = Len(sData)
+            If x = 0 Then x = Len(sData) + 1
             sLine = mid(sData, nDataPos, x - nDataPos)
             nDataPos = x + 1
             
@@ -33381,6 +33505,14 @@ skiptele:
             oLI.Tag = tabRooms.Fields("CMD")
         Next x
     End If
+End If
+
+'greet commands of the NPC assigned to this room. added after the room commands so the
+'teleport de-dupe above only ever sees the room's own commands.
+If nNPC > 0 Then
+    Call AddRoomNPCCommandRefs(lvMapLoc, nNPC, nMapNumber)
+    tabRooms.Index = "idxRooms"
+    tabRooms.Seek "=", nMapNumber, nRoomNumber
 End If
 
 For x = 0 To 9
@@ -34262,7 +34394,7 @@ Select Case Index
         Select Case objWorkingListView.name
             Case "lvClasses", "lvRaces", "lvShopDetail", "lvSpellBook", "lvMapLoc", "lvSpellLoc", "lvShopLoc", "lvSpellCompareLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , , True)
-            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc":
+            Case "lvWeaponLoc", "lvArmourLoc", "lvSpellLoc", "lvShopLoc", "lvItemManagerLoc", "lvWeaponCompareLoc", "lvArmourCompareLoc", "lvOtherItemLoc":
                 Call CopyLVLinetoClipboard(objWorkingListView, , , 0, True)
             Case "lvShops":
                 Call CopyShopToClipboard(True)
@@ -34864,6 +34996,10 @@ Private Sub mnuFindBestArmour_Click(Index As Integer)
 Call InvenFindBest(Index, Armour)
 End Sub
 
+Private Sub mnuFindBestAttrib_Click(Index As Integer)
+Call InvenFindBest(Index, Attribs)
+End Sub
+
 Private Sub mnuFindBestAttack_Click(Index As Integer)
 Call InvenFindBest(Index, attack)
 End Sub
@@ -35381,6 +35517,15 @@ Else
 End If
 End Sub
 
+Private Sub mnuShopsFirst_Click()
+On Error Resume Next
+If mnuShopsFirst.Checked = True Then
+    mnuShopsFirst.Checked = False
+Else
+    mnuShopsFirst.Checked = True
+End If
+End Sub
+
 'Private Sub mnuLairLimitMovement_Click()
 'On Error Resume Next
 'If mnuLairLimitMovement.Checked = True Then
@@ -35745,8 +35890,6 @@ If x < 20 Or val(cmbEquip(16).ItemData(cmbEquip(16).ListIndex)) > 0 Then
                     If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                         sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                         If UBound(sArr) >= 1 Then y = val(sArr(1))
-                    ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                        y = val(lvItemManager.ListItems(x).ListSubItems(3))
                     End If
                     If y < 1 Then y = 1
                     
@@ -37012,6 +37155,9 @@ Dim sCharFile As String, sSectionName As String, nResult As Integer, nYesNo As I
 Dim bPastedInven As Boolean, sManualStat As String
 Dim tPasteItems As ItemParseResult, bCountThis As Boolean
 Dim sCarryName As String, sEquippedAnom As String, sMissingAnom As String, sDiscrepMsg As String
+Dim nItemStatBonus() As Long, sItemStatSource() As String, sCarryStatAnom As String, sInvName As String
+Dim nCarryQTY As Long, nCarryHits As Long, tCarryHits() As ItemMatch, nInvUB As Long
+Dim iEQ As Integer, iInv As Long, iHit As Long
 
 'x = current position in string
 'y = length of next possible (current) string match
@@ -37341,110 +37487,70 @@ skip:
 Loop
 tabItems.MoveFirst
 
+'parse the paste once so carried weight is only counted for items that were
+'actually in it (see bCountThis below), to flag carried/equipped anomalies, and to
+'work out which carried items are inflating the pasted stats below
+If bPastedInven Then tPasteItems = ParseGameTextInventory(sSearch)
+
+'The game's stat block reports each stat WITH its item bonuses already applied, but
+'txtCharStats().Text holds the BASE stat. Total up what CalcCharacterStats will re-add
+'for items so the pasted numbers can be reduced back to base. Only GreaterMUD/Paramud
+'items add stats -- in stock only spells do (see CalcCharacterStats).
+ReDim nItemStatBonus(0 To 5)
+ReDim sItemStatSource(0 To 5)
+
+If bGreaterMUD Then
+    For iEQ = 0 To UBound(nEquippedItem())
+        Call AccumItemStatBonus(nEquippedItem(iEQ), False, 1, nItemStatBonus(), sItemStatSource())
+    Next iEQ
+
+    'items that apply their abilities while merely carried (special items, or armour
+    'worn nowhere) inflate the reported stats too, but only if the character can
+    'actually use them
+    If bPastedInven Then
+        nInvUB = -1
+        On Error Resume Next
+        nInvUB = UBound(tPasteItems.sInventory)
+        On Error GoTo error:
+
+        For iInv = 0 To nInvUB
+            Call ParseNameAndQty(tPasteItems.sInventory(iInv), sInvName, nCarryQTY)
+            If Len(sInvName) > 0 Then
+                Erase tCarryHits
+                nCarryHits = GetItemsByExactNameArr(sInvName, tCarryHits)
+                For iHit = 0 To nCarryHits - 1
+                    If AccumItemStatBonus(tCarryHits(iHit).Number, True, nCarryQTY, nItemStatBonus(), sItemStatSource()) Then
+                        'CalcCharacterStats only applies a carried item's abilities when its
+                        'Item Manager row is flagged CARRIED, so warn about any that aren't
+                        'rather than editing the user's list for them
+                        If Not ItemIsFlaggedCarried(tCarryHits(iHit).Number) Then
+                            sCarryStatAnom = AutoAppend(sCarryStatAnom, tCarryHits(iHit).name, ", ")
+                        End If
+                        Exit For 'only one record for a given name can be the one carried
+                    End If
+                Next iHit
+            End If
+        Next iInv
+    End If
+End If
+
 nStat = ExtractValueFromString(sSearch, "Strength:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Strength: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(0).Text <> nStat - val(lblLabelArray(1).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Strength (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Strength or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(1).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(0).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(0).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(0, "Strength", val(nStat), PastedStatIsBuffed(sSearch, "Strength:"), nItemStatBonus(0), sItemStatSource(0), sManualStat)
+
 nStat = ExtractValueFromString(sSearch, "Intellect:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Intellect:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(1).Text <> nStat - val(lblLabelArray(4).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Intellect (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Intellect or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(4).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(1).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(1).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(1, "Intellect", val(nStat), PastedStatIsBuffed(sSearch, "Intellect:"), nItemStatBonus(1), sItemStatSource(1), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Willpower:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Willpower:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(2).Text <> nStat - val(lblLabelArray(24).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Willpower (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Willpower or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(24).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(2).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(2).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(2, "Willpower", val(nStat), PastedStatIsBuffed(sSearch, "Willpower:"), nItemStatBonus(2), sItemStatSource(2), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Agility:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Agility:*", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(3).Text <> nStat - val(lblLabelArray(2).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Agility (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Agility or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(2).Tag))
-        If val(sManualStat) > 0 Then
-                txtCharStats(3).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(3).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(3, "Agility", val(nStat), PastedStatIsBuffed(sSearch, "Agility:"), nItemStatBonus(3), sItemStatSource(3), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Health:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Health: *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(4).Text <> nStat - val(lblLabelArray(23).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Health (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Health or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(23).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(4).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(4).Text = nStat
-    End If
-End If
+Call ApplyPastedStat(4, "Health", val(nStat), PastedStatIsBuffed(sSearch, "Health:"), nItemStatBonus(4), sItemStatSource(4), sManualStat)
 
 nStat = ExtractValueFromString(sSearch, "Charm:")
-If nStat > 0 Then
-    If InStr(1, sSearch, "Charm:  *", vbTextCompare) > 0 Then
-        If sManualStat <> "SKIP" And txtCharStats(5).Text <> nStat - val(lblLabelArray(3).Tag) Then
-            sManualStat = InputBox("Your pasted character has modified Charm (" & nStat & ")." & vbCrLf & vbCrLf _
-                            & "Enter your actual Charm or press cancel to skip this and all further stat prompts.", "Confirm Stat", nStat - val(lblLabelArray(3).Tag))
-            If val(sManualStat) > 0 Then
-                txtCharStats(5).Text = val(sManualStat)
-            Else
-                sManualStat = "SKIP"
-            End If
-        End If
-    Else
-        txtCharStats(5).Text = nStat
-    End If
-End If
-
-'parse the paste once so carried weight is only counted for items that were
-'actually in it (see bCountThis below) and to flag carried/equipped anomalies
-If bPastedInven Then tPasteItems = ParseGameTextInventory(sSearch)
+Call ApplyPastedStat(5, "Charm", val(nStat), PastedStatIsBuffed(sSearch, "Charm:"), nItemStatBonus(5), sItemStatSource(5), sManualStat)
 
 If nEncum > 0 Then
     If lvItemManager.ListItems.count > 0 Then
@@ -37464,8 +37570,6 @@ If nEncum > 0 Then
                         If InStr(1, lvItemManager.ListItems(x).ListSubItems(2), " x", vbTextCompare) > 0 Then
                             sArr() = Split(lvItemManager.ListItems(x).ListSubItems(2), " x")
                             If UBound(sArr) >= 1 Then y = val(sArr(1))
-                        ElseIf val(lvItemManager.ListItems(x).ListSubItems(3)) > 1 Then
-                            y = val(lvItemManager.ListItems(x).ListSubItems(3))
                         End If
                         If y < 1 Then y = 1
                         nEncum = nEncum - (val(lvItemManager.ListItems(x).ListSubItems(5).Text) * y)
@@ -37510,7 +37614,7 @@ If bPastedInven Then Call PasteInventoryManager(sSearch)
 bDontRefresh = False
 Call RefreshAll
 
-If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Then
+If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Or Len(sCarryStatAnom) > 0 Then
     sDiscrepMsg = "Discrepancy in carried/equipped items detected." & vbCrLf
     If Len(sMissingAnom) > 0 Then
         sDiscrepMsg = sDiscrepMsg & vbCrLf _
@@ -37524,8 +37628,16 @@ If Len(sEquippedAnom) > 0 Or Len(sMissingAnom) > 0 Then
             & " (items both carried and equipped are highlighted in red on the Item Manager):" & vbCrLf _
             & sEquippedAnom & vbCrLf
     End If
+    If Len(sCarryStatAnom) > 0 Then
+        sDiscrepMsg = sDiscrepMsg & vbCrLf _
+            & "In the pasted inventory and boosting a stat while carried, but NOT flagged" _
+            & " CARRIED on the Item Manager (the boost was taken back out of your pasted" _
+            & " stats -- flag them CARRIED so it gets applied again):" & vbCrLf _
+            & sCarryStatAnom & vbCrLf
+    End If
     sDiscrepMsg = sDiscrepMsg & vbCrLf _
-        & "Nothing was changed automatically -- review these items if this was unexpected."
+        & "Apart from the stat values, nothing was changed automatically -- review these" _
+        & " items if this was unexpected."
     MsgBox sDiscrepMsg, vbInformation + vbOKOnly, "Carried/Equipped Discrepancy"
 End If
 
@@ -37560,6 +37672,198 @@ Call HandleError("PasteCharacter")
 Me.Enabled = True
 If FormIsLoaded("frmSpellBook") Then frmSpellBook.Enabled = True
 bDontRefresh = False
+End Sub
+
+'=== Paste Character stat helpers ==============================================
+'The game's stat block reports each stat WITH the bonuses from its worn (and
+'carry-active) items already applied, but txtCharStats().Text holds the BASE stat --
+'txtCharStats_Change adds the bonuses back on to produce .Tag, which is what every
+'calculator reads. These helpers total up exactly what CalcCharacterStats will re-add
+'for items so a pasted stat can be reduced to its base, keeping
+'base + item bonus = the number the game printed.
+
+'True when the stat following sLabel is asterisked, i.e. spell-modified. The game
+'right-aligns the value and floats the "*" ahead of it, so its column moves with the
+'digit count -- skip spaces rather than matching a fixed number of them. Finds the
+'label the same way ExtractValueFromString does so the two always read the same stat.
+Private Function PastedStatIsBuffed(ByVal sSearch As String, ByVal sLabel As String) As Boolean
+Dim x As Long
+On Error GoTo error:
+
+x = InStr(1, sSearch, sLabel, vbTextCompare)
+If x = 0 Then Exit Function
+x = x + Len(sLabel)
+
+Do Until x > Len(sSearch)
+    Select Case mid(sSearch, x, 1)
+        Case " ":
+            x = x + 1
+        Case "*":
+            PastedStatIsBuffed = True
+            Exit Do
+        Case Else:
+            Exit Do
+    End Select
+Loop
+
+out:
+Exit Function
+error:
+Call HandleError("PastedStatIsBuffed")
+Resume out:
+End Function
+
+'True if this item grants its abilities while merely carried -- the same test
+'CalcCharacterStats and RefreshListviewItemColors_ItemManager use. ItemIsUsableByChar
+'enforces the item's own MinLevel ability, so e.g. a level 40 item does nothing for a
+'level 30 character carrying it.
+Private Function ItemIsCarryActive(ByVal nItemNum As Long) As Boolean
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNum
+If tabItems.NoMatch Then Exit Function
+
+'10==special items, armour + nowhere
+If tabItems.Fields("ItemType") = 10 Or (tabItems.Fields("ItemType") = 0 And tabItems.Fields("Worn") = 0) Then
+    ItemIsCarryActive = ItemIsUsableByChar(nItemNum, True)
+End If
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsCarryActive")
+Resume out:
+End Function
+
+'True if nItemNum already has a CARRIED row on the Item Manager, meaning
+'CalcCharacterStats is already applying its abilities.
+Private Function ItemIsFlaggedCarried(ByVal nItemNum As Long) As Boolean
+Dim x As Integer
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+
+For x = 1 To lvItemManager.ListItems.count
+    If val(lvItemManager.ListItems(x).Text) = nItemNum And lvItemManager.ListItems(x).ListSubItems.count >= 2 Then
+        If InStr(1, lvItemManager.ListItems(x).ListSubItems(2).Text, "CARRIED", vbTextCompare) > 0 Then
+            ItemIsFlaggedCarried = True
+            Exit For
+        End If
+    End If
+Next x
+
+out:
+Exit Function
+error:
+Call HandleError("ItemIsFlaggedCarried")
+Resume out:
+End Function
+
+'Accumulate nItemNum's +stat abilities into nBonus() and describe them in sSources(),
+'both indexed like txtCharStats (0=str, 1=int, 2=wil, 3=agi, 4=hea, 5=cha). Returns
+'True if anything was added. The ability-to-stat mapping mirrors GetAbilityStatSlot
+'(slots 101/102/103/104/123/124) and AdjMainStatBonus -- keep it in step with those.
+Private Function AccumItemStatBonus(ByVal nItemNum As Long, ByVal bCarried As Boolean, ByVal nQTY As Long, _
+                                    ByRef nBonus() As Long, ByRef sSources() As String) As Boolean
+Dim x As Integer, nStatIndex As Integer, nAbilVal As Long, nMulti As Long, sName As String
+On Error GoTo error:
+
+If nItemNum < 1 Then Exit Function
+If tabItems.RecordCount = 0 Then Exit Function
+
+'ItemIsCarryActive moves the shared recordset (via ItemIsUsableByChar), so seek after it
+If bCarried Then
+    If Not ItemIsCarryActive(nItemNum) Then Exit Function
+End If
+
+tabItems.Index = "pkItems"
+tabItems.Seek "=", nItemNum
+If tabItems.NoMatch Then Exit Function
+
+If nQTY < 1 Then nQTY = 1
+sName = tabItems.Fields("Name")
+
+For x = 0 To 19
+    nStatIndex = -1
+    Select Case tabItems.Fields("Abil-" & x)
+        Case 46: nStatIndex = 0 'str
+        Case 44: nStatIndex = 1 'int
+        Case 45: nStatIndex = 2 'wil (called "Wisdom" in the ability table)
+        Case 48: nStatIndex = 3 'agi
+        Case 47: nStatIndex = 4 'hea
+        Case 49: nStatIndex = 5 'cha
+    End Select
+
+    If nStatIndex >= 0 Then
+        nAbilVal = tabItems.Fields("AbilVal-" & x)
+        If Not nAbilVal = 0 Then
+            'CalcCharacterStats adds +str once during the encumbrance pass with no
+            'quantity multiplier and the other five with * nMultiQTY -- mirror that, or
+            'the base stat won't add back up to what the game reported
+            If bCarried And nStatIndex <> 0 Then nMulti = nQTY Else nMulti = 1
+
+            nBonus(nStatIndex) = nBonus(nStatIndex) + (nAbilVal * nMulti)
+            sSources(nStatIndex) = AutoAppend(sSources(nStatIndex), sName & " (" _
+                & IIf(nAbilVal * nMulti > 0, "+", "") & (nAbilVal * nMulti) & ")", ", ")
+            AccumItemStatBonus = True
+        End If
+    End If
+Next x
+
+out:
+Exit Function
+error:
+Call HandleError("AccumItemStatBonus")
+Resume out:
+End Function
+
+'Write a pasted stat into its base-stat textbox. nItemBonus is the item contribution
+'already baked into nPasted, so base = nPasted - nItemBonus. A buffed stat also carries
+'a spell bonus that can't be derived from the paste, so that case still prompts -- but
+'with the item portion already taken off the suggested value.
+Private Sub ApplyPastedStat(ByVal nStatIndex As Integer, ByVal sStatName As String, ByVal nPasted As Long, _
+                            ByVal bBuffed As Boolean, ByVal nItemBonus As Long, ByVal sItemSources As String, _
+                            ByRef sManualStat As String)
+Dim nBase As Long, sPrompt As String
+On Error GoTo error:
+
+If nPasted < 1 Then Exit Sub
+
+nBase = nPasted - nItemBonus
+If nBase < 1 Then nBase = 1
+
+If Not bBuffed Then
+    txtCharStats(nStatIndex).Text = nBase
+    Exit Sub
+End If
+
+'spell-modified: the spell portion is unknowable from the paste, so ask
+If sManualStat = "SKIP" Then Exit Sub
+If val(txtCharStats(nStatIndex).Text) = nBase Then Exit Sub
+
+sPrompt = "Your pasted character has spell-modified " & sStatName & " (" & nPasted & ")." & vbCrLf
+If Not nItemBonus = 0 And Len(sItemSources) > 0 Then
+    sPrompt = sPrompt & vbCrLf & "Item bonuses already taken off: " & sItemSources & vbCrLf
+End If
+sPrompt = sPrompt & vbCrLf & "Enter your actual " & sStatName _
+        & " or press cancel to skip this and all further stat prompts."
+
+sManualStat = InputBox(sPrompt, "Confirm Stat", nBase)
+If val(sManualStat) > 0 Then
+    txtCharStats(nStatIndex).Text = val(sManualStat)
+Else
+    sManualStat = "SKIP"
+End If
+
+out:
+Exit Sub
+error:
+Call HandleError("ApplyPastedStat")
+Resume out:
 End Sub
 
 Public Sub PasteParty()
@@ -39235,9 +39539,8 @@ For Each oLI In lvItemManager.ListItems
             If InStr(1, oLI.ListSubItems(2), " x", vbTextCompare) > 0 Then
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
-            ElseIf val(oLI.ListSubItems(3)) > 1 Then
-                y = val(oLI.ListSubItems(3))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
@@ -39256,9 +39559,8 @@ For Each oLI In lvItemManager.ListItems
             If InStr(1, oLI.ListSubItems(2), " x", vbTextCompare) > 0 Then
                 sArr() = Split(oLI.ListSubItems(2), " x")
                 If UBound(sArr) >= 1 Then y = val(sArr(1))
-            ElseIf val(oLI.ListSubItems(3)) > 1 Then
-                y = val(oLI.ListSubItems(3))
             End If
+            If y < 1 Then y = 1
             str = str & oLI.Text & "|" & y & ","
             Set oLI = Nothing
             x = x + 1
@@ -39463,6 +39765,12 @@ If mnuJumpToCompare.Checked = True Then
     Call WriteINI("Settings", "JumpToCompare", 1)
 Else
     Call WriteINI("Settings", "JumpToCompare", 0)
+End If
+
+If mnuShopsFirst.Checked = True Then
+    Call WriteINI("Settings", "ShopsFirstInRefs", 1)
+Else
+    Call WriteINI("Settings", "ShopsFirstInRefs", 0)
 End If
 
 Exit Function
@@ -40151,8 +40459,11 @@ ElseIf nNMRVer >= 1.82 Then
     x = x + 1: lvMonsters.ColumnHeaders.Add x, "#Mobs", "#Mobs", 700, lvwColumnCenter '14
 End If
 x = x + 1: lvMonsters.ColumnHeaders.Add x, "Mag.", "Mag.", 600, lvwColumnCenter '15 (14 < 1.82)
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter '16 (15 < 1.82)
-x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvwColumnCenter '17 (16 < 1.82)
+If nNMRVer >= 1.83 Then
+    x = x + 1: lvMonsters.ColumnHeaders.Add x, "BS Defense", "BS Defense", 1100, lvwColumnCenter '16 (1.83+ only)
+End If
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Undead", "Undead", 800, lvwColumnCenter '17 (16 = 1.82, 15 < 1.82)
+x = x + 1: lvMonsters.ColumnHeaders.Add x, "Spell Atk.", "Spell Atk.", 1500, lvwColumnCenter '18 (17 = 1.82, 16 < 1.82)
 
 lvMonsterCompare.ColumnHeaders.clear
 For Each oColumnHeader In lvMonsters.ColumnHeaders

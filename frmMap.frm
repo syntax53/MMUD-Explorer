@@ -45522,6 +45522,7 @@ On Error GoTo error:
 Dim x As Long, sLook As String, nExitType As Integer, RoomExit As RoomExitType, oLI As ListItem, RoomExit2 As RoomExitType
 Dim nRecNum As Long, y As Long, sNumbers As String, sCommand As String, nMap As Long, nRoom As Long, sChar As String
 Dim sArray() As String, nDataPos As Long, sLine As String, sData As String, nDmg As Long, sDmgVS As String
+Dim nNPC As Long
 
 '=============================================================================
 '
@@ -45541,6 +45542,7 @@ lvMapLoc.ColumnHeaders(1).Text = "Refs [" & tabRooms.Fields("Name") & " (" & nMa
 nDataPos = 1
 
 If chkMapOptions(3).Value = 0 And tabRooms.Fields("NPC") > 0 Then
+    nNPC = tabRooms.Fields("NPC")
     Set oLI = lvMapLoc.ListItems.Add()
     oLI.Text = "NPC: " & GetMonsterName(tabRooms.Fields("NPC"), bHideRecordNumbers)
     oLI.Tag = tabRooms.Fields("NPC")
@@ -45589,7 +45591,7 @@ If tabRooms.Fields("CMD") > 0 Then 'chkMapOptions(4).Value = 0 And
         
         Do While nDataPos < Len(sData)
             x = InStr(nDataPos, sData, Chr(10))
-            If x = 0 Then x = Len(sData)
+            If x = 0 Then x = Len(sData) + 1
             sLine = mid(sData, nDataPos, x - nDataPos)
             nDataPos = x + 1
             
@@ -45718,6 +45720,14 @@ End If
 '        oLI.Tag = tabRooms.Fields("CMD")
 '    End If
 'End If
+
+'greet commands of the NPC assigned to this room. added after the room commands so the
+'teleport de-dupe above only ever sees the room's own commands.
+If nNPC > 0 Then
+    Call AddRoomNPCCommandRefs(lvMapLoc, nNPC, nMapNumber)
+    tabRooms.Index = "idxRooms"
+    tabRooms.Seek "=", nMapNumber, nRoomNumber
+End If
 
 For x = 0 To 9
     Select Case x
