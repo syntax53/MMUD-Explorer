@@ -1,6 +1,6 @@
 v2.3.5 (09/##/2026)  
 ------------------------------------------------------------------------------------  
-- FIX: Critical hit chance now counts penalties from below-average agility/intellect/charm instead of ignoring them  
+- FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 
 v2.3.4 (09/06/2026)  
