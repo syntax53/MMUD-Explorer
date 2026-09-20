@@ -21107,7 +21107,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-'sNormalCaption = sNormalCaption & " v260906a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
+sNormalCaption = sNormalCaption & " v260916a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -28292,28 +28292,20 @@ If (nCharLevel > 0 Or val(txtCharStats(1).Tag) > 0 Or val(txtCharStats(3).Tag) >
     nCritBonus = 0
     
     nTemp = Fix(nCharLevel / 10)
-    If nTemp > 0 Then
-        StatTips(7) = AutoAppend(StatTips(7), "Level (" & nTemp & ")", vbCrLf)
-        nCritBonus = nCritBonus + nTemp
-    End If
+    If nTemp <> 0 Then StatTips(7) = AutoAppend(StatTips(7), "Level (" & nTemp & ")", vbCrLf)
+    nCritBonus = nCritBonus + nTemp
     
     nTemp = Fix((val(txtCharStats(3).Tag) - 50) / 20)
-    If nTemp > 0 Then
-        StatTips(7) = AutoAppend(StatTips(7), "Agility (" & nTemp & ")", vbCrLf)
-        nCritBonus = nCritBonus + nTemp
-    End If
+    If nTemp <> 0 Then StatTips(7) = AutoAppend(StatTips(7), "Agility (" & nTemp & ")", vbCrLf)
+    nCritBonus = nCritBonus + nTemp
     
     nTemp = Fix((val(txtCharStats(1).Tag) - 50) / 10)
-    If nTemp > 0 Then
-        StatTips(7) = AutoAppend(StatTips(7), "Intellect (" & nTemp & ")", vbCrLf)
-        nCritBonus = nCritBonus + nTemp
-    End If
+    If nTemp <> 0 Then StatTips(7) = AutoAppend(StatTips(7), "Intellect (" & nTemp & ")", vbCrLf)
+    nCritBonus = nCritBonus + nTemp
     
     nTemp = Fix((val(txtCharStats(5).Tag) - 50) / 30)
-    If nTemp > 0 Then
-        StatTips(7) = AutoAppend(StatTips(7), "Charm (" & nTemp & ")", vbCrLf)
-        nCritBonus = nCritBonus + nTemp
-    End If
+    If nTemp <> 0 Then StatTips(7) = AutoAppend(StatTips(7), "Charm (" & nTemp & ")", vbCrLf)
+    nCritBonus = nCritBonus + nTemp
     
     If nCritBonus > 75 And Not bGreaterMUD Then nCritBonus = 75
     If nCritBonus < 1 Then nCritBonus = 1

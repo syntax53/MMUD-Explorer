@@ -4559,8 +4559,9 @@ If bGreaterMUD Then
     Else
         gmudMultiplier = 50
     End If
-    gmudEnergyRemain = 1000 - (nEU * 5)
-    CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
+    'a full round of swings is spent before any energy is left over for Q&D
+    gmudEnergyRemain = 1000 - (nEU * GMUD_MAX_SWINGS)
+    If gmudEnergyRemain > 0 Then CalcQuickAndDeadlyBonus = Fix(gmudEnergyRemain / gmudMultiplier)
 Else
     CalcQuickAndDeadlyBonus = (200 - nEU) + Fix((nAGL - 50) / 10)
     If (CalcQuickAndDeadlyBonus > 20) Then CalcQuickAndDeadlyBonus = 20
