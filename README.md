@@ -2,6 +2,30 @@
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
+v2.3.4 (09/06/2026)  
+------------------------------------------------------------------------------------  
+- UP: New toggle option in menu to initially always show shops first when listing item references  
+- UP: NPC greet commands now show in the map's room references  
+- UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  
+- UP: Extra damage column on Weapon lists will now be reflective of hit percentage (xSwings + Extra = Avg Round)
+- UP: Monsters will no longer show the combined lair HP in the column/table when in lair mode  
+- UP: Monsters lists now have a columns for BS Defense (requires db created with NMR v1.83+)  
+- UP: Find Best on EQ tab now offers additional stats/abilities/attributes  
+- UP: Find Best evaluates each item once and sums multi-part criteria the same way for Find Best and Next Best  
+- UP: Spell details now show the difficulty for learnable spells with a difficulty of 0 instead of omitting it  
+- UP: Item Manager +/- quantity buttons now sit next to each other  
+- FIX: Teleport destination on the last line of a textblock could lose its map number  
+- FIX: Spell immunity now compared against the spell's required level instead of the level it was cast at  
+- FIX: Spells not filtering properly when in monster lair mode with party > 1  
+- FIX: Exp/hr pasting party recognizing their class (missionary and witchunter usually)  
+- FIX: Exp/hr pasting party and inventory/mana/spellcasting going to the wrong characters  
+- FIX: Paste Character treating item stat bonuses as part of your base stats  
+- FIX: "Copy Name to Clipboard" now works when right-clicking a reference on the Sundry tab  
+- FIX: Saved Item Manager rows now reflect proper QTY and fixed adjusting QTY of pasted items  
+- FIX: Spells taught by an item (LearnSp) now appear in the item's reference list  
+- FIX: Find Best could lose the best ring/bracelet on Find Next because the paired-slot check skipped the item already worn  
+- FIX: Find Best no longer leaves a 2-handed weapon next to a newly chosen off-hand item (and clears the off-hand with weapon)  
+- FIX: Item ability lookups (ItemHasAbility) was not scanning all 20 ability slots  
 
 v2.3.3 (07/15/2026)  
 ------------------------------------------  
