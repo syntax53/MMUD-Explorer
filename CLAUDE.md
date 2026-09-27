@@ -135,9 +135,16 @@ followed when touching UI code:
 
 - `Option Explicit` is used throughout; keep it. Hungarian-style prefixes are pervasive
   (`b`=Boolean, `n`=numeric, `s`=String, `tab`=Recordset, `frm`=Form, `mod`=Module, `cls`=Class).
-- The changelog lives in `docs/changelog.txt` (current) and `docs/changelog.archive.txt`;
-  user-facing change notes are also mirrored at the top of `README.md`. Update these when
-  shipping user-visible changes.
+- **Changelog + README must stay in sync (required for every user-visible change).**
+  `docs/changelog.txt` is the source of truth (older history in `docs/changelog.archive.txt`);
+  `README.md` mirrors it below its intro. Workflow:
+  1. Add the note to the top version block of `docs/changelog.txt` (`- NEW:` / `- UP:` / `- FIX:`,
+     UP before FIX, each line ending in two spaces). The file is CRLF, so edit it with the Latin-1
+     PowerShell method above; the Edit tool strips those trailing spaces.
+  2. Run `powershell -ExecutionPolicy Bypass -File docs\sync-readme.ps1`. It rebuilds README's
+     version history from the changelog (it keeps the intro, shortens the dash rules, and writes LF).
+     Never hand-edit README's version history; change the changelog and re-run the script.
+  3. Commit both files together; `git diff README.md` should show only the new lines.
 
 ## Git
 

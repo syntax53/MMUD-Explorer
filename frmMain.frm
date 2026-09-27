@@ -18037,7 +18037,7 @@ Begin VB.Form frmMain
          Index           =   0
          Left            =   8640
          TabIndex        =   487
-         ToolTipText     =   "Filter by individual mob stats - NOT saved between sessions"
+         ToolTipText     =   "Filter by individual mob stats - saved to the character file"
          Top             =   240
          Value           =   -1  'True
          Width           =   975
@@ -19589,6 +19589,7 @@ If optMonsterFilter(1).Value = True Then
     If chkMonMagic.Value <> filter_chkMonMagic(1) And bCharLoaded Then bPromptSave = True
     filter_chkMonMagic(1) = chkMonMagic.Value
 Else
+    If chkMonMagic.Value <> filter_chkMonMagic(0) And bCharLoaded Then bPromptSave = True
     filter_chkMonMagic(0) = chkMonMagic.Value
 End If
 End Sub
@@ -19674,6 +19675,7 @@ If optMonsterFilter(1).Value = True Then
     If cmbMonsterRegen.ListIndex <> filter_cmbMonsterRegen(1) And bCharLoaded Then bPromptSave = True
     filter_cmbMonsterRegen(1) = cmbMonsterRegen.ListIndex
 Else
+    If cmbMonsterRegen.ListIndex <> filter_cmbMonsterRegen(0) And bCharLoaded Then bPromptSave = True
     filter_cmbMonsterRegen(0) = cmbMonsterRegen.ListIndex
 End If
 End Sub
@@ -20412,6 +20414,7 @@ If Index = 0 Then 'copy
         filter_txtMonMagic(0) = txtMonMagic.Text
         filter_txtDamageOut(0) = txtMonsterDamageOUT(0).Text
         filter_txtDmgOutMag(0) = txtMonsterDamageOUT(1).Text
+        If bCharLoaded Then bPromptSave = True
         optMonsterFilter(0).Value = True
         Call optMonsterFilter_Click(0)
     Else 'by mob selected
@@ -23392,7 +23395,7 @@ If Index = 0 Then 'help
             & vbCrLf & vbCrLf & "The HP and EXP filters will filter based on those combined stats, with the exp filtering based on exp/hour." _
             & vbCrLf & vbCrLf & "See the additional buttons/notes for some of the other fields (now visible by clicking this).", vbInformation
     Else
-        MsgBox "The Saved toggle setting has its filter values saved to your character file. " _
+        MsgBox "The Temp and Saved toggle settings each have their own filter values saved to your character file. " _
             & vbCrLf & vbCrLf _
             & "When party size > 1, the party defense stats will be utilized. Otherwise, the current character stats are used." _
             & vbCrLf & vbCrLf _
@@ -25485,6 +25488,8 @@ Dim nPassEXP As Currency, nPassRecovery As Double, nSurpriseDamageOut As Long, n
 Dim nFirstRoundDMG As Long, nMinRoundDMG As Long, nSurpriseMinDMG As Long, nSurpriseChance As Integer
 Dim bAbilityFilterPass(2) As Boolean, bFilterAbilities As Boolean, tMonAtkSummary As MonsterAttackSummary, bDoesNotMatchFilter As Boolean
 Dim bMonXfilter_HasAbility(2) As Boolean
+Dim bRestoreMobFilter As Boolean, bPrevPromptSave As Boolean, nMobRegenOpt As Integer, nMobMagicOpt As Integer
+Dim sMobRegen As String, sMobMagic As String, sMobDamage As String, sMobHP As String, sMobEXP As String
 
 If optMonsterFilter(1).Value = True Then bCurrentMonFilter = 1 'else it stays as 0
 If chkGlobalFilter.Value = 1 Then bUseCharacter = True
@@ -25492,6 +25497,18 @@ If chkGlobalFilter.Value = 1 Then bUseCharacter = True
 If bRemoveFilter Then
     optMonsterFilter(0).Value = True
     Call optMonsterFilter_Click(0)
+
+    'remember the by mob filter values so they can be restored after the clear
+    nMobRegenOpt = filter_cmbMonsterRegen(0)
+    sMobRegen = filter_txtMonsterRegen(0)
+    nMobMagicOpt = filter_chkMonMagic(0)
+    sMobMagic = filter_txtMonMagic(0)
+    sMobDamage = filter_txtMonsterDamage(0)
+    sMobHP = filter_txtMonsterHP(0)
+    sMobEXP = filter_txtMonsterEXP(0)
+    bPrevPromptSave = bPromptSave
+    bRestoreMobFilter = True
+
     'chkMonsterDropCash.Value = 0
     cmbMonsterRegen.ListIndex = 0
     txtMonsterRegen.Text = 999
@@ -25918,6 +25935,17 @@ out:
 On Error Resume Next
 optMonsterFilter(bCurrentMonFilter).Value = True
 Call optMonsterFilter_Click(bCurrentMonFilter)
+If bRestoreMobFilter Then 'restore the by mob filter values after the clear
+    filter_cmbMonsterRegen(0) = nMobRegenOpt
+    filter_txtMonsterRegen(0) = sMobRegen
+    filter_chkMonMagic(0) = nMobMagicOpt
+    filter_txtMonMagic(0) = sMobMagic
+    filter_txtMonsterDamage(0) = sMobDamage
+    filter_txtMonsterHP(0) = sMobHP
+    filter_txtMonsterEXP(0) = sMobEXP
+    If bCurrentMonFilter = 0 Then Call optMonsterFilter_Click(0)
+    bPromptSave = bPrevPromptSave
+End If
 lvMonsters.Refresh
 Call RefreshMonsterColors
 If lvMonsters.ListItems.count >= 1 Then Call lvMonsters_ItemClick(lvMonsters.ListItems(1))
@@ -30212,44 +30240,56 @@ End If
 If Not sFile = "" Then sSectionName = "MonsterFilter"
 'filter_chkMonsterDropCash(1) = val(ReadINI(sSectionName, "DropCash", sFile, 0))
 'filter_chkMonsterUndead(1) = val(ReadINI(sSectionName, "Undead", sFile, 0))
-filter_cmbMonsterRegen(1) = val(ReadINI(sSectionName, "RegenOpt", sFile, 0))
-filter_txtMonsterRegen(1) = val(ReadINI(sSectionName, "RegenVal", sFile, 1))
-filter_chkMonMagic(1) = val(ReadINI(sSectionName, "MonMagicOpt", sFile, 0))
-filter_txtMonMagic(1) = val(ReadINI(sSectionName, "MonMagicVal", sFile, 99))
-filter_txtMonsterDamage(1) = val(ReadINI(sSectionName, "Damage", sFile, 9999))
-filter_txtMonsterDamage(2) = val(ReadINI(sSectionName, "DamageParty", sFile, filter_txtMonsterDamage(1)))
-filter_txtMonsterHP(1) = val(ReadINI(sSectionName, "HP", sFile, 9999))
-filter_txtMonsterHP(2) = val(ReadINI(sSectionName, "HPParty", sFile, filter_txtMonsterHP(1)))
-filter_txtMonsterEXP(1) = ReadINI(sSectionName, "EXP", sFile, 1)
-filter_txtMonsterEXP(2) = ReadINI(sSectionName, "EXPParty", sFile, filter_txtMonsterEXP(1))
-filter_txtDamageOut(1) = val(ReadINI(sSectionName, "MonDmgOUT", sFile, 99999))
-filter_txtDmgOutMag(1) = val(ReadINI(sSectionName, "MonMagDmgOUT", sFile, 99999))
-filter_txtDamageOut(2) = val(ReadINI(sSectionName, "MonPartyDmgOUT", sFile, 99999))
-filter_txtDmgOutMag(2) = val(ReadINI(sSectionName, "MonPartyMagDmgOUT", sFile, 99999))
+'values below go through ReadINIFilterNum/ReadINIFilterEXP so a corrupted or hand-edited
+'file value falls back to the default instead of overflowing and aborting the load
+filter_cmbMonsterRegen(1) = Int(ReadINIFilterNum(sSectionName, "RegenOpt", sFile, 0, 0, cmbMonsterRegen.ListCount - 1))
+filter_txtMonsterRegen(1) = ReadINIFilterTxt(sSectionName, "RegenVal", sFile, 1, txtMonsterRegen)
+filter_chkMonMagic(1) = IIf(ReadINIFilterNum(sSectionName, "MonMagicOpt", sFile, 0, 0, 1) > 0, 1, 0)
+filter_txtMonMagic(1) = ReadINIFilterTxt(sSectionName, "MonMagicVal", sFile, 99, txtMonMagic)
+filter_txtMonsterDamage(1) = ReadINIFilterTxt(sSectionName, "Damage", sFile, 9999, txtMonsterDamage)
+filter_txtMonsterDamage(2) = ReadINIFilterTxt(sSectionName, "DamageParty", sFile, val(filter_txtMonsterDamage(1)), txtMonsterDamage)
+filter_txtMonsterHP(1) = ReadINIFilterTxt(sSectionName, "HP", sFile, 9999, txtMonsterHP)
+filter_txtMonsterHP(2) = ReadINIFilterTxt(sSectionName, "HPParty", sFile, val(filter_txtMonsterHP(1)), txtMonsterHP)
+filter_txtMonsterEXP(1) = ReadINIFilterEXP(sSectionName, "EXP", sFile, "1")
+filter_txtMonsterEXP(2) = ReadINIFilterEXP(sSectionName, "EXPParty", sFile, filter_txtMonsterEXP(1))
+filter_txtDamageOut(1) = ReadINIFilterTxt(sSectionName, "MonDmgOUT", sFile, 99999, txtMonsterDamageOUT(0))
+filter_txtDmgOutMag(1) = ReadINIFilterTxt(sSectionName, "MonMagDmgOUT", sFile, 99999, txtMonsterDamageOUT(1))
+filter_txtDamageOut(2) = ReadINIFilterTxt(sSectionName, "MonPartyDmgOUT", sFile, 99999, txtMonsterDamageOUT(0))
+filter_txtDmgOutMag(2) = ReadINIFilterTxt(sSectionName, "MonPartyMagDmgOUT", sFile, 99999, txtMonsterDamageOUT(1))
+
+'by mob filter (0)
+filter_cmbMonsterRegen(0) = Int(ReadINIFilterNum(sSectionName, "MobRegenOpt", sFile, 0, 0, cmbMonsterRegen.ListCount - 1))
+filter_txtMonsterRegen(0) = ReadINIFilterTxt(sSectionName, "MobRegenVal", sFile, 999, txtMonsterRegen)
+filter_chkMonMagic(0) = IIf(ReadINIFilterNum(sSectionName, "MobMagicOpt", sFile, 0, 0, 1) > 0, 1, 0)
+filter_txtMonMagic(0) = ReadINIFilterTxt(sSectionName, "MobMagicVal", sFile, 999, txtMonMagic)
+filter_txtMonsterDamage(0) = ReadINIFilterTxt(sSectionName, "MobDamage", sFile, 99999, txtMonsterDamage)
+filter_txtMonsterHP(0) = ReadINIFilterTxt(sSectionName, "MobHP", sFile, 99999, txtMonsterHP)
+filter_txtMonsterEXP(0) = ReadINIFilterEXP(sSectionName, "MobEXP", sFile, "0")
+If optMonsterFilter(0).Value = True Then Call optMonsterFilter_Click(0) 'push loaded by mob values into the fields
 
 'txtMonsterLairFilter(0).Text = Val(ReadINI(sSectionName, "MonLairFilterTXT0", sFile, 1)) '# in party
-txtMonsterLairFilter(1).Text = val(ReadINI(sSectionName, "MonLairFilterTXT1", sFile, 10)) 'ac
-txtMonsterLairFilter(2).Text = val(ReadINI(sSectionName, "MonLairFilterTXT2", sFile, 0)) 'dr
-txtMonsterLairFilter(3).Text = val(ReadINI(sSectionName, "MonLairFilterTXT3", sFile, 50)) 'mr
-txtMonsterLairFilter(4).Text = val(ReadINI(sSectionName, "MonLairFilterTXT4", sFile, 0)) 'dg
-txtMonsterLairFilter(5).Text = val(ReadINI(sSectionName, "MonLairFilterTXT5", sFile, 9999)) 'hp
-txtMonsterLairFilter(6).Text = val(ReadINI(sSectionName, "MonLairFilterTXT6", sFile, 0)) 'am
-txtMonsterLairFilter(7).Text = val(ReadINI(sSectionName, "MonLairFilterTXT7", sFile, 1)) 'rest
-txtMonsterLairFilter(8).Text = val(ReadINI(sSectionName, "MonLairFilterTXT8", sFile, 999)) 'acc
-txtMonsterLairFilter(9).Text = val(ReadINI(sSectionName, "MonLairFilterTXT9", sFile, 1)) 'swings
+txtMonsterLairFilter(1).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT1", sFile, 10, txtMonsterLairFilter(1)) 'ac
+txtMonsterLairFilter(2).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT2", sFile, 0, txtMonsterLairFilter(2)) 'dr
+txtMonsterLairFilter(3).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT3", sFile, 50, txtMonsterLairFilter(3)) 'mr
+txtMonsterLairFilter(4).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT4", sFile, 0, txtMonsterLairFilter(4)) 'dg
+txtMonsterLairFilter(5).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT5", sFile, 9999, txtMonsterLairFilter(5)) 'hp
+txtMonsterLairFilter(6).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT6", sFile, 0, txtMonsterLairFilter(6)) 'am
+txtMonsterLairFilter(7).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT7", sFile, 1, txtMonsterLairFilter(7)) 'rest
+txtMonsterLairFilter(8).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT8", sFile, 999, txtMonsterLairFilter(8)) 'acc
+txtMonsterLairFilter(9).Text = ReadINIFilterTxt(sSectionName, "MonLairFilterTXT9", sFile, 1, txtMonsterLairFilter(9)) 'swings
 
-filter_Monster_nArmourClass = val(ReadINI(sSectionName, "MonExtraFilterAC", sFile, 9999))
-filter_Monster_nDamageResist = val(ReadINI(sSectionName, "MonExtraFilterDR", sFile, 9999))
-filter_Monster_nMagicRes = val(ReadINI(sSectionName, "MonExtraFilterMR", sFile, 9999))
-filter_Monster_nBSDef = val(ReadINI(sSectionName, "MonExtraFilterBSDef", sFile, 9999))
-filter_Monster_nGameLimit = val(ReadINI(sSectionName, "MonExtraFilterGL", sFile, 9999))
-filter_Monster_nAvgLairExp = val(ReadINI(sSectionName, "MonExtraFilterLairExp", sFile, 0))
-filter_Monster_nAtkAccuracyMaj = val(ReadINI(sSectionName, "MonExtraFilterAccMaj", sFile, 9999))
-filter_Monster_nAtkAccuracyMax = val(ReadINI(sSectionName, "MonExtraFilterAccMax", sFile, 9999))
-filter_Monster_nNumLairs = val(ReadINI(sSectionName, "MonExtraFilterNumLairs", sFile, 0))
-filter_Monster_nNumMobsLTE = val(ReadINI(sSectionName, "MonExtraFilterMbLt", sFile, 9999))
-filter_Monster_nNumMobsGTE = val(ReadINI(sSectionName, "MonExtraFilterMbGt", sFile, 0))
-filter_Monster_nDodge = val(ReadINI(sSectionName, "MonExtraFilterDodge", sFile, 9999))
+filter_Monster_nArmourClass = ReadINIFilterNum(sSectionName, "MonExtraFilterAC", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nDamageResist = ReadINIFilterNum(sSectionName, "MonExtraFilterDR", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nMagicRes = ReadINIFilterNum(sSectionName, "MonExtraFilterMR", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nBSDef = ReadINIFilterNum(sSectionName, "MonExtraFilterBSDef", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nGameLimit = ReadINIFilterNum(sSectionName, "MonExtraFilterGL", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nAvgLairExp = ReadINIFilterNum(sSectionName, "MonExtraFilterLairExp", sFile, 0, -1E+15, 1E+15)
+filter_Monster_nAtkAccuracyMaj = ReadINIFilterNum(sSectionName, "MonExtraFilterAccMaj", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nAtkAccuracyMax = ReadINIFilterNum(sSectionName, "MonExtraFilterAccMax", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nNumLairs = ReadINIFilterNum(sSectionName, "MonExtraFilterNumLairs", sFile, 0, -2147483647, 2147483647)
+filter_Monster_nNumMobsLTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbLt", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_nNumMobsGTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbGt", sFile, 0, -2147483647, 2147483647)
+filter_Monster_nDodge = ReadINIFilterNum(sSectionName, "MonExtraFilterDodge", sFile, 9999, -2147483647, 2147483647)
 
 filter_Monster_bDropsCash = False
 filter_Monster_bDropsR = False
@@ -30572,6 +30612,52 @@ Call HandleError("LoadCharacter")
 Me.Enabled = True
 Resume out:
 End Sub
+
+Private Function ReadINIFilterNum(ByVal sSection As String, ByVal sKey As String, ByVal sFile As String, _
+    ByVal dDefault As Double, ByVal dMin As Double, ByVal dMax As Double) As Double
+'reads a numeric filter value, returning dDefault if it's not a usable number or is outside dMin..dMax
+Dim dValue As Double
+On Error GoTo bad_value:
+
+dValue = val(ReadINI(sSection, sKey, sFile, dDefault))
+If dValue < dMin Or dValue > dMax Then GoTo bad_value:
+ReadINIFilterNum = dValue
+Exit Function
+
+bad_value:
+ReadINIFilterNum = dDefault
+End Function
+
+Private Function ReadINIFilterTxt(ByVal sSection As String, ByVal sKey As String, ByVal sFile As String, _
+    ByVal dDefault As Double, oTextBox As TextBox) As Double
+'reads a numeric filter value for oTextBox, limited to what could be typed within its MaxLength
+Dim dMax As Double, dMin As Double
+
+If oTextBox.MaxLength > 0 And oTextBox.MaxLength < 15 Then
+    dMax = 10 ^ oTextBox.MaxLength - 1
+    dMin = -(10 ^ (oTextBox.MaxLength - 1) - 1) 'one character is taken by the minus sign
+Else
+    dMax = 2147483647
+    dMin = -2147483647
+End If
+ReadINIFilterTxt = ReadINIFilterNum(sSection, sKey, sFile, dDefault, dMin, dMax)
+End Function
+
+Private Function ReadINIFilterEXP(ByVal sSection As String, ByVal sKey As String, ByVal sFile As String, _
+    ByVal sDefault As String) As String
+'reads the exp filter as text (to keep a K/M suffix), returning sDefault if it's not usable
+Dim sValue As String
+On Error GoTo bad_value:
+
+sValue = Trim(ReadINI(sSection, sKey, sFile, sDefault))
+If Len(sValue) = 0 Or Len(sValue) > txtMonsterEXP.MaxLength Then GoTo bad_value:
+If val(sValue) < 0 Then GoTo bad_value: 'val also raises an overflow on garbage such as 9e999
+ReadINIFilterEXP = sValue
+Exit Function
+
+bad_value:
+ReadINIFilterEXP = sDefault
+End Function
 
 Private Sub ReloadMonsterCompare(sMonsterIDs As String)
 On Error GoTo error:
@@ -39454,6 +39540,13 @@ Call WriteINI(sSectionName, "MonDmgOUT", filter_txtDamageOut(1), sFile)
 Call WriteINI(sSectionName, "MonMagDmgOUT", filter_txtDmgOutMag(1), sFile)
 Call WriteINI(sSectionName, "MonPartyDmgOUT", filter_txtDamageOut(2), sFile)
 Call WriteINI(sSectionName, "MonPartyMagDmgOUT", filter_txtDmgOutMag(2), sFile)
+Call WriteINI(sSectionName, "MobRegenOpt", filter_cmbMonsterRegen(0), sFile)
+Call WriteINI(sSectionName, "MobRegenVal", filter_txtMonsterRegen(0), sFile)
+Call WriteINI(sSectionName, "MobMagicOpt", filter_chkMonMagic(0), sFile)
+Call WriteINI(sSectionName, "MobMagicVal", filter_txtMonMagic(0), sFile)
+Call WriteINI(sSectionName, "MobDamage", filter_txtMonsterDamage(0), sFile)
+Call WriteINI(sSectionName, "MobHP", filter_txtMonsterHP(0), sFile)
+Call WriteINI(sSectionName, "MobEXP", filter_txtMonsterEXP(0), sFile)
 
 For x = 0 To 9
     Call WriteINI(sSectionName, "MonLairFilterTXT" & x, txtMonsterLairFilter(x).Text, sFile)
@@ -40417,12 +40510,12 @@ Next
 If nNMRVer >= 1.83 Then
     optMonsterFilter(0).Caption = "By Mob"
     optMonsterFilter(1).Caption = "By Lair"
-    optMonsterFilter(0).ToolTipText = "Filter by individual mob stats - NOT saved between sessions"
+    optMonsterFilter(0).ToolTipText = "Filter by individual mob stats - saved to the character file"
     optMonsterFilter(1).ToolTipText = "Filter by overall lair values - saved to the character file"
 Else
     optMonsterFilter(0).Caption = "Temp"
     optMonsterFilter(1).Caption = "Saved"
-    optMonsterFilter(0).ToolTipText = "NOT saved between sessions"
+    optMonsterFilter(0).ToolTipText = "Filters saved to the character file (independent of Saved)"
     optMonsterFilter(1).ToolTipText = "Filters saved to the character file"
 End If
 
@@ -41797,6 +41890,7 @@ If optMonsterFilter(1).Value = True Then
     If txtMonMagic.Text <> filter_txtMonMagic(1) And bCharLoaded Then bPromptSave = True
     filter_txtMonMagic(1) = val(txtMonMagic.Text)
 Else
+    If txtMonMagic.Text <> filter_txtMonMagic(0) And bCharLoaded Then bPromptSave = True
     filter_txtMonMagic(0) = val(txtMonMagic.Text)
 End If
 End Sub
@@ -41825,6 +41919,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
         End If
     End If
 Else
+    If txtMonsterDamage.Text <> filter_txtMonsterDamage(0) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterDamage(0) = val(txtMonsterDamage.Text)
 End If
 tLastAvgLairInfo = GetLairInfo("") 'reset
@@ -41917,6 +42012,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
         End If
     End If
 Else
+    If txtMonsterEXP.Text <> filter_txtMonsterEXP(0) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterEXP(0) = txtMonsterEXP.Text
 End If
 End Sub
@@ -41968,6 +42064,7 @@ If optMonsterFilter(1).Value = True Then 'lair/saved
         End If
     End If
 Else
+    If txtMonsterHP.Text <> filter_txtMonsterHP(0) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterHP(0) = val(txtMonsterHP.Text)
 End If
 tLastAvgLairInfo = GetLairInfo("") 'reset
@@ -42059,6 +42156,7 @@ If optMonsterFilter(1).Value = True Then
     If txtMonsterRegen.Text <> filter_txtMonsterRegen(1) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterRegen(1) = val(txtMonsterRegen.Text)
 Else
+    If txtMonsterRegen.Text <> filter_txtMonsterRegen(0) And bCharLoaded Then bPromptSave = True
     filter_txtMonsterRegen(0) = val(txtMonsterRegen.Text)
 End If
 End Sub

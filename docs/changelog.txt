@@ -1,5 +1,6 @@
 v2.3.5 (10/##/2026)  
 ------------------------------------------------------------------------------------  
+- UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
