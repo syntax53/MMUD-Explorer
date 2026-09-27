@@ -3329,7 +3329,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                                 nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, nCalcElementalResist(0), nCalcElementalResist(1), _
                                 nCalcElementalResist(2), nCalcElementalResist(3), nCalcElementalResist(5))
                 
-                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nCalcSpellImmuLVL)) Then
+                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel >= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel >= nCalcSpellImmuLVL)) Then
                     If eAttackFlags = AR000_Unknown Then
                         If SpellSeek(nGlobalAttackSpellNum) Then
                             For x = 0 To 9
@@ -3370,7 +3370,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nDamageOut = 0
                     nFirstRoundDamageOut = 0
                     nMinDamageOut = 0
-                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
+                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel < nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel < nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
                     If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
                     If ((eAttackFlags And AR108_Living) <> 0 And (DF_Flags And DF109_IsLiving) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotLiving", "+")
@@ -3894,12 +3894,12 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     If tAvgLairInfo.nSpellImmuLVL + tAvgLairInfo.nMaxSpellImmuLVL > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective SpellImmu"
-        sTemp = tAvgLairInfo.nSpellImmuLVL & " (immune to spells <= level " & tAvgLairInfo.nSpellImmuLVL & ")"
+        sTemp = tAvgLairInfo.nSpellImmuLVL & " (immune to spells < level " & tAvgLairInfo.nSpellImmuLVL & ")"
         If tAvgLairInfo.nMaxSpellImmuLVL > tAvgLairInfo.nSpellImmuLVL Then sTemp = sTemp & " - Max SpellImmu in lairs: " & tAvgLairInfo.nMaxSpellImmuLVL
         oLI.ListSubItems.Add (1), "Detail", sTemp
         
         If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Then
+            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel < tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel < tAvgLairInfo.nMaxSpellImmuLVL) Then
                 oLI.ForeColor = TColor(RGB(204, 0, 0))
                 oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
@@ -5258,7 +5258,7 @@ Select Case nGlobalAttackTypeMME
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
                             nVSrcol, nVSrfir, nVSrsto, nVSrlit, nVSrwat)
             
-            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nSpellImmuLVL)) Then
+            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel >= nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel >= nSpellImmuLVL)) Then
                 If eAttackFlags = AR000_Unknown Then
                     If SpellSeek(nGlobalAttackSpellNum) Then
                         For x = 0 To 9
