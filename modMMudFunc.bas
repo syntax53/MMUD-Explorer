@@ -1730,8 +1730,10 @@ If nPreRollMinModifier > 1 Then nDmgMin = Fix(nDmgMin * nPreRollMinModifier)
 If nPreRollMaxModifier > 1 Then nDmgMax = Fix(nDmgMax * nPreRollMaxModifier)
 
 If nCritChance > 0 Then
-    nMinCrit = nDmgMax * 2
-    nMaxCrit = nDmgMax * 4
+    nTemp = nDmgMax
+    If bGreaterMUD Then nTemp = Fix(nDmgMax * nDamageMultiplierMax) 'kick/jk multiplier applies to crits too
+    nMinCrit = nTemp * 2
+    nMaxCrit = nTemp * 4
     If nMinCrit > nMaxCrit Then nMaxCrit = nMinCrit
     nAvgCrit = Round((nMinCrit + nMaxCrit) / 2) - nVSDR
     nMinCrit = nMinCrit - nVSDR
