@@ -44798,8 +44798,9 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sLairInfo = sLairInfo & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         
         nDmg = GetPreCalculatedMonsterDamage(0, sDmgVS)
-        If tLairInfo.nAvgDmgLair <> 0 Then
-            sLairInfo = sLairInfo & vbCrLf & "Dmg " & sDmgVS & ": " & tLairInfo.nAvgDmgLair & "/clear"
+        If tLairInfo.nAvgDmgClearRound <> 0 Then
+            sLairInfo = sLairInfo & vbCrLf & "Dmg " & sDmgVS & ": " & PutCommas(Round(tLairInfo.nAvgDmgClearRound)) & "/round"
+            If tLairInfo.nAvgDmgClear > 0 Then sLairInfo = sLairInfo & ", " & PutCommas(Round(tLairInfo.nAvgDmgClear)) & "/clear"
         End If
         
 '        If tLairInfo.nDamageMitigated <> 0 Then

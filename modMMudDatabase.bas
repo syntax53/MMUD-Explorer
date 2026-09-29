@@ -138,7 +138,9 @@ Public Type LairInfoType
     nSurpriseChance As Integer
     nPossSpawns As Long
     sGlobalAttackConfig As String
-    nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
+    nAvgDmgLair As Currency 'exp/hr model input: AvgDmg * nRTK / avgAlive (not a true per-round value; display uses nAvgDmgClearRound)
+    nAvgDmgClearRound As Currency 'display: avg dmg/round taken over a full clear, as mobs die off one at a time
+    nAvgDmgClear As Currency 'display: avg total dmg taken over a full clear, before any healing (0 = can't clear)
     nRTK As Double 'rounds to kill each mob
     nRTC As Double 'rounds to clear the lair
     nMagicLVL As Integer
@@ -169,6 +171,7 @@ Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tm
 Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Double, tmp_nSurpriseChance As Double
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
+Dim tmp_nAvgDmgClearRound As Double, tmp_nAvgDmgClear As Double, nClearLairs As Long
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double, tmp_nFirstDmgOut As Double
 Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer, tmp_nSurpriseMinDMG As Currency
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut As tDamageOutput
@@ -216,6 +219,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
                 tmp_nAvgDmg = tmp_nAvgDmg + tLairInfo.nAvgDmg
                 tmp_nAvgDmgLair = tmp_nAvgDmgLair + tLairInfo.nAvgDmgLair
+                tmp_nAvgDmgClearRound = tmp_nAvgDmgClearRound + tLairInfo.nAvgDmgClearRound
+                If tLairInfo.nAvgDmgClear > 0 Then
+                    tmp_nAvgDmgClear = tmp_nAvgDmgClear + tLairInfo.nAvgDmgClear
+                    nClearLairs = nClearLairs + 1
+                End If
                 tmp_nRTC = tmp_nRTC + tLairInfo.nRTC
                 tmp_nRTK = tmp_nRTK + tLairInfo.nRTK
                 tmp_nAvgAC = tmp_nAvgAC + tLairInfo.nAvgAC
@@ -261,6 +269,8 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     '---------------------------
     GetLairAveragesFromLocs.nAvgDmg = Round(tmp_nAvgDmg / nLairs)
     GetLairAveragesFromLocs.nAvgDmgLair = Round(tmp_nAvgDmgLair / nLairs)
+    GetLairAveragesFromLocs.nAvgDmgClearRound = Round(tmp_nAvgDmgClearRound / nLairs)
+    If nClearLairs > 0 Then GetLairAveragesFromLocs.nAvgDmgClear = Round(tmp_nAvgDmgClear / nClearLairs)
     GetLairAveragesFromLocs.nRTC = Round(tmp_nRTC / nLairs, 1)
     GetLairAveragesFromLocs.nRTK = Round(tmp_nRTK / nLairs, 1)
     GetLairAveragesFromLocs.nAvgExp = Round(tmp_nAvgExp / nLairs)
@@ -583,7 +593,7 @@ End Function
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
-Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
+Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean, nMobCount As Double
 Dim nDmgOut As tDamageOutput, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
 Dim nMinRoundDamageOut As Long, nSurpriseChance As Integer, nSurpriseMinDamageOut As Long
@@ -760,6 +770,18 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
         GetLairInfo.nRTC = nRTC
     Else
         GetLairInfo.nRTC = 0
+    End If
+
+    'display-only damage taken (nAvgDmgLair above is the exp/hr model input and has nRTK baked in).
+    'mobs die one at a time while every living mob attacks, so the k-th mob killed attacks for k * nRTK rounds:
+    'clear total = AvgDmg * nRTK * N(N+1)/2 over nRTC (nRTK * N) rounds = AvgDmg * (N+1)/2 per round
+    nMobCount = GetLairInfo.nMaxRegen
+    If nMobCount < 1 Then nMobCount = 1
+    If GetLairInfo.nRTC > 0 Then
+        GetLairInfo.nAvgDmgClearRound = Round(GetLairInfo.nAvgDmg * (nMobCount + 1) / 2, 1)
+        GetLairInfo.nAvgDmgClear = Round(GetLairInfo.nAvgDmg * GetLairInfo.nRTK * nMobCount * (nMobCount + 1) / 2, 1)
+    Else 'can't kill: every mob keeps attacking
+        GetLairInfo.nAvgDmgClearRound = Round(GetLairInfo.nAvgDmg * nMobCount, 1)
     End If
 End If
 

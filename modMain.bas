@@ -3780,10 +3780,12 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nRTK & " RTK/mob, " & tAvgLairInfo.nRTC & " RTC/lair"
     End If
     
-    If tAvgLairInfo.nRTC > 1 Or tAvgLairInfo.nAvgDmg <> tAvgLairInfo.nAvgDmgLair Then
+    If tAvgLairInfo.nRTC > 1 Or tAvgLairInfo.nAvgDmg <> tAvgLairInfo.nAvgDmgClearRound Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG DMG/clear"
-        oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmgLair) & "/round, " & PutCommas(Round(tAvgLairInfo.nAvgDmgLair * tAvgLairInfo.nRTC)) & "/clear (average damage taken, before any healing)"
+        sTemp = PutCommas(tAvgLairInfo.nAvgDmgClearRound) & "/round"
+        If tAvgLairInfo.nAvgDmgClear > 0 Then sTemp = sTemp & ", " & PutCommas(tAvgLairInfo.nAvgDmgClear) & "/clear"
+        oLI.ListSubItems.Add (1), "Detail", sTemp & " (average damage taken, before any healing)"
     End If
     
     If tAvgLairInfo.nAvgDelay > 0 And tAvgLairInfo.nMaxRegen > 0 Then
