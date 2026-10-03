@@ -12,6 +12,7 @@ v2.3.5 (10/##/2026)
 - FIX: Mob SpellImmu for spells of equal level (was only working if spell was > SpellImmu value)  
 - FIX: Lair damage per round/clear formula updated  
 - FIX: Map tooltip showed a per-round lair damage value labeled as per-clear  
+- FIX: Map's "Find room with Exits" window broken after setting attack (frame visibility issue)  
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
 
 v2.3.4 (09/06/2026)  

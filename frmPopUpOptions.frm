@@ -26,7 +26,6 @@ Begin VB.Form frmPopUpOptions
       Top             =   60
    End
    Begin VB.CommandButton cmdPaste 
-      Style           =   1  'Graphical
       Caption         =   "&Paste from Clipboard"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -39,13 +38,13 @@ Begin VB.Form frmPopUpOptions
       EndProperty
       Height          =   315
       Left            =   3000
+      Style           =   1  'Graphical
       TabIndex        =   1
       Top             =   0
       Visible         =   0   'False
       Width           =   2535
    End
    Begin VB.CommandButton cmdCancel 
-      Style           =   1  'Graphical
       Cancel          =   -1  'True
       Caption         =   "&Cancel"
       BeginProperty Font 
@@ -59,12 +58,12 @@ Begin VB.Form frmPopUpOptions
       EndProperty
       Height          =   315
       Left            =   7020
+      Style           =   1  'Graphical
       TabIndex        =   2
       Top             =   0
       Width           =   1515
    End
    Begin VB.CommandButton cmdContinue 
-      Style           =   1  'Graphical
       Caption         =   "Co&ntinue"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -77,6 +76,7 @@ Begin VB.Form frmPopUpOptions
       EndProperty
       Height          =   315
       Left            =   60
+      Style           =   1  'Graphical
       TabIndex        =   0
       Top             =   0
       Width           =   1575
@@ -112,17 +112,16 @@ Begin VB.Form frmPopUpOptions
             Width           =   2835
          End
          Begin VB.CommandButton cmdHelp 
-            Style           =   1  'Graphical
             Caption         =   "?"
             Height          =   315
             Index           =   3
             Left            =   2580
+            Style           =   1  'Graphical
             TabIndex        =   72
             Top             =   3840
             Width           =   315
          End
          Begin VB.CommandButton cmdHealRoundsMod 
-            Style           =   1  'Graphical
             Caption         =   "+"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -136,12 +135,12 @@ Begin VB.Form frmPopUpOptions
             Height          =   315
             Index           =   1
             Left            =   6780
+            Style           =   1  'Graphical
             TabIndex        =   57
             Top             =   2760
             Width           =   315
          End
          Begin VB.CommandButton cmdHealRoundsMod 
-            Style           =   1  'Graphical
             Caption         =   "-"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -155,12 +154,12 @@ Begin VB.Form frmPopUpOptions
             Height          =   315
             Index           =   0
             Left            =   5760
+            Style           =   1  'Graphical
             TabIndex        =   55
             Top             =   2760
             Width           =   315
          End
          Begin VB.CommandButton cmdHelp 
-            Style           =   1  'Graphical
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -174,6 +173,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   375
             Index           =   1
             Left            =   7440
+            Style           =   1  'Graphical
             TabIndex        =   58
             Top             =   120
             Width           =   375
@@ -523,11 +523,11 @@ Begin VB.Form frmPopUpOptions
             Width           =   615
          End
          Begin VB.CommandButton cmdHelp 
-            Style           =   1  'Graphical
             Caption         =   "?"
             Height          =   315
             Index           =   2
             Left            =   2220
+            Style           =   1  'Graphical
             TabIndex        =   71
             Top             =   3900
             Width           =   315
@@ -552,7 +552,6 @@ Begin VB.Form frmPopUpOptions
             Width           =   1275
          End
          Begin VB.CommandButton cmdHelp 
-            Style           =   1  'Graphical
             Caption         =   "?"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
@@ -566,6 +565,7 @@ Begin VB.Form frmPopUpOptions
             Height          =   375
             Index           =   0
             Left            =   7560
+            Style           =   1  'Graphical
             TabIndex        =   70
             Top             =   120
             Width           =   375
@@ -1634,6 +1634,7 @@ On Error GoTo error:
 Dim x As Integer
 
 fraChooseAttack.Visible = False
+fraChooseHealing.Visible = False
 
 For x = 0 To cmdRoomFindDir.count - 1
     cmdRoomFindDir(x).BackColor = TBtnColor(&H8000000F)
