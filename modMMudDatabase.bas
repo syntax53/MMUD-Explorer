@@ -5720,12 +5720,14 @@ On Error GoTo ReturnFalse
 ReturnFalse:
 End Function
 
-Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom As Long, Optional ByVal nFindMap As Long, Optional ByVal bStrict As Boolean) As Boolean
+Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom As Long, Optional ByVal nFindMap As Long, Optional ByVal bStrict As Boolean, _
+    Optional ByVal nNest As Integer) As Boolean
 'bStrict true == nFindMap should be > 0 and map MUST match. a missing map specified will result in false.
 'bStrict false == only room must match. however, if nFindMap is specified and the textblock does specify the map and it doesn't match, then result = false
+'"random <textblock>" commands are followed (nNest tracks the depth) since the teleport often sits in the random textblock (e.g. 15/1112 "touch ruby" -> random 4013)
 On Error GoTo error:
 Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
-Dim x As Integer, y As Integer
+Dim x As Integer, y As Integer, nRandomTB As Long
 
 If nTextblock <= 0 Then Exit Function
 
@@ -5744,6 +5746,21 @@ Do While nDataPos < Len(sData)
     If x = 0 Then x = Len(sData) + 1
     sLine = mid(sData, nDataPos, x - nDataPos)
     nDataPos = x + 1
+    
+    'sData is a local copy, so recursing (which re-seeks tabTBInfo) is safe here. the depth cap also stops reference loops.
+    If nNest < 5 Then
+        x = InStr(1, sLine, "random ")
+        Do While x > 0
+            nRandomTB = ExtractValueFromString(mid(sLine, x), "random ")
+            If nRandomTB > 0 And nRandomTB <> nTextblock Then
+                If TextBlockHasTeleport(nRandomTB, nFindRoom, nFindMap, bStrict, nNest + 1) Then
+                    TextBlockHasTeleport = True
+                    Exit Function
+                End If
+            End If
+            x = InStr(x + 1, sLine, "random ")
+        Loop
+    End If
     
     x = InStr(1, sLine, "teleport ")
     If x > 0 Then
