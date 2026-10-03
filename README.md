@@ -10,8 +10,9 @@ v2.3.5 (10/##/2026)
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
 - FIX: Mob SpellImmu for spells of equal level (was only working if spell was > SpellImmu value)  
-- FIX: Lair damage per round/clear formula updated
+- FIX: Lair damage per round/clear formula updated  
 - FIX: Map tooltip showed a per-round lair damage value labeled as per-clear  
+- FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
 
 v2.3.4 (09/06/2026)  
 ------------------------------------------  
