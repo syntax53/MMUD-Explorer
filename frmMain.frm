@@ -19668,7 +19668,7 @@ End Sub
 
 Private Sub cmbGlobalAlignment_Click()
 'GreaterMUD: vile ward only counts when the alignment is Evil, so this changes the character's defenses
-If bStartup Or Not bGreaterMUD Then Exit Sub
+If bStartup Or bDontRefresh Or Not bGreaterMUD Then Exit Sub
 Call SetCharDefenseDescription
 If FormIsLoaded("frmMonsterAttackSim") Then frmMonsterAttackSim.txtVileWard.Text = GetCharActiveVileWard()
 If FormIsLoaded("frmHitCalc") Then Call frmHitCalc.SetHitCalcVals(True, False)
@@ -21531,6 +21531,7 @@ Else
     'txtWeaponExtras(0).Text = 999
     
     Call ResetFilterOptions(, , , True)
+    Call cmbGlobalAlignment_Click 'vile ward only counts while the filter is on; refresh its consumers
     
 '    For x = 0 To 6
 '        chkArmourType(x).Enabled = True
@@ -38938,6 +38939,7 @@ For x = 0 To 9
                             nVal = tabSpells.Fields("AbilVal-" & y)
                             If nVal = 0 Then nVal = nAvgCast
                             If tabSpells.Fields("Abil-" & y) = 7 Then nVal = Round(nVal / 10, 1) 'dr
+                            If bGreaterMUD And tabSpells.Fields("Abil-" & y) = 1113 Then nGlobalCharVileWard = nGlobalCharVileWard + nVal 'vile ward bless (no stat slot)
                             
                             tStatIndex = GetAbilityStatSlot(tabSpells.Fields("Abil-" & y), nVal)
                             If Not tabSpells.Fields("Number") = cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) Then

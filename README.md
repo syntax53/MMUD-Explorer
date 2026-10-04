@@ -6,7 +6,7 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v2.3.5 (10/##/2026)  
 ------------------------------------------  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
-- UP: GreaterMUD: Vile Ward from equipment is now included vs evil monsters (hit calculator + monster attack sim) when the Evil alignment is selected  
+- UP: GreaterMUD: Vile Ward from equipment and bless spells is now included vs evil monsters (hit calculator + monster attack sim) when the character filter is on and the Evil alignment is selected  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps (99% for silk/ninja/leather classes)  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  

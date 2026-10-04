@@ -553,12 +553,26 @@ Call HandleError("RefreshCombatHealingValues")
 Resume out:
 End Sub
 
-'GreaterMUD: vile ward only counts when the character's alignment is set to Evil (and then in full)
+'GreaterMUD: is the character configured as evil-aligned? (global filter on + alignment combo set to Evil)
+Public Function bCharIsEvilAligned() As Boolean
+On Error GoTo error:
+
+If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalAlignment.ListIndex = 3 Then bCharIsEvilAligned = True
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("bCharIsEvilAligned")
+Resume out:
+End Function
+
+'GreaterMUD: vile ward only counts when the character is evil-aligned (and then in full)
 Public Function GetCharActiveVileWard() As Long
 On Error GoTo error:
 
 If Not bGreaterMUD Then Exit Function
-If frmMain.cmbGlobalAlignment.ListIndex = 3 Then GetCharActiveVileWard = nGlobalCharVileWard
+If bCharIsEvilAligned() Then GetCharActiveVileWard = nGlobalCharVileWard
 
 out:
 On Error Resume Next

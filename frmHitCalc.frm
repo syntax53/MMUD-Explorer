@@ -1270,7 +1270,7 @@ ElseIf bVSchar And Not bMonsterOnly Then
         chkShadow.Value = 0
     End If
     
-    If bGreaterMUD And frmMain.cmbGlobalAlignment.ListIndex = 3 Then 'evil alignment: vile ward applies in full
+    If bGreaterMUD And bCharIsEvilAligned() Then 'evil alignment: vile ward applies in full
         cmbEvil.ListIndex = 2
     Else
         cmbEvil.ListIndex = 0
