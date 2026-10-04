@@ -1039,7 +1039,6 @@ Begin VB.Form frmMonsterAttackSim
       Width           =   3435
    End
    Begin VB.CommandButton cmdRunSim 
-      Style           =   1  'Graphical
       Caption         =   "Run Simulator"
       Default         =   -1  'True
       BeginProperty Font 
@@ -1053,6 +1052,7 @@ Begin VB.Form frmMonsterAttackSim
       EndProperty
       Height          =   555
       Left            =   11520
+      Style           =   1  'Graphical
       TabIndex        =   64
       Top             =   5100
       Width           =   3075
@@ -1064,6 +1064,35 @@ Begin VB.Form frmMonsterAttackSim
       TabIndex        =   42
       Top             =   4620
       Width           =   6435
+      Begin VB.TextBox txtVileWard 
+         Alignment       =   2  'Center
+         BeginProperty DataFormat 
+            Type            =   0
+            Format          =   "M/dd/yy"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   1033
+            SubFormatType   =   0
+         EndProperty
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   9.75
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   5400
+         MaxLength       =   4
+         TabIndex        =   77
+         Text            =   "0"
+         ToolTipText     =   "If > 0, full value for it is assumed"
+         Top             =   480
+         Width           =   795
+      End
       Begin VB.TextBox txtProtEvil 
          Alignment       =   2  'Center
          BeginProperty DataFormat 
@@ -1093,10 +1122,10 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   795
       End
       Begin VB.CommandButton cmdAlwaysDodgeQ 
-         Style           =   1  'Graphical
          Caption         =   "?"
          Height          =   315
          Left            =   3960
+         Style           =   1  'Graphical
          TabIndex        =   53
          Top             =   480
          Width           =   255
@@ -1255,7 +1284,6 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   1215
       End
       Begin VB.CommandButton cmdResetUserDefs 
-         Style           =   1  'Graphical
          Caption         =   "Reload"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -1269,12 +1297,12 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   1
          Left            =   4380
+         Style           =   1  'Graphical
          TabIndex        =   43
          Top             =   0
          Width           =   855
       End
       Begin VB.CommandButton cmdResetUserDefs 
-         Style           =   1  'Graphical
          Caption         =   "Reset"
          BeginProperty Font 
             Name            =   "Small Fonts"
@@ -1288,6 +1316,7 @@ Begin VB.Form frmMonsterAttackSim
          Height          =   195
          Index           =   0
          Left            =   5340
+         Style           =   1  'Graphical
          TabIndex        =   44
          Top             =   0
          Width           =   855
@@ -1409,13 +1438,32 @@ Begin VB.Form frmMonsterAttackSim
          Width           =   735
       End
       Begin VB.CommandButton cmdMRNote 
-         Style           =   1  'Graphical
          Caption         =   "!"
          Height          =   315
          Left            =   5160
+         Style           =   1  'Graphical
          TabIndex        =   60
          Top             =   1140
          Width           =   255
+      End
+      Begin VB.Label lblVileWard 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         Caption         =   "Vile Ward"
+         BeginProperty Font 
+            Name            =   "MS Sans Serif"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   5340
+         TabIndex        =   78
+         Top             =   240
+         Width           =   840
       End
       Begin VB.Label Label1 
          Alignment       =   2  'Center
@@ -1760,17 +1808,14 @@ If Index = 0 Then
     txtUserMR.Text = 50
     chkUserAntiMagic.Value = 0
     txtProtEvil.Text = 0
+    txtVileWard.Text = 0
     txtElementalResist(0).Text = 0
     txtElementalResist(1).Text = 0
     txtElementalResist(2).Text = 0
     txtElementalResist(3).Text = 0
     txtElementalResist(5).Text = 0
 Else
-    If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
-        nParty = val(frmMain.txtMonsterLairFilter(0).Text)
-    End If
-    If nParty < 1 Then nParty = 1
-    If nParty > 6 Then nParty = 6
+    nParty = GetPartySize()
     
     If nParty = 1 Then
         Call SetFrameCaption(fraChar, "Character Defenses")
@@ -1785,6 +1830,7 @@ Else
         txtElementalResist(3).Text = frmMain.lblInvenCharStat(29).Tag 'lit
         txtElementalResist(5).Text = frmMain.lblInvenCharStat(26).Tag 'wat
         txtProtEvil.Text = val(frmMain.lblInvenCharStat(20).Tag)
+        txtVileWard.Text = GetCharActiveVileWard() 'gmud, evil alignment only
     Else
         Call SetFrameCaption(fraChar, "PARTY Defenses")
         'txtMonsterLairFilter... 0-#, 1-ac, 2-dr, 3-mr, 4-dodge, 5-HP, 6-#antimag, 7-hpregen, 8-accy
@@ -1799,6 +1845,7 @@ Else
         txtElementalResist(3).Text = 0
         txtElementalResist(5).Text = 0
         txtProtEvil.Text = 0
+        txtVileWard.Text = 0
     End If
 End If
 
@@ -1810,9 +1857,18 @@ Call HandleError("cmdResetUserDefs_Click")
 Resume out:
 End Sub
 
+'party size the main window is configured for (1 = character)
+Private Function GetPartySize() As Integer
+If frmMain.optMonsterFilter(1).Value = True And val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then
+    GetPartySize = val(frmMain.txtMonsterLairFilter(0).Text)
+End If
+If GetPartySize < 1 Then GetPartySize = 1
+If GetPartySize > 6 Then GetPartySize = 6
+End Function
+
 Private Sub cmdRunSim_Click()
 On Error GoTo error:
-Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, x As Integer
+Dim clsMonAtkSimThisForm As New clsMonsterAttackSim, x As Integer, nClass As Long
 
 Me.Enabled = False
 
@@ -1831,11 +1887,15 @@ clsMonAtkSimThisForm.nNumberOfRounds = val(txtNumRounds.Text)
 clsMonAtkSimThisForm.nUserMR = 50
 clsMonAtkSimThisForm.bGreaterMUD = bGreaterMUD
 
-clsMonAtkSimThisForm.HIT_MIN = GetHitMin 'add class here at some point?
+'class-based caps (gmud only): the main window's class, unless it's configured for a party
+If GetPartySize() = 1 And frmMain.cmbGlobalClass(0).ListIndex > 0 Then
+    nClass = frmMain.cmbGlobalClass(0).ItemData(frmMain.cmbGlobalClass(0).ListIndex)
+End If
+clsMonAtkSimThisForm.HIT_MIN = GetHitMin(nClass)
 clsMonAtkSimThisForm.HIT_CAP = GetHitCap
 clsMonAtkSimThisForm.SPELL_HIT_CAP = GetSpellHitCap
-clsMonAtkSimThisForm.DODGE_SOFTCAP = GetDodgeCap(0, True) 'add class here at some point?
-clsMonAtkSimThisForm.DODGE_CAP = GetDodgeCap() 'add class here at some point?
+clsMonAtkSimThisForm.DODGE_SOFTCAP = GetDodgeCap(nClass, True)
+clsMonAtkSimThisForm.DODGE_CAP = GetDodgeCap(nClass)
 
 clsMonAtkSimThisForm.bDynamicCalc = IIf(chkDynamicRounds.Value = 1, True, False)
 clsMonAtkSimThisForm.nDynamicCalcDifference = 0.0001
@@ -1847,6 +1907,7 @@ If val(txtUserDR.Text) > 0 Then clsMonAtkSimThisForm.nUserDR = val(txtUserDR.Tex
 If val(txtUserDodge.Text) > 0 Then clsMonAtkSimThisForm.nUserDodge = val(txtUserDodge.Text)
 If val(txtUserMR.Text) > 0 Then clsMonAtkSimThisForm.nUserMR = val(txtUserMR.Text)
 If val(txtProtEvil.Text) > 0 Then clsMonAtkSimThisForm.nUserProtEvil = val(txtProtEvil.Text)
+If bGreaterMUD And val(txtVileWard.Text) > 0 Then clsMonAtkSimThisForm.nUserVileWard = val(txtVileWard.Text)
 
 If val(txtElementalResist(0).Text) > 0 Then clsMonAtkSimThisForm.nUserRCOL = val(txtElementalResist(0).Text)
 If val(txtElementalResist(1).Text) > 0 Then clsMonAtkSimThisForm.nUserRFIR = val(txtElementalResist(1).Text)
@@ -1956,6 +2017,9 @@ timWindowMove.Enabled = True
 
 chkUserAntiMagic.Caption = "Anti-" & vbCrLf & "Magic"
 
+txtVileWard.Visible = bGreaterMUD 'vile ward is GreaterMUD-only
+lblVileWard.Visible = bGreaterMUD
+
 Call cmdResetUserDefs_Click(1)
 
 out:
@@ -2056,6 +2120,14 @@ Call SelectAll(txtProtEvil)
 End Sub
 
 Private Sub txtProtEvil_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtVileWard_GotFocus()
+Call SelectAll(txtVileWard)
+End Sub
+
+Private Sub txtVileWard_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 

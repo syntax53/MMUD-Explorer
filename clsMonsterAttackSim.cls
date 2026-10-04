@@ -52,6 +52,7 @@ Private m_nUserAntiMagic As Integer
 Private m_bDodgeBeforeAC As Boolean
 Private m_nUserProtEvil As Long
 Private m_bMobIsEvil As Boolean
+Private m_nUserVileWard As Long
 
 Private m_nUserRFIR As Long
 Private m_nUserRCOL As Long
@@ -486,7 +487,7 @@ Dim nRoll_AttackChance As Integer, nRoll_HitChance As Integer, nRoll_DodgeChance
 Dim nDamage As Currency, nHitSpellDamage As Currency, nRoundDamage As Long, nOriginalDamage As Currency
 Dim bSepShown As Boolean, bDurSpellApplied As Boolean, bNothingToSim As Boolean
 Dim nCurrentAverageDamage As Currency, nDifference As Currency, nDynamicRoundCount As Long
-Dim sMaxRoundCombatLog As String, sHitSpellName As String, nAccTemp As Double
+Dim sMaxRoundCombatLog As String, sHitSpellName As String, nAccTemp As Double, nUserDefense As Long
 
 Randomize
 If m_bDynamicCalc Then m_nNumberOfRounds = 100000
@@ -506,6 +507,14 @@ If m_HIT_CAP < 0 Then m_HIT_CAP = 0: If m_HIT_CAP > 100 Then m_HIT_CAP = 100
 If m_SPELL_HIT_CAP < 0 Then m_SPELL_HIT_CAP = 0: If m_SPELL_HIT_CAP > 100 Then m_SPELL_HIT_CAP = 100
 If m_DODGE_SOFTCAP < 0 Then m_DODGE_SOFTCAP = 0: If m_DODGE_SOFTCAP > 100 Then m_DODGE_SOFTCAP = 100
 If m_DODGE_CAP < 0 Then m_DODGE_CAP = 0: If m_DODGE_CAP > 100 Then m_DODGE_CAP = 100
+
+'defense vs physical attacks. secondary defenses only count vs evil monsters (GreaterMUD engine: Mob.DoCombat).
+'vile ward is GreaterMUD-only and in tenths like item AC (50 = 5 AC).
+nUserDefense = m_nUserAC
+If m_bMobIsEvil Then
+    nUserDefense = nUserDefense + m_nUserProtEvil
+    If m_bGreaterMUD And m_nUserVileWard > 0 Then nUserDefense = nUserDefense + (m_nUserVileWard \ 10)
+End If
 
 Call ResetActiveSpells
 
@@ -648,10 +657,10 @@ For nRound = 1 To m_nNumberOfRounds
                     ' CHANCE TO HIT / CAST
                     nAttack_AdjSuccessChance = m_nAtkSuccess(nAttack)
                     If m_nAtkType(nAttack) <> 2 Then 'not spell
-                        If m_nUserAC + m_nUserProtEvil > 0 Then
+                        If nUserDefense > 0 Then
                             '=((AC*AC)/100)/((ACCY*ACCY)/140)=fail %
                             If nAttack_AdjSuccessChance <> 0 Then
-                                nAttack_AdjSuccessChance = Round(1 - ((((m_nUserAC + m_nUserProtEvil) * (m_nUserAC + m_nUserProtEvil)) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
+                                nAttack_AdjSuccessChance = Round(1 - (((nUserDefense * nUserDefense) / 100) / ((nAttack_AdjSuccessChance * nAttack_AdjSuccessChance) / 140)), 2) * 100
                             Else
                                 nAttack_AdjSuccessChance = 0
                             End If
@@ -1314,6 +1323,7 @@ m_nUserAntiMagic = 0
 m_bDodgeBeforeAC = False
 m_nUserProtEvil = 0
 m_bMobIsEvil = True
+m_nUserVileWard = 0
 
 m_nUserRFIR = 0
 m_nUserRCOL = 0
@@ -1462,6 +1472,15 @@ End Property
 
 Public Property Get bMobIsEvil() As Boolean
     bMobIsEvil = m_bMobIsEvil
+End Property
+
+'GreaterMUD only: raw vile ward (tenths like item AC, 50 = 5 AC); applied in full vs evil monsters
+Public Property Let nUserVileWard(ByVal vData As Long)
+    m_nUserVileWard = vData
+End Property
+
+Public Property Get nUserVileWard() As Long
+    nUserVileWard = m_nUserVileWard
 End Property
 
 Public Property Let nUserDodge(ByVal vData As Long)
@@ -1686,6 +1705,7 @@ m_HIT_CAP = 99
 m_SPELL_HIT_CAP = 98
 m_DODGE_CAP = 95
 m_DODGE_SOFTCAP = 0
+m_bMobIsEvil = True
 Randomize
 End Sub
 

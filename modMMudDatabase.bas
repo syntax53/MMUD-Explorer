@@ -5479,8 +5479,12 @@ nAccyArr(0) = 22
 nAccyArr(1) = 105
 nAccyArr(2) = 106
 
-nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
-nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
+'GreaterMUD/Paramud: a monster's weapon and drop items never modify its attacks. the engine (Mob.DoCombat) uses
+'each attack's own accuracy and min/max damage; the weapon only supplies the hit/miss message text.
+If Not bGreaterMUD Then
+    nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
+    nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
+End If
 
 Select Case tabMonsters.Fields("Align")
     Case 1, 2, 5, 6: clsMonAtkSim.bMobIsEvil = True

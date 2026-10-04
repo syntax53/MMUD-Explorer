@@ -19666,6 +19666,14 @@ Call RefreshAll(False)
 End Sub
 
 
+Private Sub cmbGlobalAlignment_Click()
+'GreaterMUD: vile ward only counts when the alignment is Evil, so this changes the character's defenses
+If bStartup Or bDontRefresh Or Not bGreaterMUD Then Exit Sub
+Call SetCharDefenseDescription
+If FormIsLoaded("frmMonsterAttackSim") Then frmMonsterAttackSim.txtVileWard.Text = GetCharActiveVileWard()
+If FormIsLoaded("frmHitCalc") Then Call frmHitCalc.SetHitCalcVals(True, False)
+End Sub
+
 Private Sub cmbGlobalAlignment_Change()
 If bCharLoaded And Not bStartup Then bPromptSave = True
 End Sub
@@ -21523,6 +21531,7 @@ Else
     'txtWeaponExtras(0).Text = 999
     
     Call ResetFilterOptions(, , , True)
+    Call cmbGlobalAlignment_Click 'vile ward only counts while the filter is on; refresh its consumers
     
 '    For x = 0 To 6
 '        chkArmourType(x).Enabled = True
@@ -27822,6 +27831,7 @@ eq_abils_only:
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
             nAbilVal = tabItems.Fields("AbilVal-" & x)
+            If bGreaterMUD And tabItems.Fields("Abil-" & x) = 1113 Then nGlobalCharVileWard = nGlobalCharVileWard + (nAbilVal * nMultiQTY) 'vile ward (no stat slot)
             
             If bGreaterMUD And tabItems.Fields("Abil-" & x) = 9 Then
                 nShadowAC = 10
@@ -27972,6 +27982,7 @@ If nGlobalAttackTypeMME <> a4_MartialArts Then
 End If
 
 If nShadowAC > 0 Then
+    nGlobalCharShadowAC = nShadowAC
     lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + nShadowAC
     If InStr(1, sShadowAC, "/", vbTextCompare) > 1 Then
         StatTips(2) = AutoAppend(StatTips(2), "multiple sources (10/0) [shadow]", vbCrLf)
@@ -28510,6 +28521,7 @@ lblInvenCharStat(3).Tag = Fix(val(lblInvenCharStat(3).Caption))
 If FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.txtUserAC.Text = Round(val(lblInvenCharStat(2).Caption))
     frmMonsterAttackSim.txtUserDR.Text = Round(val(lblInvenCharStat(3).Caption))
+    frmMonsterAttackSim.txtVileWard.Text = GetCharActiveVileWard()
     'frmMonsterAttackSim.txtUserMR.Text = Val(lblInvenCharStat(24).Caption)
 End If
 
@@ -28631,7 +28643,7 @@ Private Function GetDodgeSummary(ByVal nRawDodge As Long, Optional ByVal nClass 
     Dim firstPct As Long: firstPct = -1
     Dim sRet As String, sVS As String, nDodge As Long
     
-    capPct = GetDodgeCap()
+    capPct = GetDodgeCap(nClass) 'class-based in gmud (98/99)
     If capPct < 1 Then capPct = 0
     If capPct > 100 Then capPct = 100
     
@@ -29633,6 +29645,8 @@ nGlobalCharAccyItems = 0
 nGlobalCharAccyAbils = 0
 nGlobalCharAccyOther = 0
 nGlobalCharPlusDodge = 0
+nGlobalCharVileWard = 0
+nGlobalCharShadowAC = 0
 nGlobalCharPlusMR = 0
 nGlobalCharQnDbonus = 0
 nGlobalCharWornArmourType = 0
@@ -36632,6 +36646,25 @@ Select Case Index
             Next x
         End If
         
+        nGlobalAttackTypeMME = 0
+        nGlobalAttackAccyAdj = 0
+        bGlobalAttackBackstab = False
+        nGlobalAttackBackstabWeapon = 0
+        nGlobalAttackMA = 0
+        nGlobalAttackSpellNum = 0
+        nGlobalAttackSpellLVL = 0
+        nGlobalAttackManualP = 0
+        nGlobalAttackManualM = 0
+        sGlobalAttackConfig = ""
+        bGlobalAttackUseMeditate = False
+        nGlobalAttackHealType = 0
+        nGlobalAttackHealSpellNum = 0
+        nGlobalAttackHealSpellLVL = 0
+        nGlobalAttackHealRounds = 0
+        nGlobalAttackHealManual = 0
+        nGlobalAttackHealValue = 0
+        nGlobalAttackHealCost = 0
+        
         Call ClearLearnedSpells
         Call cmdCharButtons_Click(4)
         Call cmdEquipButtons_Click(514)
@@ -38927,6 +38960,7 @@ For x = 0 To 9
                             nVal = tabSpells.Fields("AbilVal-" & y)
                             If nVal = 0 Then nVal = nAvgCast
                             If tabSpells.Fields("Abil-" & y) = 7 Then nVal = Round(nVal / 10, 1) 'dr
+                            If bGreaterMUD And tabSpells.Fields("Abil-" & y) = 1113 Then nGlobalCharVileWard = nGlobalCharVileWard + nVal 'vile ward bless (no stat slot)
                             
                             tStatIndex = GetAbilityStatSlot(tabSpells.Fields("Abil-" & y), nVal)
                             If Not tabSpells.Fields("Number") = cmbCharBless(x).ItemData(cmbCharBless(x).ListIndex) Then
