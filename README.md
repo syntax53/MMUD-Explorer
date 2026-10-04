@@ -8,6 +8,7 @@ v2.3.5 (10/##/2026)
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now included vs evil monsters (hit calculator + monster attack sim) when the character filter is on and the Evil alignment is selected  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps (99% for silk/ninja/leather classes)  
+- UP: Hit calculator now checks the Shadow box for a character with shadow and shows its AC without the +10 shadow bonus (was folded into the AC field)  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
@@ -18,7 +19,6 @@ v2.3.5 (10/##/2026)
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items (e.g. the fachan's -50 accy boulder)  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
-- FIX: Hit calculator no longer double-counts a character's shadow bonus (it now ticks the Shadow box and removes the +10 from the AC field)  
 
 v2.3.4 (09/06/2026)  
 ------------------------------------------  
