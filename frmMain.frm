@@ -36644,6 +36644,25 @@ Select Case Index
             Next x
         End If
         
+        nGlobalAttackTypeMME = 0
+        nGlobalAttackAccyAdj = 0
+        bGlobalAttackBackstab = False
+        nGlobalAttackBackstabWeapon = 0
+        nGlobalAttackMA = 0
+        nGlobalAttackSpellNum = 0
+        nGlobalAttackSpellLVL = 0
+        nGlobalAttackManualP = 0
+        nGlobalAttackManualM = 0
+        sGlobalAttackConfig = ""
+        bGlobalAttackUseMeditate = False
+        nGlobalAttackHealType = 0
+        nGlobalAttackHealSpellNum = 0
+        nGlobalAttackHealSpellLVL = 0
+        nGlobalAttackHealRounds = 0
+        nGlobalAttackHealManual = 0
+        nGlobalAttackHealValue = 0
+        nGlobalAttackHealCost = 0
+        
         Call ClearLearnedSpells
         Call cmdCharButtons_Click(4)
         Call cmdEquipButtons_Click(514)
