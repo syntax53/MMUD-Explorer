@@ -49,6 +49,7 @@ Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
 Global nGlobalCharPlusDodge As Long
+Global nGlobalCharVileWard As Long 'GreaterMUD: raw vile ward from gear (tenths, like item AC) -- use GetCharActiveVileWard()
 Global nGlobalCharPlusMR As Long
 Global nGlobalCharQnDbonus As Long
 Global nGlobalCharSavedWeaponNumber As Long
@@ -552,6 +553,21 @@ Call HandleError("RefreshCombatHealingValues")
 Resume out:
 End Sub
 
+'GreaterMUD: vile ward only counts when the character's alignment is set to Evil (and then in full)
+Public Function GetCharActiveVileWard() As Long
+On Error GoTo error:
+
+If Not bGreaterMUD Then Exit Function
+If frmMain.cmbGlobalAlignment.ListIndex = 3 Then GetCharActiveVileWard = nGlobalCharVileWard
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetCharActiveVileWard")
+Resume out:
+End Function
+
 Public Sub SetCharDefenseDescription()
 On Error GoTo error:
 Dim sConfig As String
@@ -575,6 +591,7 @@ sConfig = sConfig & "_" & frmMain.lblInvenCharStat(27).Tag 'rfir
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(25).Tag 'rsto
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(29).Tag 'rlit
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(26).Tag 'rwat
+sConfig = sConfig & "_" & GetCharActiveVileWard() 'vile ward (gmud, evil alignment only)
 
 If sConfig <> sGlobalCharDefenseDescription Then bDontPromptCalcCharMonsterDamage = False
 sGlobalCharDefenseDescription = sConfig
@@ -8525,6 +8542,7 @@ Else
     If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
     If val(frmMain.lblInvenCharStat(20).Tag) > 0 Then clsMonAtkSim.nUserProtEvil = val(frmMain.lblInvenCharStat(20).Tag)
+    clsMonAtkSim.nUserVileWard = GetCharActiveVileWard() 'gmud, evil alignment only
     clsMonAtkSim.nUserRCOL = frmMain.lblInvenCharStat(28).Tag 'col
     clsMonAtkSim.nUserRFIR = frmMain.lblInvenCharStat(27).Tag 'fir
     clsMonAtkSim.nUserRSTO = frmMain.lblInvenCharStat(25).Tag 'sto

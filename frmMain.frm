@@ -19666,6 +19666,14 @@ Call RefreshAll(False)
 End Sub
 
 
+Private Sub cmbGlobalAlignment_Click()
+'GreaterMUD: vile ward only counts when the alignment is Evil, so this changes the character's defenses
+If bStartup Or Not bGreaterMUD Then Exit Sub
+Call SetCharDefenseDescription
+If FormIsLoaded("frmMonsterAttackSim") Then frmMonsterAttackSim.txtVileWard.Text = GetCharActiveVileWard()
+If FormIsLoaded("frmHitCalc") Then Call frmHitCalc.SetHitCalcVals(True, False)
+End Sub
+
 Private Sub cmbGlobalAlignment_Change()
 If bCharLoaded And Not bStartup Then bPromptSave = True
 End Sub
@@ -27822,6 +27830,7 @@ eq_abils_only:
     For x = 0 To 19
         If tabItems.Fields("Abil-" & x) > 0 And tabItems.Fields("AbilVal-" & x) <> 0 Then
             nAbilVal = tabItems.Fields("AbilVal-" & x)
+            If bGreaterMUD And tabItems.Fields("Abil-" & x) = 1113 Then nGlobalCharVileWard = nGlobalCharVileWard + (nAbilVal * nMultiQTY) 'vile ward (no stat slot)
             
             If bGreaterMUD And tabItems.Fields("Abil-" & x) = 9 Then
                 nShadowAC = 10
@@ -28510,6 +28519,7 @@ lblInvenCharStat(3).Tag = Fix(val(lblInvenCharStat(3).Caption))
 If FormIsLoaded("frmMonsterAttackSim") Then
     frmMonsterAttackSim.txtUserAC.Text = Round(val(lblInvenCharStat(2).Caption))
     frmMonsterAttackSim.txtUserDR.Text = Round(val(lblInvenCharStat(3).Caption))
+    frmMonsterAttackSim.txtVileWard.Text = GetCharActiveVileWard()
     'frmMonsterAttackSim.txtUserMR.Text = Val(lblInvenCharStat(24).Caption)
 End If
 
@@ -28631,7 +28641,7 @@ Private Function GetDodgeSummary(ByVal nRawDodge As Long, Optional ByVal nClass 
     Dim firstPct As Long: firstPct = -1
     Dim sRet As String, sVS As String, nDodge As Long
     
-    capPct = GetDodgeCap()
+    capPct = GetDodgeCap(nClass) 'class-based in gmud (98/99)
     If capPct < 1 Then capPct = 0
     If capPct > 100 Then capPct = 100
     
@@ -29633,6 +29643,7 @@ nGlobalCharAccyItems = 0
 nGlobalCharAccyAbils = 0
 nGlobalCharAccyOther = 0
 nGlobalCharPlusDodge = 0
+nGlobalCharVileWard = 0
 nGlobalCharPlusMR = 0
 nGlobalCharQnDbonus = 0
 nGlobalCharWornArmourType = 0

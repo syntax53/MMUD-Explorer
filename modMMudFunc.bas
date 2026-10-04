@@ -2435,7 +2435,7 @@ If bGreaterMUD Then
         
     nSoftCap = GetDodgeCap(nClass, True)
     If nDodgePercent > nSoftCap And nSoftCap > 0 Then nDodgePercent = nSoftCap + GMUD_DiminishingReturns(nDodgePercent - nSoftCap, 4#)
-    If nDodgePercent > GMUD_DODGE_CAP Then nDodgePercent = GMUD_DODGE_CAP
+    If nDodgePercent > GetDodgeCap(nClass) Then nDodgePercent = GetDodgeCap(nClass) 'class-based hard cap (98/99)
 
 ElseIf nAccy > 8 Then
 
@@ -2549,6 +2549,8 @@ If bSoftCap And bGreaterMUD Then
     'End If
 ElseIf bGreaterMUD Then
     GetDodgeCap = GMUD_DODGE_CAP
+    'engine (Player.GetMaxMissPercent): silk/ninja/leather classes cap at 99 instead of 98
+    If GMUD_IsLightArmourClass(nClass) Then GetDodgeCap = GetDodgeCap + 1
 Else
     GetDodgeCap = STOCK_DODGE_CAP
 End If
@@ -2564,17 +2566,22 @@ End If
 End Function
 
 Public Function GetHitMin(Optional ByVal nClass As Integer) As Integer
-Dim nAT As Integer
 
 If bGreaterMUD Then
     GetHitMin = GMUD_HIT_MIN
-    If nClass > 0 Then
-        nAT = GetClassArmourType(nClass)
-        If nAT <= 6 Then GetHitMin = GetHitMin - 1
-    End If
+    'engine (Player.GetMaxMissPercent): silk/ninja/leather classes can be missed 99% of the time instead of 98
+    If GMUD_IsLightArmourClass(nClass) Then GetHitMin = GetHitMin - 1
 Else
     GetHitMin = STOCK_HIT_MIN
 End If
+End Function
+
+'GreaterMUD/Paramud: silk (1), ninja (2) and leather (6) armour classes get a 99% miss/dodge cap instead of 98%
+Private Function GMUD_IsLightArmourClass(ByVal nClass As Long) As Boolean
+If nClass < 1 Then Exit Function
+Select Case GetClassArmourType(nClass)
+    Case 1, 2, 6: GMUD_IsLightArmourClass = True
+End Select
 End Function
 
 Public Function GetHitCap() As Integer
