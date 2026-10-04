@@ -18,6 +18,7 @@ v2.3.5 (10/##/2026)
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items (e.g. the fachan's -50 accy boulder)  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
+- FIX: Hit calculator no longer double-counts a character's shadow bonus (it now ticks the Shadow box and removes the +10 from the AC field)  
 
 v2.3.4 (09/06/2026)  
 ------------------------------------------  

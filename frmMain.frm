@@ -27982,6 +27982,7 @@ If nGlobalAttackTypeMME <> a4_MartialArts Then
 End If
 
 If nShadowAC > 0 Then
+    nGlobalCharShadowAC = nShadowAC
     lblInvenCharStat(2).Caption = val(lblInvenCharStat(2).Caption) + nShadowAC
     If InStr(1, sShadowAC, "/", vbTextCompare) > 1 Then
         StatTips(2) = AutoAppend(StatTips(2), "multiple sources (10/0) [shadow]", vbCrLf)
@@ -29645,6 +29646,7 @@ nGlobalCharAccyAbils = 0
 nGlobalCharAccyOther = 0
 nGlobalCharPlusDodge = 0
 nGlobalCharVileWard = 0
+nGlobalCharShadowAC = 0
 nGlobalCharPlusMR = 0
 nGlobalCharQnDbonus = 0
 nGlobalCharWornArmourType = 0

@@ -50,6 +50,7 @@ Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
 Global nGlobalCharPlusDodge As Long
 Global nGlobalCharVileWard As Long 'GreaterMUD: raw vile ward from gear (tenths, like item AC) -- use GetCharActiveVileWard()
+Global nGlobalCharShadowAC As Long 'shadow bonus (0 or 10) already folded into the AC stat; the hit calc splits it back out
 Global nGlobalCharPlusMR As Long
 Global nGlobalCharQnDbonus As Long
 Global nGlobalCharSavedWeaponNumber As Long

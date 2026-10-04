@@ -956,7 +956,6 @@ Dim bDefenderShadow As Boolean
 'Dim nDefenderClass As Long
 
 Dim nCharPerception As Long
-Dim bCharShadow As Boolean
 
 Dim ntimButtonPressCount As Long
 Dim nPlayer
@@ -1023,7 +1022,6 @@ End If
 
 If chkShadow.Enabled Then
     If chkShadow.Value = 1 Then bShadow = True
-    If optDefender(0).Value = True Then bCharShadow = bShadow
     If optDefender(2).Value = True Then bDefenderShadow = bShadow
 End If
 
@@ -1252,7 +1250,7 @@ If bVSmob And Not bCharacterOnly Then 'monster
     
 ElseIf bVSchar And Not bMonsterOnly Then
 
-    txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) 'ac
+    txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) - nGlobalCharShadowAC 'ac (shadow bonus split out into chkShadow below)
     txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
     txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) 'prot. evil
     txtHitCalc(4).Text = GetCharActiveVileWard() 'vile ward (gmud, evil alignment only)
@@ -1264,7 +1262,7 @@ ElseIf bVSchar And Not bMonsterOnly Then
         lblBSPercep.Caption = "N/A"
     End If
     
-    If bCharShadow Then
+    If nGlobalCharShadowAC > 0 Then 'character has shadow (item abil 9 / bless): +10 handled by the checkbox, not the AC box
         chkShadow.Value = 1
     Else
         chkShadow.Value = 0
