@@ -110,6 +110,7 @@ Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
 Global filter_Monster_bIsUndead As Boolean
 Global filter_Monster_bIsNonHostile_vEvil As Boolean
 Global filter_Monster_bIsNonHostile_vNG As Boolean
+Global filter_Monster_bReachableOnly As Boolean
 Global filter_Monster_bDropsCash As Boolean
 Global filter_Monster_bDropsR As Boolean
 Global filter_Monster_bDropsP As Boolean
