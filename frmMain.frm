@@ -19547,6 +19547,7 @@ If filter_Monster_bAtkNoPoison Then GoTo active:
 If filter_Monster_bAtkNoConfusion Then GoTo active:
 If filter_Monster_bAtkNoFear Then GoTo active:
 If filter_Monster_bShowAll Then GoTo active:
+If filter_Monster_bReachableOnly Then GoTo active:
 
 not_active:
 Set cmdMonsterFilterOps(5).Picture = LoadResPicture("LAYOUT", vbResBitmap) 'blue details
@@ -21357,6 +21358,7 @@ filter_Monster_bAtkNoPoison = 0
 filter_Monster_bAtkNoConfusion = 0
 filter_Monster_bAtkNoFear = 0
 filter_Monster_bShowAll = 0
+filter_Monster_bReachableOnly = 0
 
 bDontRefresh = True
 Call LoadSettings
@@ -25623,6 +25625,7 @@ End If
 'End If
 
 'Call InvenSetupEquip(False, True)
+If filter_Monster_bExtrasEnabled And filter_Monster_bReachableOnly And Not bRemoveFilter Then Call ReachEnsureComputed
 lvMonsters.ListItems.clear
 lvMonsterDetail.ListItems.clear
 DoEvents
@@ -25681,6 +25684,11 @@ Do Until tabMonsters.EOF
     bDoesNotMatchFilter = False
     
     If filter_Monster_bExtrasEnabled Then
+        If filter_Monster_bReachableOnly Then
+            'only monsters you can reach at your level, by level gates (modReachability)
+            If Not ReachIsMonsterOK(nMonsterNum, val(txtGlobalLevel(0).Text)) Then GoTo skip:
+        End If
+        
         If filter_Monster_bDropsCash Then
             If tabMonsters.Fields("R") + tabMonsters.Fields("P") + tabMonsters.Fields("G") _
                 + tabMonsters.Fields("S") + tabMonsters.Fields("C") = 0 Then GoTo skip:
@@ -30325,6 +30333,7 @@ filter_Monster_bAtkNoPoison = IIf(val(ReadINI(sSectionName, "MonExtraFilterNoPoi
 filter_Monster_bAtkNoConfusion = IIf(val(ReadINI(sSectionName, "MonExtraFilterNoConfusion", sFile, 0)) > 0, True, False)
 filter_Monster_bAtkNoFear = IIf(val(ReadINI(sSectionName, "MonExtraFilterNoFear", sFile, 0)) > 0, True, False)
 filter_Monster_bShowAll = IIf(val(ReadINI(sSectionName, "MonExtraFilterShowAll", sFile, 0)) > 0, True, False)
+filter_Monster_bReachableOnly = IIf(val(ReadINI(sSectionName, "MonExtraFilterReachableOnly", sFile, 0)) > 0, True, False)
 
 filter_Monster_bExtrasEnabled = False
 Call RefreshExtraMonsterFilterButton
@@ -39622,6 +39631,7 @@ Call WriteINI(sSectionName, "MonExtraFilterNoPoison", IIf(filter_Monster_bAtkNoP
 Call WriteINI(sSectionName, "MonExtraFilterNoConfusion", IIf(filter_Monster_bAtkNoConfusion, 1, 0), sFile)
 Call WriteINI(sSectionName, "MonExtraFilterNoFear", IIf(filter_Monster_bAtkNoFear, 1, 0), sFile)
 Call WriteINI(sSectionName, "MonExtraFilterShowAll", IIf(filter_Monster_bShowAll, 1, 0), sFile)
+Call WriteINI(sSectionName, "MonExtraFilterReachableOnly", IIf(filter_Monster_bReachableOnly, 1, 0), sFile)
 
 On Error Resume Next
 If Not sFile = "" Then sSectionName = "Inventory"

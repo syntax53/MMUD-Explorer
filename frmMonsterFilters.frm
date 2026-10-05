@@ -72,10 +72,19 @@ Begin VB.Form frmMonsterFilters
    End
    Begin VB.CheckBox chkShowAll 
       Caption         =   "Show All Monsters, even if they don't match filter (will be greyed out)"
-      Height          =   315
+      Height          =   255
       Left            =   480
       TabIndex        =   36
-      Top             =   6060
+      Top             =   6000
+      Width           =   5355
+   End
+   Begin VB.CheckBox chkReachableOnly 
+      Caption         =   "Only monsters reachable at my level (from Bank of Godfrey)"
+      Height          =   255
+      Left            =   480
+      TabIndex        =   60
+      ToolTipText     =   "Hides monsters whose rooms need a higher (or lower) level to get to. Level gates only: keys, items, cash and quests are assumed."
+      Top             =   6270
       Width           =   5355
    End
    Begin VB.CommandButton cmdQ 
@@ -870,6 +879,7 @@ Select Case Index
         chkAtkNoConfusion.Value = 0
         chkAtkNoFear.Value = 0
         chkShowAll.Value = 0
+        chkReachableOnly.Value = 0
         
         For x = 0 To 2
             cmbAbilities(x).ListIndex = 0
@@ -965,6 +975,7 @@ filter_Monster_bAtkNoPoison = IIf(chkAtkNoPoison.Value = 1, True, False)
 filter_Monster_bAtkNoConfusion = IIf(chkAtkNoConfusion.Value = 1, True, False)
 filter_Monster_bAtkNoFear = IIf(chkAtkNoFear.Value = 1, True, False)
 filter_Monster_bShowAll = IIf(chkShowAll.Value = 1, True, False)
+filter_Monster_bReachableOnly = IIf(chkReachableOnly.Value = 1, True, False)
 
 For x = 0 To 2
     If cmbAbilities(x).ListIndex > 0 Then
@@ -1087,6 +1098,7 @@ chkAtkNoPoison.Value = IIf(filter_Monster_bAtkNoPoison, 1, 0)
 chkAtkNoConfusion.Value = IIf(filter_Monster_bAtkNoConfusion, 1, 0)
 chkAtkNoFear.Value = IIf(filter_Monster_bAtkNoFear, 1, 0)
 chkShowAll.Value = IIf(filter_Monster_bShowAll, 1, 0)
+chkReachableOnly.Value = IIf(filter_Monster_bReachableOnly, 1, 0)
 
 For x = 0 To 2
     If filter_Monster_nAbilities(x, 0) > 0 Then
