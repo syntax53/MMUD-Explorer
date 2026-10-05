@@ -36,5 +36,6 @@ frmCoinConvert = 0, 0, 0, 0, C, 104, 104, 1660, 789, C
 modExpPerHour = 182, 182, 1926, 1054, C
 modItemParse = 78, 78, 1822, 924, C
 modListViewExt = 26, 26, 1770, 872, C
+modReachability = 0, 0, 0, 0, C
 frmHitCalc = 156, 156, 1900, 1002, C, 286, 286, 1842, 1132, C
 frmMonsterFilters = 26, 26, 1770, 872, C, 130, 130, 1686, 1002, C
