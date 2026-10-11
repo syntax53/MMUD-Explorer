@@ -53,6 +53,13 @@ Private Const MON_NOT_IN_GAME As Byte = 1
 Private Const MON_NO_LOCATION As Byte = 2
 Private Const MON_LOCATED As Byte = 3
 
+Public Enum ReachStatus
+    reachUnknown = 0    'not computed, unknown monster, or monster not located / not in game (callers show nothing)
+    reachYes = 1
+    reachNo = 2         'unreachable; gate info filled in
+    reachNoGate = 3     'unreachable but no level gate found on any path (no known path)
+End Enum
+
 Private Type tTeleOut
     Room As Long
     Map As Long           '0 = same map as the room the chain started in
@@ -105,6 +112,14 @@ Private tOut() As tTeleOut, nOut As Long
 Private tPool() As tTeleOut, nPool As Long
 Private dChainCache As Dictionary         'key -> "start,count" into tPool
 
+'traversal (kept after computing, for ReachMonsterInfo's gate tracing)
+Private nStartIdx As Long                 'Bank of Godfrey room index (0 = not in this database)
+Private adjStart() As Long, adjEdge() As Long     'CSR over non-random edges, keyed on eFrom
+Private grpOK() As Boolean                'random group usable at all (destinations in one SCC)
+Private grpSrc() As Long                  'random group's source room index
+Private bRevAdjBuilt As Boolean
+Private radjStart() As Long, radjEdge() As Long   'CSR over ALL edges, keyed on eTo (built lazily)
+
 'results
 Private nBP As Long
 Private bpLevel() As Long
@@ -150,6 +165,91 @@ Call HandleError("ReachIsMonsterOK")
 ReachIsMonsterOK = True
 End Function
 
+'Reachability of one monster at a level, plus the closest level gate that blocks it.
+'bComputeIfNeeded: False = never trigger the (progress-bar) computation; return reachUnknown if not computed.
+'On reachNo: nGateMap/nGateRoom = the reachable room holding the gated exit/command; nDestMap/nDestRoom = the room
+'it leads to; nMinLvl/nMaxLvl = the edge's level range (nMaxLvl = 0 when no upper limit); bRandomGroup = True when
+'the gate is an unusable random-teleport group rather than a level range.
+'The gate is found by a reverse BFS from the monster's rooms over all edges (levels ignored), through rooms
+'not reachable at this level, stopping at the first edge whose source room IS reachable (fewest hops).
+Public Function ReachMonsterInfo(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVal bComputeIfNeeded As Boolean, _
+    ByRef nGateMap As Long, ByRef nGateRoom As Long, ByRef nDestMap As Long, ByRef nDestRoom As Long, _
+    ByRef nMinLvl As Long, ByRef nMaxLvl As Long, ByRef bRandomGroup As Boolean) As ReachStatus
+Dim nIdx As Long, i As Long, j As Long, u As Long, e As Long, r As Long, nGate As Long
+Dim visited() As Long, seen() As Long, queue() As Long, qHead As Long, qTail As Long, vKey As Variant
+On Error GoTo error:
+
+ReachMonsterInfo = reachUnknown
+nGateMap = 0: nGateRoom = 0: nDestMap = 0: nDestRoom = 0
+nMinLvl = 0: nMaxLvl = 0: bRandomGroup = False
+
+If Not ReachIsComputed() And bComputeIfNeeded Then Call ReachEnsureComputed
+If Not ReachIsComputed() Then Exit Function
+If Not dMonIdx.Exists(nMonsterNum) Then Exit Function
+nIdx = dMonIdx(nMonsterNum)
+If mStatus(nIdx) <> MON_LOCATED Then Exit Function
+If nStartIdx = 0 Or nRooms < 1 Then Exit Function
+
+If nLevel < 1 Then nLevel = 1
+i = 0
+Do While i + 1 < nBP
+    If bpLevel(i + 1) > nLevel Then Exit Do
+    i = i + 1
+Loop
+If mHit(nIdx, i) = 1 Then
+    ReachMonsterInfo = reachYes
+    Exit Function
+End If
+
+Call VisitAtLevel(nLevel, visited)
+If Not bRevAdjBuilt Then Call BuildReverseAdjacency
+
+'seed with the monster's rooms (none of them is reachable, or it would have been reachYes)
+ReDim seen(1 To nRooms): ReDim queue(1 To nRooms)
+qHead = 1: qTail = 0
+For Each vKey In mRooms(nIdx).Keys
+    r = CLng(vKey)
+    If r >= 1 And r <= nRooms Then
+        If visited(r) = 1 Then   'shouldn't happen (mHit says unreachable); trust the BFS
+            ReachMonsterInfo = reachYes
+            Exit Function
+        End If
+        If seen(r) = 0 Then seen(r) = 1: qTail = qTail + 1: queue(qTail) = r
+    End If
+Next vKey
+
+nGate = 0
+Do While qHead <= qTail
+    u = queue(qHead): qHead = qHead + 1
+    For j = radjStart(u) To radjStart(u + 1) - 1
+        e = radjEdge(j)
+        If visited(eFrom(e)) = 1 Then
+            nGate = e
+            Exit Do
+        ElseIf seen(eFrom(e)) = 0 Then
+            seen(eFrom(e)) = 1: qTail = qTail + 1: queue(qTail) = eFrom(e)
+        End If
+    Next j
+Loop
+
+If nGate = 0 Then
+    ReachMonsterInfo = reachNoGate
+    Exit Function
+End If
+
+nGateMap = rMap(eFrom(nGate)): nGateRoom = rRoom(eFrom(nGate))
+nDestMap = rMap(eTo(nGate)): nDestRoom = rRoom(eTo(nGate))
+nMinLvl = eMin(nGate)
+If eMax(nGate) >= NO_MAX Or eMax(nGate) >= LEVEL_CAP Then nMaxLvl = 0 Else nMaxLvl = eMax(nGate)
+bRandomGroup = (eGroup(nGate) > 0)
+ReachMonsterInfo = reachNo
+
+Exit Function
+error:
+Call HandleError("ReachMonsterInfo")
+ReachMonsterInfo = reachUnknown
+End Function
+
 Public Sub ReachEnsureComputed()
 Dim t As Single
 On Error GoTo error:
@@ -163,12 +263,14 @@ frmMain.Enabled = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(100)
 frmProgressBar.ProgressBar.Value = 1
-frmProgressBar.lblCaption.Caption = "Mapping which monsters each level can reach..."
+frmProgressBar.lblCaption.Caption = "Mapping monster reachability..."
 Set frmProgressBar.objFormOwner = frmMain
 frmProgressBar.Show vbModeless, frmMain
 DoEvents
 
 nOut = 0: nPool = 0: nEdges = 0: nGroups = 0: nDroppedRandom = 0
+bRevAdjBuilt = False: nStartIdx = 0
+Erase radjStart, radjEdge
 Set dChainCache = New Dictionary
 
 Call LoadTextblocks:  Call SetProgress(10)
@@ -188,13 +290,15 @@ If DEVELOPMENT_MODE_RT Then
     Call ReachWriteDebugCSV(sGlobalWorkingDirectory & "\_reachability.csv")
 End If
 
-'Queries only need dMonIdx, mStatus, mHit, bpLevel; free the build data.
+'ReachIsMonsterOK only needs dMonIdx, mStatus, mHit, bpLevel; ReachMonsterInfo's gate tracing
+'also needs the rooms (rMap/rRoom), edges (e*, nEdges), traversal arrays (adjStart/adjEdge, grpOK,
+'grpSrc, nStartIdx) and mRooms. Free the rest of the build data.
 Set dChainCache = Nothing
 Set dTB = Nothing: Set dSpell = Nothing: Set dItemRooms = Nothing: Set dRoomIdx = Nothing
-Erase tOut, tPool, rExit, rPlaced, rCMD, rSpell, rNPC, rRoom, rMap
+Erase tOut, tPool, rExit, rPlaced, rCMD, rSpell, rNPC
 Erase tbAction, tbLink, tbCalled, spNum, spAb, spVal, spReqLevel, spCastedBy
-Erase eFrom, eTo, eMin, eMax, eGroup, mRooms, mBase, mBaseRaw, mSummonedBy, mGreet
-nOut = 0: nPool = 0: nEdges = 0
+Erase mBase, mBaseRaw, mSummonedBy, mGreet
+nOut = 0: nPool = 0
 GoTo done:
 
 error:
@@ -1197,14 +1301,14 @@ End Sub
 '=============================================================== reachability
 
 Private Sub ComputeReachability()
-Dim adjStart() As Long, adjEdge() As Long, i As Long, j As Long, nPos() As Long
-Dim comp() As Long, grpOK() As Boolean, grpComp() As Long, grpSrc() As Long
-Dim dBP As Dictionary, v As Variant, nTmp As Long, b As Long, L As Long
-Dim visited() As Long, queue() As Long, qHead As Long, qTail As Long
-Dim u As Long, e As Long, bChanged As Boolean, g As Long, bLvlOK() As Boolean
-Dim nStartIdx As Long, m As Long, vKey As Variant
+Dim i As Long, j As Long, nPos() As Long
+Dim comp() As Long, grpComp() As Long
+Dim dBP As Dictionary, v As Variant, nTmp As Long, b As Long
+Dim visited() As Long, e As Long, g As Long
+Dim m As Long, vKey As Variant
 On Error GoTo error:
 
+nStartIdx = 0
 'adjacency (CSR) over non-random edges
 ReDim adjStart(1 To nRooms + 1): ReDim nPos(1 To nRooms + 1)
 For e = 1 To nEdges
@@ -1262,8 +1366,6 @@ For i = 1 To nBP - 1     'insertion sort; a few dozen values
 Next i
 
 ReDim mHit(1 To nMons, 0 To nBP - 1)
-ReDim visited(1 To nRooms): ReDim queue(1 To nRooms)
-ReDim bLvlOK(0 To nGroups)
 nStartIdx = RoomIndex(START_MAP, START_ROOM)
 If nStartIdx = 0 Then
     'No Bank of Godfrey in this database: don't hide anything.
@@ -1274,45 +1376,7 @@ If nStartIdx = 0 Then
 End If
 
 For b = 0 To nBP - 1
-    L = bpLevel(b)
-    For g = 1 To nGroups
-        bLvlOK(g) = grpOK(g)
-    Next g
-    For e = 1 To nEdges
-        g = eGroup(e)
-        If g > 0 Then
-            If L < eMin(e) Or L > eMax(e) Then bLvlOK(g) = False
-        End If
-    Next e
-
-    For i = 1 To nRooms: visited(i) = 0: Next i
-    qHead = 1: qTail = 0
-    visited(nStartIdx) = 1: qTail = qTail + 1: queue(qTail) = nStartIdx
-    Do
-        Do While qHead <= qTail
-            u = queue(qHead): qHead = qHead + 1
-            For j = adjStart(u) To adjStart(u + 1) - 1
-                e = adjEdge(j)
-                If visited(eTo(e)) = 0 Then
-                    If L >= eMin(e) And L <= eMax(e) Then
-                        visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
-                    End If
-                End If
-            Next j
-        Loop
-        bChanged = False
-        For e = 1 To nEdges
-            g = eGroup(e)
-            If g > 0 Then
-                If bLvlOK(g) Then
-                    If visited(grpSrc(g)) = 1 And visited(eTo(e)) = 0 Then
-                        visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
-                        bChanged = True
-                    End If
-                End If
-            End If
-        Next e
-    Loop While bChanged
+    Call VisitAtLevel(bpLevel(b), visited)
 
     For m = 1 To nMons
         If mStatus(m) = MON_LOCATED Then
@@ -1326,6 +1390,76 @@ Next b
 Exit Sub
 error:
 Call HandleError("Reach.ComputeReachability")
+End Sub
+
+'Rooms reachable from Bank of Godfrey at level L, following only edges whose level range
+'includes L plus random groups usable at L: visited(1..nRooms) = 1 if reachable.
+'Uses adjStart/adjEdge, grpOK, grpSrc, nStartIdx from ComputeReachability.
+Private Sub VisitAtLevel(ByVal L As Long, visited() As Long)
+Dim queue() As Long, qHead As Long, qTail As Long, j As Long
+Dim u As Long, e As Long, bChanged As Boolean, g As Long, bLvlOK() As Boolean
+
+ReDim visited(1 To nRooms)   'all 0
+If nStartIdx = 0 Then Exit Sub
+ReDim queue(1 To nRooms)
+ReDim bLvlOK(0 To nGroups)
+For g = 1 To nGroups
+    bLvlOK(g) = grpOK(g)
+Next g
+For e = 1 To nEdges
+    g = eGroup(e)
+    If g > 0 Then
+        If L < eMin(e) Or L > eMax(e) Then bLvlOK(g) = False
+    End If
+Next e
+
+qHead = 1: qTail = 0
+visited(nStartIdx) = 1: qTail = qTail + 1: queue(qTail) = nStartIdx
+Do
+    Do While qHead <= qTail
+        u = queue(qHead): qHead = qHead + 1
+        For j = adjStart(u) To adjStart(u + 1) - 1
+            e = adjEdge(j)
+            If visited(eTo(e)) = 0 Then
+                If L >= eMin(e) And L <= eMax(e) Then
+                    visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
+                End If
+            End If
+        Next j
+    Loop
+    bChanged = False
+    For e = 1 To nEdges
+        g = eGroup(e)
+        If g > 0 Then
+            If bLvlOK(g) Then
+                If visited(grpSrc(g)) = 1 And visited(eTo(e)) = 0 Then
+                    visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
+                    bChanged = True
+                End If
+            End If
+        End If
+    Next e
+Loop While bChanged
+End Sub
+
+'Reverse adjacency (CSR keyed on eTo) over ALL edges, random groups included, for gate tracing.
+Private Sub BuildReverseAdjacency()
+Dim i As Long, j As Long, e As Long, nTmp As Long, nPos() As Long
+
+ReDim radjStart(1 To nRooms + 1): ReDim nPos(1 To nRooms + 1)
+For e = 1 To nEdges
+    radjStart(eTo(e)) = radjStart(eTo(e)) + 1
+Next e
+j = 1
+For i = 1 To nRooms
+    nTmp = radjStart(i): radjStart(i) = j: nPos(i) = j: j = j + nTmp
+Next i
+radjStart(nRooms + 1) = j
+ReDim radjEdge(1 To IIf(j > 1, j - 1, 1))
+For e = 1 To nEdges
+    radjEdge(nPos(eTo(e))) = e: nPos(eTo(e)) = nPos(eTo(e)) + 1
+Next e
+bRevAdjBuilt = True
 End Sub
 
 'Strongly connected component id per room (iterative Tarjan), ignoring level gates.

@@ -2293,6 +2293,9 @@ Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer, sDB_C
 Dim DF_Flags As eDefenseFlags, eMobDefenseFlags As eDefenseFlags, eAttackFlags As eAttackRestrictions, bValidTarget As Boolean
 Dim this_nDamageOut As Double, this_nFirstRoundDamageOut As Double, this_nMinDamageOut As Double
 Dim this_nSurpriseDamageOut As Double, this_nSurpriseMinDamage As Double, this_nSurpriseChance As Integer
+Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGateRoom As Long, sReachReason As String
+Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
+Dim bReachRowAdded As Boolean
             
 On Error GoTo error:
 
@@ -4035,6 +4038,77 @@ oLI.Text = ""
 If bMobPrintCharDamageOutFirst And nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then GoTo mob_attacks:
 done_attacks:
 
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+'reachability from Bank of Godfrey at the character's level (see modReachability)
+If Not ReachIsComputed() Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Reachable"
+    oLI.Tag = "reach_compute"
+    oLI.ForeColor = TColor(&H80000015)
+    oLI.ListSubItems.Add (1), "Detail", "(double-click to compute)"
+    oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
+    bReachRowAdded = True
+Else
+    nReachLevel = val(frmMain.txtGlobalLevel(0).Text)
+    eReach = ReachMonsterInfo(nMonsterNum, nReachLevel, False, nReachGateMap, nReachGateRoom, _
+        nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup)
+    Select Case eReach
+        Case reachYes:
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&H8000&)
+            oLI.ListSubItems.Add (1), "Detail", "Yes"
+            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
+            bReachRowAdded = True
+
+        Case reachNoGate:
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No, no known path from Bank of Godfrey"
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+        Case reachNo:
+            If bReachRandomGroup Then
+                sReachReason = "random teleport (unusable)"
+            ElseIf nReachLevel < nReachMinLvl Then
+                sReachReason = "needs Level " & nReachMinLvl & IIf(nReachMaxLvl > 0, " to " & nReachMaxLvl, "+")
+            Else
+                sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
+            End If
+
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.Tag = "room"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No, blocked by " _
+                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & " - " & sReachReason
+            oLI.ListSubItems(1).Tag = nReachGateMap & "/" & nReachGateRoom
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+            If nReachDestMap <> nReachGateMap Or nReachDestRoom <> nReachGateRoom Then
+                Set oLI = DetailLV.ListItems.Add()
+                oLI.Text = ""
+                oLI.Tag = "room"
+                oLI.ForeColor = TColor(&HC0&)
+                oLI.ListSubItems.Add (1), "Detail", "leads to " _
+                    & GetRoomName(, nReachDestMap, nReachDestRoom, bHideRecordNumbers)
+                oLI.ListSubItems(1).Tag = nReachDestMap & "/" & nReachDestRoom
+                oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            End If
+
+        'reachUnknown: not computed / monster not located -- show nothing
+    End Select
+End If
+If bReachRowAdded Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
+
+'GetRoomName only seeks tabRooms; re-seek in case ReachMonsterInfo moved tabMonsters
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If Not frmMain.bDontLookupMonRegen Then

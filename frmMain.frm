@@ -32384,6 +32384,11 @@ Private Sub lvMonsterCompareLoc_DblClick()
 Dim tRoomExits As RoomExitType
 
 Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
+    Case "reach_compute":
+        Call ReachEnsureComputed
+        If Not lvMonsterCompare.SelectedItem Is Nothing Then
+            Call PullMonsterDetail(val(lvMonsterCompare.SelectedItem.Text), lvMonsterCompareLoc)
+        End If
     Case "item":
         Call GotoItem(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
     Case "spell":
@@ -32429,6 +32434,13 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
     Case "nolimit":
         If Not lvMonsters.SelectedItem Is Nothing Then
             Call PullMonsterDetail(val(lvMonsters.SelectedItem.Text), lvMonsterDetail, 1000)
+        End If
+        Exit Sub
+
+    Case "reach_compute":
+        Call ReachEnsureComputed
+        If Not lvMonsters.SelectedItem Is Nothing Then
+            Call PullMonsterDetail(val(lvMonsters.SelectedItem.Text), lvMonsterDetail)
         End If
         Exit Sub
         

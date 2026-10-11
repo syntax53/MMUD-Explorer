@@ -5,6 +5,7 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v2.3.5 (10/##/2026)  
 ------------------------------------------  
 - NEW: Monster reachability filter (by character level, etc) for the extra monsters tab filters  
+- UP: Monster details now show whether the monster is reachable at the character's level and, if not, the room whose level gate blocks it (double-click to jump there)  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now included vs evil monsters (hit calculator + monster attack sim) when the character filter is on and the Evil alignment is selected  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps (99% for silk/ninja/leather classes)  
