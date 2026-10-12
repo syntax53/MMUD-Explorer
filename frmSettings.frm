@@ -786,7 +786,7 @@ If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
 nRouteWaypointInterval = val(txtRouteWaypointInterval.Text)
-If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 1
+If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 25 '0/blank = default
 If nRouteWaypointInterval > 1000 Then nRouteWaypointInterval = 1000
 
 

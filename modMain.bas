@@ -2273,7 +2273,8 @@ Resume out:
 End Sub
 
 'route rows under the "Reachable" detail row: start, a waypoint every nRouteWaypointInterval steps
-'(first 10 shown), then the destination. sDblClickWord = the detail text to double-click for the full route.
+'(first 10 shown), then the destination. sDblClickWord = the detail text to double-click for the full route
+'("" = no full route to offer, so the "more waypoints" row gets no double-click hint).
 Private Sub AddRouteRows(DetailLV As ListView, ByVal nSourceMap As Long, ByVal nSourceRoom As Long, _
     ByVal sSourceName As String, nStepMap() As Long, nStepRoom() As Long, ByVal nSteps As Long, _
     Optional ByVal sDblClickWord As String = "Yes")
@@ -2307,7 +2308,7 @@ If nMore > 0 Then
     Set oLI = DetailLV.ListItems.Add()
     oLI.Text = ""
     oLI.ListSubItems.Add (1), "Detail", "... plus " & nMore & " more waypoint" & IIf(nMore = 1, "", "s") _
-        & " (double-click " & sDblClickWord & " for the full route)"
+        & IIf(sDblClickWord = "", "", " (double-click " & sDblClickWord & " for the full route)")
 End If
 
 If nSteps > 0 Then
@@ -2431,7 +2432,8 @@ Do While x > 0
         If InStr(1, "0123456789", mid$(s, y, 1)) = 0 Then Exit Do
         y = y + 1
     Loop
-    If y > x + Len(sPrefix) Then
+    'at most 9 digits so val() can't overflow the Long
+    If y > x + Len(sPrefix) And y - x - Len(sPrefix) <= 9 Then
         nNum = val(mid$(s, x + Len(sPrefix), y - x - Len(sPrefix)))
         Select Case nKind
             Case 1: sName = GetItemName(nNum, bHideRecordNumbers)
@@ -2464,6 +2466,126 @@ End If
 If Not bHideRecordNumbers Then RouteLabelClassRace = RouteLabelClassRace & "(" & nNum & ")"
 End Function
 
+'the "Reachable" detail rows of PullMonsterDetail (reachability from Bank of Godfrey at the character's level,
+'see modReachability): the status row, its route rows, an alternate-route row and a trailing blank row.
+'May move tabRooms/tabMonsters.
+Private Sub AddMonsterReachRows(ByVal nMonsterNum As Long, DetailLV As ListView)
+On Error GoTo error:
+Dim oLI As ListItem
+Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGateRoom As Long, sReachReason As String
+Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
+Dim nReachableAtLvl As Long, bReachRowAdded As Boolean, bReachRoute As Boolean, bFullRoute As Boolean
+Dim nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String, nRouteSteps As Long
+Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String
+Dim nRouteCoin As Long, nRouteAltSteps As Long, nRouteAltCoin As Long, sRouteAltSrcName As String
+Dim nFullCoin As Long, nFullAltSteps As Long, nFullAltCoin As Long, sFullAltSrcName As String
+
+If Not ReachIsComputed() Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Reachable"
+    oLI.Tag = "reach_compute"
+    oLI.ForeColor = TColor(&H80000015)
+    oLI.ListSubItems.Add (1), "Detail", "(double-click to compute)"
+    oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
+    bReachRowAdded = True
+Else
+    nReachLevel = val(frmMain.txtGlobalLevel(0).Text)
+    eReach = ReachMonsterInfo(nMonsterNum, nReachLevel, False, nReachGateMap, nReachGateRoom, _
+        nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup, nReachableAtLvl)
+    Select Case eReach
+        Case reachYes:
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&H8000&)
+            If bReachRoute Then
+                oLI.Tag = "reach_route"
+                oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
+                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")"
+            Else
+                oLI.ListSubItems.Add (1), "Detail", "Yes"
+            End If
+            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
+            bReachRowAdded = True
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "Yes")
+                If nRouteAltSteps > 0 Then
+                    Call AddRouteAltRow(DetailLV, "", nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName, nRouteCoin)
+                End If
+            End If
+
+        Case reachNoGate:
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No, no known path from Bank of Godfrey"
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+        Case reachNo:
+            If bReachRandomGroup Then
+                sReachReason = "random teleport (unusable)"
+            ElseIf nReachLevel < nReachMinLvl Then
+                sReachReason = "needs Level " & nReachMinLvl & IIf(nReachMaxLvl > 0, " to " & nReachMaxLvl, "+")
+                If nReachableAtLvl > nReachMinLvl Then
+                    sReachReason = sReachReason & " (reachable from Level " & nReachableAtLvl & ")"
+                ElseIf nReachableAtLvl = 0 Then
+                    sReachReason = sReachReason & " (still blocked at higher levels)"
+                End If
+            Else
+                sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
+            End If
+
+            'the full route past the gate is what double-clicking the No row opens (frmMain.ShowMonsterRoute),
+            'so only tag the row when that route exists
+            bFullRoute = ReachRoute(nMonsterNum, nReachLevel, False, True, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nFullCoin, nFullAltSteps, nFullAltCoin, sFullAltSrcName)
+
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            If bFullRoute Then oLI.Tag = "reach_route"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No - blocked by " _
+                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & ", " & sReachReason
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+            'route to the room holding the blocking gate (the double-click hint only when the full route exists)
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, IIf(bFullRoute, "No", ""))
+            End If
+
+            'the full route past the gate may have an alternate (see ReachRoute)
+            If bFullRoute And nFullAltSteps > 0 Then
+                Call AddRouteAltRow(DetailLV, " past the level gate", nFullAltSteps, nFullAltCoin, _
+                    sFullAltSrcName, nFullCoin)
+            End If
+
+        'reachUnknown: not computed / monster not located -- show nothing
+    End Select
+End If
+If bReachRowAdded Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddMonsterReachRows")
+Resume out:
+End Sub
+
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTemp As Long, tExpInfo As tExpPerHourInfo
@@ -2487,11 +2609,6 @@ Dim nMobElementalResist(5) As Integer, nCalcElementalResist(5) As Integer, sDB_C
 Dim DF_Flags As eDefenseFlags, eMobDefenseFlags As eDefenseFlags, eAttackFlags As eAttackRestrictions, bValidTarget As Boolean
 Dim this_nDamageOut As Double, this_nFirstRoundDamageOut As Double, this_nMinDamageOut As Double
 Dim this_nSurpriseDamageOut As Double, this_nSurpriseMinDamage As Double, this_nSurpriseChance As Integer
-Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGateRoom As Long, sReachReason As String
-Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
-Dim bReachRowAdded As Boolean, bReachRoute As Boolean, nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String
-Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String, nRouteSteps As Long
-Dim nRouteCoin As Long, nRouteAltSteps As Long, nRouteAltCoin As Long, sRouteAltSrcName As String
             
 On Error GoTo error:
 
@@ -4237,98 +4354,9 @@ done_attacks:
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 'reachability from Bank of Godfrey at the character's level (see modReachability)
-If Not ReachIsComputed() Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = "Reachable"
-    oLI.Tag = "reach_compute"
-    oLI.ForeColor = TColor(&H80000015)
-    oLI.ListSubItems.Add (1), "Detail", "(double-click to compute)"
-    oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
-    bReachRowAdded = True
-Else
-    nReachLevel = val(frmMain.txtGlobalLevel(0).Text)
-    eReach = ReachMonsterInfo(nMonsterNum, nReachLevel, False, nReachGateMap, nReachGateRoom, _
-        nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup)
-    Select Case eReach
-        Case reachYes:
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, False, nRouteSrcMap, nRouteSrcRoom, _
-                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
-                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = "Reachable"
-            oLI.ForeColor = TColor(&H8000&)
-            If bReachRoute Then
-                oLI.Tag = "reach_route"
-                oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
-                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")"
-            Else
-                oLI.ListSubItems.Add (1), "Detail", "Yes"
-            End If
-            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
-            bReachRowAdded = True
-            If bReachRoute Then
-                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
-                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "Yes")
-                If nRouteAltSteps > 0 Then
-                    Call AddRouteAltRow(DetailLV, "", nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName, nRouteCoin)
-                End If
-            End If
+Call AddMonsterReachRows(nMonsterNum, DetailLV)
 
-        Case reachNoGate:
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = "Reachable"
-            oLI.ForeColor = TColor(&HC0&)
-            oLI.ListSubItems.Add (1), "Detail", "No, no known path from Bank of Godfrey"
-            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
-            bReachRowAdded = True
-
-        Case reachNo:
-            If bReachRandomGroup Then
-                sReachReason = "random teleport (unusable)"
-            ElseIf nReachLevel < nReachMinLvl Then
-                sReachReason = "needs Level " & nReachMinLvl & IIf(nReachMaxLvl > 0, " to " & nReachMaxLvl, "+")
-            Else
-                sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
-            End If
-
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, False, nRouteSrcMap, nRouteSrcRoom, _
-                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
-                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
-
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = "Reachable"
-            If bReachRoute Then oLI.Tag = "reach_route"
-            oLI.ForeColor = TColor(&HC0&)
-            oLI.ListSubItems.Add (1), "Detail", "No - blocked by " _
-                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & ", " & sReachReason
-            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
-            bReachRowAdded = True
-
-            'route to the room holding the blocking gate (double-click the row for the full route past it)
-            If bReachRoute Then
-                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
-                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "No")
-            End If
-
-            'the full route past the gate (what the No row opens) may have an alternate (see ReachRoute)
-            If ReachRoute(nMonsterNum, nReachLevel, False, True, False, nRouteSrcMap, nRouteSrcRoom, _
-                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
-                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName) Then
-                If nRouteAltSteps > 0 Then
-                    Call AddRouteAltRow(DetailLV, " past the level gate", nRouteAltSteps, nRouteAltCoin, _
-                        sRouteAltSrcName, nRouteCoin)
-                End If
-            End If
-
-        'reachUnknown: not computed / monster not located -- show nothing
-    End Select
-End If
-If bReachRowAdded Then
-    Set oLI = DetailLV.ListItems.Add()
-    oLI.Text = ""
-End If
-
-'GetRoomName only seeks tabRooms; re-seek in case ReachMonsterInfo moved tabMonsters
+'the reach rows may have moved tabRooms/tabMonsters (GetRoomName re-seeks only tabRooms); re-seek tabMonsters
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If Not frmMain.bDontLookupMonRegen Then

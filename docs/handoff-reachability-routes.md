@@ -12,10 +12,37 @@ This file is untracked scratch for continuity; delete or commit at the end.
   Lost City 16/426, Albion 14/1, Port Blackwater 14/10), waypoint rows every N (Settings option
   `RouteWaypointInterval`, dialog grown), results window via double-click on Yes/No.
 
+## Round 4 — adversarial audit fixes (2026-10-12, session f70ac558)
+STATUS: APPLIED, UNCOMPILED (no VB6 on this PC). Three Opus reviewers audited the whole branch; fixes:
+- modReachability: level **breakpoints now include random-group edges** (they were skipped, so a band
+  could be evaluated at a level where a level-gated group was unusable → filter/detail pane disagreed
+  with the route finder); `maxlevel 0` in a textblock = no upper limit (as for exits); item-spell edges
+  carry the chain's `price`; `teleport`/`summon` keyword match is case-insensitive;
+  `ReachEnsureComputed` has a re-entrancy guard (`bReachComputing` — its DoEvents let the filter form's
+  Apply start a nested build), treats any build step's error as failure (`bBuildError`, set in each
+  step's handler; previously partial data was marked computed), and restores frmMain.Enabled to its
+  previous value; `VisitAtLevel` caches its last result per level (the detail pane needs it 3× per
+  monster); **`ReachMonsterInfo` gained an 11th arg `nReachableAtLvl`** (lowest higher band that reaches
+  the monster, 0 = none) and `bRandomGroup` is now True only for an *unusable* group — a level-gated
+  usable group reports the group's combined level range.
+- modMain: reach block extracted from `PullMonsterDetail` into `AddMonsterReachRows` (64K
+  compiled-code-per-procedure risk); the No row's `reach_route` tag now follows the FULL route (what
+  double-click opens), not the to-gate route; the No text appends "(reachable from Level X)" when a
+  further gate raises the real requirement, or "(still blocked at higher levels)"; `RouteLabelNames`
+  caps digit runs at 9.
+- frmMain: `reach_compute` rows call `ReachRecompute` (a failed build was never retried) + message;
+  pre-existing compare-pane bug (greet_text/textblock read `lvMonsterDetail`) fixed; Calculate
+  Reachability menu skips the main-list refresh when the reachable-only filter is on (FilterMonsters
+  refills the list and clicks a row itself; the compare pane still refreshes); results caption gets a
+  ToolTipText (one-line label clips) and singular "step"; interval default 0 → 25 (was clamped to 1).
+Known, deliberately not changed: the detail pane's waypoints go to the nearest gate (reverse-BFS) while
+the No-row results window shows the cheapest ignore-level route, which may cross a different gate;
+room-spell random blocks with several `random` ops merge into one group (LineNo = 0).
+
 ## Round 3 — coin-detour cap + alternate-route row (2026-10-12, session f70ac558)
-STATUS: EDITS APPLIED, UNCOMPILED, UNCOMMITTED. **VB6 is not installed on the user's current PC**, so
+STATUS: COMMITTED as `6194f3c`, UNCOMPILED. **VB6 is not installed on the user's current PC**, so
 nothing was compiled or run. Only static checks were done: high-byte counts unchanged (0/1/6), zero lone
-LFs, and stripped diffs show only the intended hunks. The user compiles and tests in the IDE, then commits.
+LFs, and stripped diffs show only the intended hunks. The user compiles and tests in the IDE.
 Files: modReachability.bas, modMain.bas, frmMain.frm, docs/changelog.txt, README.md.
 - `RouteSearch` gains `bAvoidCoin` + `cost()` output. `ReachRoute` runs it twice: F (fewest coin steps,
   then steps) and S (fewest steps).

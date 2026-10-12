@@ -31606,7 +31606,7 @@ If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
 nRouteWaypointInterval = val(ReadINI("Settings", "RouteWaypointInterval", , nRouteWaypointInterval))
-If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 1
+If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 25 '0/blank = default
 If nRouteWaypointInterval > 1000 Then nRouteWaypointInterval = 1000
 
 Call LoadExpPerHourKnobs
@@ -32394,8 +32394,10 @@ Dim tRoomExits As RoomExitType
 
 Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
     Case "reach_compute":
-        Call ReachEnsureComputed
-        If Not lvMonsterCompare.SelectedItem Is Nothing Then
+        Call ReachRecompute
+        If Not ReachIsComputed() Then
+            MsgBox "Reachability could not be computed for this database.", vbExclamation
+        ElseIf Not lvMonsterCompare.SelectedItem Is Nothing Then
             Call PullMonsterDetail(val(lvMonsterCompare.SelectedItem.Text), lvMonsterCompareLoc)
         End If
     Case "reach_route":
@@ -32410,13 +32412,13 @@ Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
         'Load frmResults
         lvMonsters.SetFocus
         Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
-        Call frmResults.CreateCommandTree(val(lvMonsterDetail.SelectedItem.ListSubItems(1).Tag), False, True)
+        Call frmResults.CreateCommandTree(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag), False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
     Case "textblock":
         lvMonsters.SetFocus
         Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
-        Call frmResults.CreateExecutionTree(val(lvMonsterDetail.SelectedItem.ListSubItems(1).Tag))
+        Call frmResults.CreateExecutionTree(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
     Case "monster":
@@ -32451,8 +32453,10 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
         Exit Sub
 
     Case "reach_compute":
-        Call ReachEnsureComputed
-        If Not lvMonsters.SelectedItem Is Nothing Then
+        Call ReachRecompute
+        If Not ReachIsComputed() Then
+            MsgBox "Reachability could not be computed for this database.", vbExclamation
+        ElseIf Not lvMonsters.SelectedItem Is Nothing Then
             Call PullMonsterDetail(val(lvMonsters.SelectedItem.Text), lvMonsterDetail)
         End If
         Exit Sub
@@ -32534,11 +32538,11 @@ Dim nMinLvl As Long, nMaxLvl As Long, bRandomGroup As Boolean, sLastRow As Strin
 Dim nSourceMap As Long, nSourceRoom As Long, sSourceName As String, nSteps As Long
 Dim nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String
 Dim nLastShown As Long, nLastRowRoom As Long, sCaption As String
-Dim nCoinSteps As Long, nAltSteps As Long, nAltCoinSteps As Long, sAltSourceName As String
+Dim nCoinSteps As Long, nAltSteps As Long, nAltCoinSteps As Long, sAltSourceName As String, nReachableAtLvl As Long
 
 nLevel = val(txtGlobalLevel(0).Text)
 eReach = ReachMonsterInfo(nMonsterNum, nLevel, False, nGateMap, nGateRoom, nDestMap, nDestRoom, _
-    nMinLvl, nMaxLvl, bRandomGroup)
+    nMinLvl, nMaxLvl, bRandomGroup, nReachableAtLvl)
 Select Case eReach
     Case reachYes: bIgnoreLevel = False
     Case reachNo: bIgnoreLevel = True 'full route past the blocking level gate
@@ -32593,13 +32597,15 @@ End If
 
 'caption: the alternate is named by what sets it apart; the default mentions its alternate (offered in the details)
 If bAltRoute Then sCaption = RouteKindText(nCoinSteps, nAltCoinSteps) Else sCaption = "Route"
-sCaption = sCaption & " to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & " steps from " & sSourceName _
-    & IIf(bIgnoreLevel, " (ignoring level gates)", "") & IIf(nCoinSteps > 0, ", " & RouteCoinText(nCoinSteps), "")
+sCaption = sCaption & " to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & IIf(nSteps = 1, " step", " steps") _
+    & " from " & sSourceName & IIf(bIgnoreLevel, " (ignoring level gates)", "") _
+    & IIf(nCoinSteps > 0, ", " & RouteCoinText(nCoinSteps), "")
 If nAltSteps > 0 And Not bAltRoute Then
-    sCaption = sCaption & "; " & LCase$(RouteKindText(nAltCoinSteps, nCoinSteps)) & ": " & nAltSteps & " steps from " _
-        & sAltSourceName
+    sCaption = sCaption & "; " & LCase$(RouteKindText(nAltCoinSteps, nCoinSteps)) & ": " & nAltSteps _
+        & IIf(nAltSteps = 1, " step", " steps") & " from " & sAltSourceName
 End If
 frmResults.lblCaption = sCaption
+frmResults.lblCaption.ToolTipText = sCaption
 frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
 'frmResults.Form_Resize sizes the last column to the remaining list width (also on Show); widen it afterward so long lines fit
 If frmResults.lvResults.ColumnHeaders(2).Width < 9000 Then frmResults.lvResults.ColumnHeaders(2).Width = 9000
@@ -36717,7 +36723,9 @@ Select Case Index
         Me.MousePointer = vbHourglass
         DoEvents
         Call ReachRecompute
-        If framNav(8).Visible And Not (framNav(3).Visible Or framCompareNav(3).Visible) Then
+        'with the reachable-only filter on, FilterMonsters (below) refills the list and clicks a row itself
+        If framNav(8).Visible And Not (framNav(3).Visible Or framCompareNav(3).Visible) _
+            And Not (filter_Monster_bExtrasEnabled And filter_Monster_bReachableOnly) Then
             If Not lvMonsters.SelectedItem Is Nothing Then
                 Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
             ElseIf lvMonsters.ListItems.count > 0 Then

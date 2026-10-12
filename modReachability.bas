@@ -110,6 +110,8 @@ End Type
 
 Private sReachDatabase As String          'database file the results belong to ("" = none)
 Private sReachFailedFor As String         'don't retry a failed computation for the same database
+Private bReachComputing As Boolean        'ReachEnsureComputed is running (its DoEvents can re-enter via FilterMonsters)
+Private bBuildError As Boolean            'a build step's error handler ran: the results are not usable
 Private nDroppedRandom As Long
 
 'rooms (1-based index)
@@ -166,6 +168,8 @@ Private bRevAdjBuilt As Boolean
 Private radjStart() As Long, radjEdge() As Long   'CSR over ALL edges, keyed on eTo (built lazily)
 Private bGrpAdjBuilt As Boolean
 Private gadjStart() As Long, gadjEdge() As Long   'CSR over random-group edges, keyed on eFrom (lazily, RouteSearch)
+Private nVisCacheLevel As Long            'VisitAtLevel cache: level (0 = empty) and its visited() result
+Private visCache() As Long
 Private nPOIIdx() As Long                 '(0..NUM_POIS-1) route source room index (0 = not in this database)
 Private sPOIName() As String              'route source names; index 0 = Bank of Godfrey (= nStartIdx)
 
@@ -223,20 +227,24 @@ End Function
 'Reachability of one monster at a level, plus the closest level gate that blocks it.
 'bComputeIfNeeded: False = never trigger the (progress-bar) computation; return reachUnknown if not computed.
 'On reachNo: nGateMap/nGateRoom = the reachable room holding the gated exit/command; nDestMap/nDestRoom = the room
-'it leads to; nMinLvl/nMaxLvl = the edge's level range (nMaxLvl = 0 when no upper limit); bRandomGroup = True when
-'the gate is an unusable random-teleport group rather than a level range.
+'it leads to; nMinLvl/nMaxLvl = the edge's level range (nMaxLvl = 0 when no upper limit) -- for a random-teleport
+'group the range every edge of the group allows; bRandomGroup = True when the gate is a random-teleport group that
+'is unusable at any level (scattered destinations) rather than a level range.
+'On reachNo/reachNoGate: nReachableAtLvl = the lowest level above nLevel at which the monster IS reachable (from the
+'precomputed level bands; 0 = none). Nested gates make this higher than nMinLvl: the gate reported is only the
+'nearest one, so "needs Level 30+" may still leave a Level 60+ gate behind it.
 'The gate is found by a reverse BFS from the monster's rooms over all edges (levels ignored), through rooms
 'not reachable at this level, stopping at the first edge whose source room IS reachable (fewest hops).
 Public Function ReachMonsterInfo(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVal bComputeIfNeeded As Boolean, _
     ByRef nGateMap As Long, ByRef nGateRoom As Long, ByRef nDestMap As Long, ByRef nDestRoom As Long, _
-    ByRef nMinLvl As Long, ByRef nMaxLvl As Long, ByRef bRandomGroup As Boolean) As ReachStatus
-Dim nIdx As Long, i As Long, r As Long, nGate As Long
+    ByRef nMinLvl As Long, ByRef nMaxLvl As Long, ByRef bRandomGroup As Boolean, ByRef nReachableAtLvl As Long) As ReachStatus
+Dim nIdx As Long, i As Long, r As Long, nGate As Long, g As Long, e As Long, nLo As Long, nHi As Long
 Dim visited() As Long, vKey As Variant
 On Error GoTo error:
 
 ReachMonsterInfo = reachUnknown
 nGateMap = 0: nGateRoom = 0: nDestMap = 0: nDestRoom = 0
-nMinLvl = 0: nMaxLvl = 0: bRandomGroup = False
+nMinLvl = 0: nMaxLvl = 0: bRandomGroup = False: nReachableAtLvl = 0
 
 If Not ReachIsComputed() And bComputeIfNeeded Then Call ReachEnsureComputed
 If Not ReachIsComputed() Then Exit Function
@@ -256,6 +264,11 @@ If mHit(nIdx, i) = 1 Then
     Exit Function
 End If
 
+'first higher band that reaches it (bpLevel is sorted ascending)
+For i = i + 1 To nBP - 1
+    If mHit(nIdx, i) = 1 Then nReachableAtLvl = bpLevel(i): Exit For
+Next i
+
 Call VisitAtLevel(nLevel, visited)
 
 'none of the monster's rooms is reachable, or it would have been reachYes
@@ -264,6 +277,7 @@ For Each vKey In mRooms(nIdx).Keys
     If r >= 1 And r <= nRooms Then
         If visited(r) = 1 Then   'shouldn't happen (mHit says unreachable); trust the BFS
             ReachMonsterInfo = reachYes
+            nReachableAtLvl = 0
             Exit Function
         End If
     End If
@@ -277,9 +291,20 @@ End If
 
 nGateMap = rMap(eFrom(nGate)): nGateRoom = rRoom(eFrom(nGate))
 nDestMap = rMap(eTo(nGate)): nDestRoom = rRoom(eTo(nGate))
-nMinLvl = eMin(nGate)
-If eMax(nGate) >= NO_MAX Or eMax(nGate) >= LEVEL_CAP Then nMaxLvl = 0 Else nMaxLvl = eMax(nGate)
-bRandomGroup = (eGroup(nGate) > 0)
+nLo = eMin(nGate): nHi = eMax(nGate)
+g = eGroup(nGate)
+If g > 0 Then
+    bRandomGroup = Not grpOK(g)
+    'a usable group is level-gated as a whole: it needs a level every one of its edges allows
+    For e = 1 To nEdges
+        If eGroup(e) = g Then
+            If eMin(e) > nLo Then nLo = eMin(e)
+            If eMax(e) < nHi Then nHi = eMax(e)
+        End If
+    Next e
+End If
+nMinLvl = nLo
+If nHi >= NO_MAX Or nHi >= LEVEL_CAP Then nMaxLvl = 0 Else nMaxLvl = nHi
 ReachMonsterInfo = reachNo
 
 Exit Function
@@ -400,14 +425,18 @@ ReachRoute = False
 End Function
 
 Public Sub ReachEnsureComputed()
-Dim t As Single
+Dim t As Single, bWasEnabled As Boolean
+bWasEnabled = True
 On Error GoTo error:
 
 If ReachIsComputed() Then Exit Sub
+If bReachComputing Then Exit Sub    're-entered from a DoEvents below (e.g. the filter form's Apply)
 If DB Is Nothing Then Exit Sub
 If sReachFailedFor <> "" And sReachFailedFor = sCurrentDatabaseFile Then Exit Sub
+bReachComputing = True: bBuildError = False
 t = Timer
 
+bWasEnabled = frmMain.Enabled
 frmMain.Enabled = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(100)
@@ -418,9 +447,9 @@ frmProgressBar.Show vbModeless, frmMain
 DoEvents
 
 nOut = 0: nPool = 0: nEdges = 0: nGroups = 0: nDroppedRandom = 0
-bRevAdjBuilt = False: bGrpAdjBuilt = False: nStartIdx = 0
+bRevAdjBuilt = False: bGrpAdjBuilt = False: nStartIdx = 0: nVisCacheLevel = 0
 ReDim nPOIIdx(0 To NUM_POIS - 1): ReDim sPOIName(0 To NUM_POIS - 1)
-Erase radjStart, radjEdge, gadjStart, gadjEdge
+Erase radjStart, radjEdge, gadjStart, gadjEdge, visCache
 Set dChainCache = New Dictionary
 
 Call LoadTextblocks:  Call SetProgress(10)
@@ -431,6 +460,8 @@ Call LoadMonsters:    Call SetProgress(35)
 Call BuildEdges:      Call SetProgress(70)
 Call ResolveMonsterRooms: Call SetProgress(80)
 Call ComputeReachability: Call SetProgress(100)
+'each build step handles its own errors (HandleError) and returns; partial data must not count as computed
+If bBuildError Then GoTo failed:
 
 sReachDatabase = sCurrentDatabaseFile
 If DEVELOPMENT_MODE_RT Then
@@ -454,6 +485,10 @@ Erase mBase, mBaseRaw, mSummonedBy, mGreet
 nOut = 0: nPool = 0
 GoTo done:
 
+failed:
+sReachDatabase = ""
+sReachFailedFor = sCurrentDatabaseFile
+GoTo done:
 error:
 Call HandleError("ReachEnsureComputed")
 sReachDatabase = ""
@@ -461,7 +496,8 @@ sReachFailedFor = sCurrentDatabaseFile
 done:
 On Error Resume Next
 If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
-frmMain.Enabled = True
+frmMain.Enabled = bWasEnabled
+bReachComputing = False
 End Sub
 
 'Same format as reachability.py --csv: number,name,status,levels (sorted by number).
@@ -551,6 +587,7 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadTextblocks")
+bBuildError = True
 End Sub
 
 Private Sub LoadSpells()
@@ -593,6 +630,7 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadSpells")
+bBuildError = True
 End Sub
 
 'ReDim Preserve can only grow the last dimension, so copy the 2-D ability arrays.
@@ -652,6 +690,7 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadRooms")
+bBuildError = True
 End Sub
 
 'Route sources for ReachRoute, in priority order (ties go to the earlier one). Index 0 must be Bank of
@@ -722,6 +761,7 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadItemRooms")
+bBuildError = True
 End Sub
 
 Private Sub LoadMonsters()
@@ -777,6 +817,7 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadMonsters")
+bBuildError = True
 End Sub
 
 
@@ -976,7 +1017,7 @@ For i = 0 To nOps - 1
     k = OpKind(sOps(i), v1, v2)
     Select Case k
         Case OP_MINLEVEL: If v1 > nMin Then nMin = v1
-        Case OP_MAXLEVEL: If v1 < nMax Then nMax = v1
+        Case OP_MAXLEVEL: If v1 > 0 And v1 < nMax Then nMax = v1   '"maxlevel 0" = no upper limit, as for exits
         Case OP_ROOMITEM: sItems = sItems & v1 & ","
         Case OP_TELEPORT: If v1 <> 0 Then Call AddOut(v1, v2, nMin, nMax, sItems, nPrice, nLine)
         Case OP_TEXT: Call FromTB(v1, nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, sCmd, bHasCmd, nLine)
@@ -1354,7 +1395,7 @@ For s = 1 To nSpells
                     Next j
                     If Not dHold Is Nothing Then
                         For Each vR In dHold.Keys
-                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0, EK_ITEMSPELL, NO_DIR, spNum(s) & "|" & sItemList, 0)
+                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0, EK_ITEMSPELL, NO_DIR, spNum(s) & "|" & sItemList, tPool(k).Price)
                         Next vR
                     End If
                 End If
@@ -1366,6 +1407,7 @@ Next s
 Exit Sub
 error:
 Call HandleError("Reach.BuildEdges")
+bBuildError = True
 End Sub
 
 
@@ -1473,12 +1515,12 @@ For i = 0 To UBound(lines)
     For j = 0 To UBound(ops)
         w = SplitWords(ops(j))
         If UBound(w) >= 1 Then
-            If w(0) = "teleport" And IsDigits(w(1)) Then
+            If LCase$(w(0)) = "teleport" And IsDigits(w(1)) Then
                 nRoom = CLng(w(1)): nMap = 0: bTP = True
                 If UBound(w) >= 2 Then
                     If IsDigits(w(2)) Then nMap = CLng(w(2))
                 End If
-            ElseIf w(0) = "summon" And w(1) = CStr(nMon) And bTP Then
+            ElseIf LCase$(w(0)) = "summon" And w(1) = CStr(nMon) And bTP Then
                 SummonAfterTeleport = True
                 Exit Function
             End If
@@ -1543,6 +1585,7 @@ Next m
 Exit Sub
 error:
 Call HandleError("Reach.ResolveMonsterRooms")
+bBuildError = True
 End Sub
 
 
@@ -1593,11 +1636,10 @@ Next e
 'level breakpoints (where the set of usable edges can change)
 Set dBP = New Dictionary
 dBP(CLng(1)) = True   'keys must all be Long: Dictionary treats Integer 1 and Long 1 as different
+'(random-group edges included: VisitFromSeeds/RouteSearch test their level ranges too)
 For e = 1 To nEdges
-    If eGroup(e) = 0 Then
-        If eMin(e) >= 1 And eMin(e) < LEVEL_CAP Then dBP(eMin(e)) = True
-        If eMax(e) >= 0 And eMax(e) < LEVEL_CAP Then dBP(eMax(e) + 1) = True
-    End If
+    If eMin(e) >= 1 And eMin(e) < LEVEL_CAP Then dBP(eMin(e)) = True
+    If eMax(e) >= 0 And eMax(e) < LEVEL_CAP Then dBP(eMax(e) + 1) = True
 Next e
 nBP = 0
 ReDim bpLevel(0 To dBP.Count - 1)
@@ -1638,21 +1680,35 @@ Next b
 Exit Sub
 error:
 Call HandleError("Reach.ComputeReachability")
+bBuildError = True
 End Sub
 
 'Rooms reachable from Bank of Godfrey at level L, following only edges whose level range
 'includes L plus random groups usable at L: visited(1..nRooms) = 1 if reachable.
 'Uses adjStart/adjEdge, grpOK, grpSrc, nStartIdx from ComputeReachability.
 Private Sub VisitAtLevel(ByVal L As Long, visited() As Long)
-Dim nSeeds() As Long, parentEdge() As Long, dist() As Long
+Dim nSeeds() As Long, parentEdge() As Long, dist() As Long, i As Long
 
 If nStartIdx = 0 Then
     ReDim visited(1 To nRooms)   'all 0
     Exit Sub
 End If
+If nVisCacheLevel > 0 And nVisCacheLevel = L Then
+    ReDim visited(1 To nRooms)
+    For i = 1 To nRooms
+        visited(i) = visCache(i)
+    Next i
+    Exit Sub
+End If
 ReDim nSeeds(1 To 1)
 nSeeds(1) = nStartIdx
 Call VisitFromSeeds(nSeeds, 1, L, visited, parentEdge, dist)
+'the detail pane asks for the same level several times per monster (gate, routes); keep the last answer
+ReDim visCache(1 To nRooms)
+For i = 1 To nRooms
+    visCache(i) = visited(i)
+Next i
+nVisCacheLevel = L
 End Sub
 
 'Rooms reachable at level L from any of nSeeds(1..nSeedCount), following only edges whose level range
