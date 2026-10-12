@@ -43,6 +43,7 @@ Form=frmCoinConvert.frm
 Module=modExpPerHour; modExpPerHour.bas
 Module=modItemParse; modItemParse.bas
 Module=modListViewExt; modListViewExt.bas
+Module=modReachability; modReachability.bas
 Form=frmHitCalc.frm
 Form=frmMonsterFilters.frm
 ResFile32="resResource.res"

@@ -897,6 +897,7 @@ UseExpMulti = False
 Set DB = OpenDatabase(sFile, False, True)
 
 sCurrentDatabaseFile = sFile
+Call ReachInvalidate
 
 On Error GoTo missing_tables:
 Set tabItems = DB.OpenRecordset("Items")

@@ -2,13 +2,22 @@
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
-
 v2.3.5 (10/##/2026)  
 ------------------------------------------  
+- NEW: Monster reachability filter (by character level, etc) for the extra monsters tab filters  
+- NEW: Options menu item to (re)calculate monster reachability  
+- UP: Monster details now show whether the monster is reachable at the character's level and, if not, the room whose level gate blocks it  
+- UP: Monster details now show a route to the monster (or to its blocking level gate) from Bank of Godfrey or the nearest other hub (major banks, Port Blackwater), with a waypoint every N rooms (new Settings option, default 25); double-click Yes/No for a results window listing every command, teleport, gated or restricted exit and map change along the way  
+- UP: Route results now list the step number first, show item/key/spell/class/race names, skip automatic waypoints unless nothing was listed for N rooms, and prefer coin-free paths over tolls and paid passages  
+- UP: Routes take a toll or paid passage when the coin-free path is more than three times longer, and monster details offer the other route (coin-free or shorter) as an extra row to double-click  
+- UP: Unreachable monsters now show the blocking room on the No row; double-clicking it lists the full route past the level gate  
+- UP: Route destinations prefer placed rooms, then lairs, then summon spells/textblocks, then roaming groups  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now included vs evil monsters (hit calculator + monster attack sim) when the character filter is on and the Evil alignment is selected  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps (99% for silk/ninja/leather classes)  
 - UP: Hit calculator now checks the Shadow box for a character with shadow and shows its AC without the +10 shadow bonus (was folded into the AC field)  
+- FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
+- FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  

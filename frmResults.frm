@@ -453,6 +453,7 @@ End Sub
 
 Private Sub Form_Resize()
 On Error Resume Next
+Dim x As Long, nOtherWidth As Single, nLastWidth As Single
 
 If Me.WindowState = vbMinimized Then Exit Sub
 
@@ -460,10 +461,18 @@ nWindowState = Me.WindowState
 
 fraLV.Width = Me.ScaleWidth - fraLV.Left - 50
 fraLV.Height = Me.ScaleHeight - fraLV.Top - 50
+lblCaption.Width = Me.ScaleWidth - lblCaption.Left - 50   'long route captions
 
 lvResults.Width = fraLV.Width
 lvResults.Height = fraLV.Height - lvResults.Top
-lvResults.ColumnHeaders(1).Width = lvResults.Width - 500
+'size the last column to the remaining width; the other columns keep theirs
+nOtherWidth = 0
+For x = 1 To lvResults.ColumnHeaders.count - 1
+    nOtherWidth = nOtherWidth + lvResults.ColumnHeaders(x).Width
+Next x
+nLastWidth = lvResults.Width - 500 - nOtherWidth
+If nLastWidth < 1000 Then nLastWidth = 1000
+lvResults.ColumnHeaders(lvResults.ColumnHeaders.count).Width = nLastWidth
 
 fraTree.Width = Me.ScaleWidth - fraTree.Left - 50
 fraTree.Height = Me.ScaleHeight - fraTree.Top - 50

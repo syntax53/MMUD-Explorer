@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSettings 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
-   ClientHeight    =   7725
+   ClientHeight    =   8205
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   10110
@@ -10,7 +10,7 @@ Begin VB.Form frmSettings
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   7725
+   ScaleHeight     =   8205
    ScaleWidth      =   10110
    Begin VB.CommandButton cmdRecreateINI 
       Style           =   1  'Graphical
@@ -18,12 +18,12 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   4020
       TabIndex        =   3
-      Top             =   7200
+      Top             =   7680
       Width           =   2115
    End
    Begin VB.Frame Frame4 
       Caption         =   "Settings"
-      Height          =   6975
+      Height          =   7455
       Left            =   60
       TabIndex        =   2
       Top             =   60
@@ -33,7 +33,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   50
-         Top             =   6600
+         Top             =   7080
          Width           =   5595
       End
       Begin VB.CheckBox chkSwapMonDetailOutput 
@@ -251,6 +251,24 @@ Begin VB.Form frmSettings
          Top             =   4140
          Width           =   4695
       End
+      Begin VB.TextBox txtRouteWaypointInterval 
+         Alignment       =   2  'Center
+         Height          =   345
+         Left            =   180
+         MaxLength       =   4
+         TabIndex        =   51
+         ToolTipText     =   "Min = 1, Max = 1000, Default = 25"
+         Top             =   4440
+         Width           =   615
+      End
+      Begin VB.Label lblRouteWaypoint 
+         Caption         =   "Route waypoint every N rooms in monster details (double-click Yes/No for the full route)"
+         Height          =   390
+         Left            =   900
+         TabIndex        =   52
+         Top             =   4425
+         Width           =   4700
+      End
       Begin VB.CheckBox chkSwapWindowTitle 
          Caption         =   "Put the character / filename at the start of MME's window title"
          Height          =   255
@@ -280,7 +298,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   20
-         Top             =   4800
+         Top             =   5280
          Width           =   4995
       End
       Begin VB.CheckBox chkWindowSnap 
@@ -288,7 +306,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   25
-         Top             =   6300
+         Top             =   6780
          Width           =   8955
       End
       Begin VB.CheckBox chkNavSpan 
@@ -296,7 +314,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   22
-         Top             =   5400
+         Top             =   5880
          Width           =   3435
       End
       Begin VB.CheckBox chkUseWrist 
@@ -312,7 +330,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   21
-         Top             =   5100
+         Top             =   5580
          Width           =   3735
       End
       Begin VB.CheckBox chkWindowsOnTop 
@@ -320,7 +338,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   24
-         Top             =   6000
+         Top             =   6480
          Width           =   4695
       End
       Begin VB.CheckBox chkSwapMapButtons 
@@ -328,7 +346,7 @@ Begin VB.Form frmSettings
          Height          =   255
          Left            =   180
          TabIndex        =   23
-         Top             =   5700
+         Top             =   6180
          Width           =   3435
       End
       Begin VB.CheckBox chkAutoSaveChar 
@@ -447,7 +465,7 @@ Begin VB.Form frmSettings
          Height          =   195
          Left            =   180
          TabIndex        =   42
-         Top             =   4500
+         Top             =   4980
          Width           =   2010
       End
       Begin VB.Label Label3 
@@ -518,7 +536,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   8700
       TabIndex        =   1
-      Top             =   7200
+      Top             =   7680
       Width           =   1215
    End
    Begin VB.CommandButton cmdSave 
@@ -536,7 +554,7 @@ Begin VB.Form frmSettings
       Height          =   375
       Left            =   120
       TabIndex        =   0
-      Top             =   7200
+      Top             =   7680
       Width           =   1575
    End
 End
@@ -698,6 +716,7 @@ If val(ReadINI("Settings", "ExpPerHourKnobsByCharacter")) > 0 Then
 End If
 
 txtMonsterSimRounds.Text = nGlobalMonsterSimRounds
+txtRouteWaypointInterval.Text = nRouteWaypointInterval
 
 Call PopulateExpFields
 Call chkAutoLoadChar_Click
@@ -765,6 +784,10 @@ sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ")
 nGlobalMonsterSimRounds = val(txtMonsterSimRounds.Text)
 If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
+
+nRouteWaypointInterval = val(txtRouteWaypointInterval.Text)
+If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 25 '0/blank = default
+If nRouteWaypointInterval > 1000 Then nRouteWaypointInterval = 1000
 
 
 nGlobal_cephDMG_Knob = Round(val(txtCEPH_DMG.Text), 2)
@@ -847,6 +870,7 @@ If (chkDarkMode.Value = 1) <> bDarkMode Then
     MsgBox "The dark mode change will take effect the next time " & App.title & " is started.", vbInformation
 End If
 Call WriteINI("Settings", "MonsterSimRounds", nGlobalMonsterSimRounds)
+Call WriteINI("Settings", "RouteWaypointInterval", nRouteWaypointInterval)
 
 Call WriteINI("Settings", "ExpPerHourKnobsByCharacter", chkExpHrCalcByCharacter.Value)
 If chkExpHrCalcByCharacter.Value = 1 And bCharLoaded = True And sSessionLastCharFile <> "" Then sFile = sSessionLastCharFile
@@ -996,6 +1020,14 @@ Call SelectAll(txtMonsterSimRounds)
 End Sub
 
 Private Sub txtMonsterSimRounds_KeyPress(KeyAscii As Integer)
+KeyAscii = NumberKeysOnly(KeyAscii)
+End Sub
+
+Private Sub txtRouteWaypointInterval_GotFocus()
+Call SelectAll(txtRouteWaypointInterval)
+End Sub
+
+Private Sub txtRouteWaypointInterval_KeyPress(KeyAscii As Integer)
 KeyAscii = NumberKeysOnly(KeyAscii)
 End Sub
 
