@@ -19,6 +19,7 @@ Global bHideRecordNumbers As Boolean
 Global bMobPrintCharDamageOutFirst As Boolean
 Global bOnlyInGame As Boolean
 Global nGlobalMonsterSimRounds As Long
+Global nRouteWaypointInterval As Long
 Global bCharLoaded As Boolean
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
@@ -2270,6 +2271,62 @@ error:
 Call HandleError("AddRoomNPCCommandRefs")
 Resume out:
 End Sub
+
+'route rows under the "Reachable" detail row: start, a waypoint every nRouteWaypointInterval steps
+'(first 10 shown), then the destination. sDblClickWord = the detail text to double-click for the full route.
+Private Sub AddRouteRows(DetailLV As ListView, ByVal nSourceMap As Long, ByVal nSourceRoom As Long, _
+    ByVal sSourceName As String, nStepMap() As Long, nStepRoom() As Long, ByVal nSteps As Long, _
+    Optional ByVal sDblClickWord As String = "Yes")
+On Error GoTo error:
+Dim oLI As ListItem, i As Long, nInterval As Long, nShown As Long, nMore As Long
+
+nInterval = nRouteWaypointInterval
+If nInterval < 1 Then nInterval = 50
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+oLI.Tag = "room"
+oLI.ListSubItems.Add (1), "Detail", "start: " & sSourceName _
+    & IIf(bHideRecordNumbers, "", " (" & nSourceMap & "/" & nSourceRoom & ")")
+oLI.ListSubItems(1).Tag = nSourceMap & "/" & nSourceRoom
+
+For i = nInterval To nSteps - 1 Step nInterval
+    If nShown < 10 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.Tag = "room"
+        oLI.ListSubItems.Add (1), "Detail", i & ": " & GetRoomName(, nStepMap(i), nStepRoom(i), bHideRecordNumbers)
+        oLI.ListSubItems(1).Tag = nStepMap(i) & "/" & nStepRoom(i)
+        nShown = nShown + 1
+    Else
+        nMore = nMore + 1
+    End If
+Next i
+
+If nMore > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", "... plus " & nMore & " more waypoint" & IIf(nMore = 1, "", "s") _
+        & " (double-click " & sDblClickWord & " for the full route)"
+End If
+
+If nSteps > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.Tag = "room"
+    oLI.ListSubItems.Add (1), "Detail", nSteps & ": " & GetRoomName(, nStepMap(nSteps), nStepRoom(nSteps), bHideRecordNumbers)
+    oLI.ListSubItems(1).Tag = nStepMap(nSteps) & "/" & nStepRoom(nSteps)
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRouteRows")
+Resume out:
+End Sub
+
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTemp As Long, tExpInfo As tExpPerHourInfo
@@ -2295,7 +2352,8 @@ Dim this_nDamageOut As Double, this_nFirstRoundDamageOut As Double, this_nMinDam
 Dim this_nSurpriseDamageOut As Double, this_nSurpriseMinDamage As Double, this_nSurpriseChance As Integer
 Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGateRoom As Long, sReachReason As String
 Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
-Dim bReachRowAdded As Boolean
+Dim bReachRowAdded As Boolean, bReachRoute As Boolean, nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String
+Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String, nRouteSteps As Long
             
 On Error GoTo error:
 
@@ -4055,12 +4113,24 @@ Else
         nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup)
     Select Case eReach
         Case reachYes:
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
             oLI.ForeColor = TColor(&H8000&)
-            oLI.ListSubItems.Add (1), "Detail", "Yes"
+            If bReachRoute Then
+                oLI.Tag = "reach_route"
+                oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
+                    & " from " & sRouteSrcName & ")"
+            Else
+                oLI.ListSubItems.Add (1), "Detail", "Yes"
+            End If
             oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
             bReachRowAdded = True
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "Yes")
+            End If
 
         Case reachNoGate:
             Set oLI = DetailLV.ListItems.Add()
@@ -4079,15 +4149,25 @@ Else
                 sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
             End If
 
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
+
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
+            If bReachRoute Then oLI.Tag = "reach_route"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No"
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = ""
             oLI.Tag = "room"
             oLI.ForeColor = TColor(&HC0&)
-            oLI.ListSubItems.Add (1), "Detail", "No, blocked by " _
+            oLI.ListSubItems.Add (1), "Detail", "blocked by " _
                 & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & " - " & sReachReason
             oLI.ListSubItems(1).Tag = nReachGateMap & "/" & nReachGateRoom
             oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
-            bReachRowAdded = True
 
             If nReachDestMap <> nReachGateMap Or nReachDestRoom <> nReachGateRoom Then
                 Set oLI = DetailLV.ListItems.Add()
@@ -4098,6 +4178,12 @@ Else
                     & GetRoomName(, nReachDestMap, nReachDestRoom, bHideRecordNumbers)
                 oLI.ListSubItems(1).Tag = nReachDestMap & "/" & nReachDestRoom
                 oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            End If
+
+            'route to the room holding the blocking gate
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "No")
             End If
 
         'reachUnknown: not computed / monster not located -- show nothing

@@ -21092,6 +21092,7 @@ lblLabelArray(3).Tag = 0
 
 'default exp/hour globals
 nGlobalMonsterSimRounds = 500
+nRouteWaypointInterval = 50
 
 nGlobal_cephXP_Knob = 1
 nGlobal_cephDMG_Knob = 1
@@ -31600,6 +31601,10 @@ nGlobalMonsterSimRounds = val(ReadINI("Settings", "MonsterSimRounds", , nGlobalM
 If nGlobalMonsterSimRounds < 100 Then nGlobalMonsterSimRounds = 100
 If nGlobalMonsterSimRounds > 10000 Then nGlobalMonsterSimRounds = 10000
 
+nRouteWaypointInterval = val(ReadINI("Settings", "RouteWaypointInterval", , nRouteWaypointInterval))
+If nRouteWaypointInterval < 1 Then nRouteWaypointInterval = 1
+If nRouteWaypointInterval > 1000 Then nRouteWaypointInterval = 1000
+
 Call LoadExpPerHourKnobs
 
 'character
@@ -32389,6 +32394,8 @@ Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
         If Not lvMonsterCompare.SelectedItem Is Nothing Then
             Call PullMonsterDetail(val(lvMonsterCompare.SelectedItem.Text), lvMonsterCompareLoc)
         End If
+    Case "reach_route":
+        If Not lvMonsterCompare.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsterCompare.SelectedItem.Text))
     Case "item":
         Call GotoItem(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
     Case "spell":
@@ -32444,6 +32451,10 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
         End If
         Exit Sub
         
+    Case "reach_route":
+        If Not lvMonsters.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsters.SelectedItem.Text))
+        Exit Sub
+
     Case "greet_text", "textblock":
         If lvMonsterDetail.ListItems.count > 0 Then
             For x = 1 To lvMonsterDetail.ListItems.count
@@ -32497,6 +32508,80 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
         End If
 End Select
 
+End Sub
+
+'results window listing the reachability route to a monster (or to the level gate that blocks it):
+'the start room, every non-plain step (command, teleport, gated/restricted exit, map change), a waypoint
+'every nRouteWaypointInterval steps, and the destination. Rows are "Room: ..." + Tag "m/r" for GotoLocation.
+Public Sub ShowMonsterRoute(ByVal nMonsterNum As Long)
+On Error GoTo error:
+Dim eReach As ReachStatus, nLevel As Long, bToGate As Boolean, i As Long, nInterval As Long
+Dim nGateMap As Long, nGateRoom As Long, nDestMap As Long, nDestRoom As Long
+Dim nMinLvl As Long, nMaxLvl As Long, bRandomGroup As Boolean, sLastRow As String
+Dim nSourceMap As Long, nSourceRoom As Long, sSourceName As String, nSteps As Long
+Dim nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String
+
+nLevel = val(txtGlobalLevel(0).Text)
+eReach = ReachMonsterInfo(nMonsterNum, nLevel, False, nGateMap, nGateRoom, nDestMap, nDestRoom, _
+    nMinLvl, nMaxLvl, bRandomGroup)
+Select Case eReach
+    Case reachYes: bToGate = False
+    Case reachNo: bToGate = True
+    Case Else:
+        MsgBox "No route information for this monster.", vbInformation
+        GoTo out:
+End Select
+
+If Not ReachRoute(nMonsterNum, nLevel, bToGate, nSourceMap, nSourceRoom, sSourceName, _
+    nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps) Then
+    MsgBox "No route found.", vbInformation
+    GoTo out:
+End If
+
+nInterval = nRouteWaypointInterval
+If nInterval < 1 Then nInterval = 50
+
+Call frmResults.SetupResultsWindow(False, Me)
+
+Call AddMonsterRouteResultRow(nSourceMap, nSourceRoom, "start (" & sSourceName & ")", sLastRow)
+For i = 1 To nSteps
+    If nStepFlags(i) <> 0 Then
+        'listed at the room you act FROM
+        Call AddMonsterRouteResultRow(nStepMap(i - 1), nStepRoom(i - 1), "step " & i & ": " & sStepLabel(i) _
+            & " -> " & GetRoomName(, nStepMap(i), nStepRoom(i), False), sLastRow)
+    End If
+    If i Mod nInterval = 0 And i < nSteps Then
+        Call AddMonsterRouteResultRow(nStepMap(i), nStepRoom(i), "step " & i & " (waypoint)", sLastRow)
+    End If
+Next i
+Call AddMonsterRouteResultRow(nStepMap(nSteps), nStepRoom(nSteps), "step " & nSteps & ": " _
+    & IIf(bToGate, "the level gate", "destination"), sLastRow)
+
+frmResults.lblCaption = "Route to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & " steps from " & sSourceName _
+    & IIf(bToGate, " to the level gate", "")
+frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
+'frmResults.Form_Resize sizes the column to the list width (also on Show); widen it afterward so long lines fit
+If frmResults.lvResults.ColumnHeaders(1).Width < 9000 Then frmResults.lvResults.ColumnHeaders(1).Width = 9000
+
+out:
+Exit Sub
+error:
+Call HandleError("ShowMonsterRoute")
+Resume out:
+End Sub
+
+'one "Room: <name> (m/r) -- <suffix>" row in frmResults; skips a row identical to the previous one
+Private Sub AddMonsterRouteResultRow(ByVal nMap As Long, ByVal nRoom As Long, ByVal sSuffix As String, ByRef sLastRow As String)
+Dim oLI As ListItem, sRow As String
+
+sRow = "Room: " & GetRoomName(, nMap, nRoom, True) & " (" & nMap & "/" & nRoom & ") -- " & sSuffix
+If sRow = sLastRow Then Exit Sub
+sLastRow = sRow
+
+Set oLI = frmResults.lvResults.ListItems.Add()
+oLI.Text = sRow
+oLI.Tag = nMap & "/" & nRoom
+Set oLI = Nothing
 End Sub
 
 Private Sub lvMonsterDetail_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)

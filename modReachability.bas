@@ -60,6 +60,23 @@ Public Enum ReachStatus
     reachNoGate = 3     'unreachable but no level gate found on any path (no known path)
 End Enum
 
+'Step kind flags (bitmask) for route steps
+Public Const REACH_STEP_ACTION As Long = 1    'not a plain exit: typed command / NPC talk / room spell / item spell
+Public Const REACH_STEP_LEVEL As Long = 2     'edge has a level gate (min > 1 or max < no-limit)
+Public Const REACH_STEP_RESTRICT As Long = 4  'exit with a non-level restriction (Key/Item/Toll/Door/Hidden/Text/...)
+Public Const REACH_STEP_MAPCHANGE As Long = 8 'destination room is on a different map than the previous room
+Public Const REACH_STEP_RANDOM As Long = 16   'random-destination teleport group
+
+'edge kinds (eKind)
+Private Const EK_EXIT As Byte = 1
+Private Const EK_COMMAND As Byte = 2
+Private Const EK_ROOMSPELL As Byte = 3
+Private Const EK_NPC As Byte = 4
+Private Const EK_ITEMSPELL As Byte = 5
+Private Const NO_DIR As Byte = 255
+
+Private Const NUM_POIS As Long = 6        'route sources, see ResolvePOIs
+
 Private Type tTeleOut
     Room As Long
     Map As Long           '0 = same map as the room the chain started in
@@ -68,6 +85,7 @@ Private Type tTeleOut
     IsRandom As Boolean
     RoomItems As String   '",id,id," -- 'roomitem' requirements seen on the way
     LineNo As Long        'top-level textblock line that produced it
+    Cmd As String         'top-level command / greet keyword that produced it ("" for spells)
 End Type
 
 Private sReachDatabase As String          'database file the results belong to ("" = none)
@@ -80,6 +98,7 @@ Private nRooms As Long
 Private rMap() As Long, rRoom() As Long, rCMD() As Long, rSpell() As Long, rNPC() As Long
 Private rExit() As String                 '(room, 0..9) raw exit fields
 Private rPlaced() As String
+Private sDirs As Variant                  'exit direction names for Rooms columns 0..9 (kept for route labels)
 
 'textblocks
 Private dTB As Dictionary                 'number -> index
@@ -88,6 +107,7 @@ Private tbAction() As String, tbLink() As Long, tbCalled() As String
 'spells
 Private dSpell As Dictionary              'number -> index
 Private spNum() As Long, spAb() As Long, spVal() As Long, spReqLevel() As Long, spCastedBy() As String
+Private spName() As String                'for edge labels only
 Private nSpells As Long
 
 'items: rooms holding each item (Rooms.Placed, Items.[Obtained From] "Room m/r")
@@ -105,6 +125,10 @@ Private mBaseRaw() As Long                'count of those entries, including roo
 'edges
 Private nEdges As Long
 Private eFrom() As Long, eTo() As Long, eMin() As Long, eMax() As Long, eGroup() As Long
+Private eKind() As Byte                   'EK_* (for ReachRoute)
+Private eDir() As Byte                    'exit direction 0..9, NO_DIR for non-exits
+Private eLabel() As String                'exit: non-level restriction text ("" = plain); command: command text;
+                                          'room spell: spell name; NPC: "npc|keyword"; item spell: "spell|item,item"
 Private nGroups As Long
 
 'chain-walk output buffer and per-root cache
@@ -119,6 +143,8 @@ Private grpOK() As Boolean                'random group usable at all (destinati
 Private grpSrc() As Long                  'random group's source room index
 Private bRevAdjBuilt As Boolean
 Private radjStart() As Long, radjEdge() As Long   'CSR over ALL edges, keyed on eTo (built lazily)
+Private nPOIIdx() As Long                 '(0..NUM_POIS-1) route source room index (0 = not in this database)
+Private sPOIName() As String              'route source names; index 0 = Bank of Godfrey (= nStartIdx)
 
 'results
 Private nBP As Long
@@ -175,8 +201,8 @@ End Function
 Public Function ReachMonsterInfo(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVal bComputeIfNeeded As Boolean, _
     ByRef nGateMap As Long, ByRef nGateRoom As Long, ByRef nDestMap As Long, ByRef nDestRoom As Long, _
     ByRef nMinLvl As Long, ByRef nMaxLvl As Long, ByRef bRandomGroup As Boolean) As ReachStatus
-Dim nIdx As Long, i As Long, j As Long, u As Long, e As Long, r As Long, nGate As Long
-Dim visited() As Long, seen() As Long, queue() As Long, qHead As Long, qTail As Long, vKey As Variant
+Dim nIdx As Long, i As Long, r As Long, nGate As Long
+Dim visited() As Long, vKey As Variant
 On Error GoTo error:
 
 ReachMonsterInfo = reachUnknown
@@ -202,11 +228,8 @@ If mHit(nIdx, i) = 1 Then
 End If
 
 Call VisitAtLevel(nLevel, visited)
-If Not bRevAdjBuilt Then Call BuildReverseAdjacency
 
-'seed with the monster's rooms (none of them is reachable, or it would have been reachYes)
-ReDim seen(1 To nRooms): ReDim queue(1 To nRooms)
-qHead = 1: qTail = 0
+'none of the monster's rooms is reachable, or it would have been reachYes
 For Each vKey In mRooms(nIdx).Keys
     r = CLng(vKey)
     If r >= 1 And r <= nRooms Then
@@ -214,24 +237,10 @@ For Each vKey In mRooms(nIdx).Keys
             ReachMonsterInfo = reachYes
             Exit Function
         End If
-        If seen(r) = 0 Then seen(r) = 1: qTail = qTail + 1: queue(qTail) = r
     End If
 Next vKey
 
-nGate = 0
-Do While qHead <= qTail
-    u = queue(qHead): qHead = qHead + 1
-    For j = radjStart(u) To radjStart(u + 1) - 1
-        e = radjEdge(j)
-        If visited(eFrom(e)) = 1 Then
-            nGate = e
-            Exit Do
-        ElseIf seen(eFrom(e)) = 0 Then
-            seen(eFrom(e)) = 1: qTail = qTail + 1: queue(qTail) = eFrom(e)
-        End If
-    Next j
-Loop
-
+nGate = FindGateEdge(nIdx, visited)
 If nGate = 0 Then
     ReachMonsterInfo = reachNoGate
     Exit Function
@@ -248,6 +257,109 @@ Exit Function
 error:
 Call HandleError("ReachMonsterInfo")
 ReachMonsterInfo = reachUnknown
+End Function
+
+'Route from the nearest usable source to the monster's nearest spawn room (bToGate=False) or to the
+'reachable room holding the gate that blocks it (bToGate=True). Step i (1..nSteps) = room reached after
+'action i; index 0 = the source room. sStepLabel(i) = player-facing action leading INTO step i.
+'Returns False when not computed / unknown monster / no route. Never triggers the computation.
+'Sources are Bank of Godfrey plus the other points of interest (ResolvePOIs) that are reachable from it
+'at this level; one BFS seeded with all of them (Godfrey first, so it wins ties) picks the nearest.
+'bToGate=True also returns False when the monster is reachable at this level (nothing blocks it); the
+'gate is the same one ReachMonsterInfo reports. nSteps = 0 with True = the destination is the source.
+'Output arrays are always ReDim'd (0 To nSteps); on False they are (0 To 0) and nSteps = 0.
+Public Function ReachRoute(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVal bToGate As Boolean, _
+    ByRef nSourceMap As Long, ByRef nSourceRoom As Long, ByRef sSourceName As String, _
+    ByRef nStepMap() As Long, ByRef nStepRoom() As Long, ByRef nStepFlags() As Long, _
+    ByRef sStepLabel() As String, ByRef nSteps As Long) As Boolean
+Dim nIdx As Long, i As Long, p As Long, r As Long, e As Long, n As Long, nDest As Long
+Dim visG() As Long, visited() As Long, parentEdge() As Long, dist() As Long
+Dim nSeeds() As Long, nSeedCount As Long, pathE() As Long, vKey As Variant
+On Error GoTo error:
+
+nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
+
+If Not ReachIsComputed() Then Exit Function
+If Not dMonIdx.Exists(nMonsterNum) Then Exit Function
+nIdx = dMonIdx(nMonsterNum)
+If mStatus(nIdx) <> MON_LOCATED Then Exit Function
+If nStartIdx = 0 Or nRooms < 1 Then Exit Function
+If nLevel < 1 Then nLevel = 1
+
+'sources: Bank of Godfrey first, then every other point of interest reachable from it at this level
+Call VisitAtLevel(nLevel, visG)
+ReDim nSeeds(1 To NUM_POIS)
+nSeedCount = 1: nSeeds(1) = nStartIdx
+For p = 1 To NUM_POIS - 1
+    r = nPOIIdx(p)
+    If r >= 1 And r <= nRooms Then
+        If visG(r) = 1 Then nSeedCount = nSeedCount + 1: nSeeds(nSeedCount) = r
+    End If
+Next p
+Call VisitFromSeeds(nSeeds, nSeedCount, nLevel, visited, parentEdge, dist)
+
+nDest = 0
+If bToGate Then
+    For Each vKey In mRooms(nIdx).Keys
+        r = CLng(vKey)
+        If r >= 1 And r <= nRooms Then
+            If visG(r) = 1 Then Exit Function   'reachable at this level: no gate
+        End If
+    Next vKey
+    e = FindGateEdge(nIdx, visG)
+    If e = 0 Then Exit Function
+    nDest = eFrom(e)
+Else
+    For Each vKey In mRooms(nIdx).Keys
+        r = CLng(vKey)
+        If r >= 1 And r <= nRooms Then
+            If visited(r) = 1 Then
+                If nDest = 0 Then
+                    nDest = r
+                ElseIf dist(r) < dist(nDest) Or (dist(r) = dist(nDest) And r < nDest) Then
+                    nDest = r
+                End If
+            End If
+        End If
+    Next vKey
+    If nDest = 0 Then Exit Function
+End If
+If visited(nDest) = 0 Then Exit Function
+
+'walk the parent edges back to the source (parentEdge = 0 at a seed)
+ReDim pathE(1 To nRooms)
+n = 0: r = nDest
+Do While parentEdge(r) <> 0
+    n = n + 1
+    If n > nRooms Then Exit Function    'safety; the parent links form a tree
+    pathE(n) = parentEdge(r)
+    r = eFrom(pathE(n))
+Loop
+
+For p = 0 To NUM_POIS - 1
+    If nPOIIdx(p) = r Then Exit For
+Next p
+If p < NUM_POIS Then sSourceName = sPOIName(p)
+nSourceMap = rMap(r): nSourceRoom = rRoom(r)
+
+ReDim nStepMap(0 To n): ReDim nStepRoom(0 To n): ReDim nStepFlags(0 To n): ReDim sStepLabel(0 To n)
+nStepMap(0) = rMap(r): nStepRoom(0) = rRoom(r)
+For i = 1 To n
+    e = pathE(n - i + 1)
+    nStepMap(i) = rMap(eTo(e)): nStepRoom(i) = rRoom(eTo(e))
+    nStepFlags(i) = StepFlags(e)
+    sStepLabel(i) = StepLabel(e)
+Next i
+nSteps = n
+ReachRoute = True
+
+Exit Function
+error:
+Call HandleError("ReachRoute")
+nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
+ReachRoute = False
 End Function
 
 Public Sub ReachEnsureComputed()
@@ -270,12 +382,13 @@ DoEvents
 
 nOut = 0: nPool = 0: nEdges = 0: nGroups = 0: nDroppedRandom = 0
 bRevAdjBuilt = False: nStartIdx = 0
+ReDim nPOIIdx(0 To NUM_POIS - 1): ReDim sPOIName(0 To NUM_POIS - 1)
 Erase radjStart, radjEdge
 Set dChainCache = New Dictionary
 
 Call LoadTextblocks:  Call SetProgress(10)
 Call LoadSpells:      Call SetProgress(15)
-Call LoadRooms:       Call SetProgress(30)
+Call LoadRooms:       Call ResolvePOIs: Call SetProgress(30)
 Call LoadItemRooms
 Call LoadMonsters:    Call SetProgress(35)
 Call BuildEdges:      Call SetProgress(70)
@@ -292,11 +405,13 @@ End If
 
 'ReachIsMonsterOK only needs dMonIdx, mStatus, mHit, bpLevel; ReachMonsterInfo's gate tracing
 'also needs the rooms (rMap/rRoom), edges (e*, nEdges), traversal arrays (adjStart/adjEdge, grpOK,
-'grpSrc, nStartIdx) and mRooms. Free the rest of the build data.
+'grpSrc, nStartIdx) and mRooms; ReachRoute also needs the edge metadata (eKind/eDir/eLabel), the
+'direction names (sDirs) and the route sources (nPOIIdx/sPOIName). Free the rest of the build data
+'(spell names are already materialized into eLabel).
 Set dChainCache = Nothing
 Set dTB = Nothing: Set dSpell = Nothing: Set dItemRooms = Nothing: Set dRoomIdx = Nothing
 Erase tOut, tPool, rExit, rPlaced, rCMD, rSpell, rNPC
-Erase tbAction, tbLink, tbCalled, spNum, spAb, spVal, spReqLevel, spCastedBy
+Erase tbAction, tbLink, tbCalled, spNum, spAb, spVal, spReqLevel, spCastedBy, spName
 Erase mBase, mBaseRaw, mSummonedBy, mGreet
 nOut = 0: nPool = 0
 GoTo done:
@@ -414,19 +529,21 @@ For j = 0 To MAX_ABILS - 1
 Next j
 nSpells = 0
 ReDim spNum(1 To 500): ReDim spAb(1 To 500, 0 To MAX_ABILS - 1): ReDim spVal(1 To 500, 0 To MAX_ABILS - 1)
-ReDim spReqLevel(1 To 500): ReDim spCastedBy(1 To 500)
+ReDim spReqLevel(1 To 500): ReDim spCastedBy(1 To 500): ReDim spName(1 To 500)
 Do Until rs.EOF
     nSpells = nSpells + 1
     If nSpells > UBound(spNum) Then
         ReDim Preserve spNum(1 To nSpells * 2)
         ReDim Preserve spReqLevel(1 To nSpells * 2)
         ReDim Preserve spCastedBy(1 To nSpells * 2)
+        ReDim Preserve spName(1 To nSpells * 2)
         Call GrowAbils(nSpells * 2)
     End If
     n = FldLng(rs, "Number")
     spNum(nSpells) = n
     If bReq Then spReqLevel(nSpells) = FldLng(rs, "ReqLevel")
     If bCasted Then spCastedBy(nSpells) = FldStr(rs, "Casted By")
+    spName(nSpells) = FldStr(rs, "Name")
     For j = 0 To MAX_ABILS - 1
         If fAb(j) Then
             spAb(nSpells, j) = FldLng(rs, "Abil-" & j)
@@ -457,7 +574,7 @@ End Sub
 Private Sub LoadRooms()
 Dim rs As DAO.Recordset, j As Long, sKey As String
 Dim fMap As DAO.Field, fRoom As DAO.Field, fCMD As DAO.Field, fSpell As DAO.Field, fNPC As DAO.Field
-Dim fExit(0 To 9) As DAO.Field, sDirs As Variant, bSpell As Boolean, bNPC As Boolean, bPlaced As Boolean
+Dim fExit(0 To 9) As DAO.Field, bSpell As Boolean, bNPC As Boolean, bPlaced As Boolean
 On Error GoTo error:
 
 sDirs = Array("N", "S", "E", "W", "NE", "NW", "SE", "SW", "U", "D")
@@ -499,6 +616,23 @@ rs.Close
 Exit Sub
 error:
 Call HandleError("Reach.LoadRooms")
+End Sub
+
+'Route sources for ReachRoute, in priority order (ties go to the earlier one). Index 0 must be Bank of
+'Godfrey (START_MAP/START_ROOM), the reachability start, so nPOIIdx(0) = nStartIdx. Needs dRoomIdx.
+Private Sub ResolvePOIs()
+ReDim nPOIIdx(0 To NUM_POIS - 1): ReDim sPOIName(0 To NUM_POIS - 1)
+Call SetPOI(0, "Bank of Godfrey", START_MAP, START_ROOM)
+Call SetPOI(1, "Bank of Arlysia", 17, 2435)
+Call SetPOI(2, "Bank of Khazarad", 6, 1334)
+Call SetPOI(3, "The Lost City", 16, 426)
+Call SetPOI(4, "Bank of Albion", 14, 1)
+Call SetPOI(5, "Port Blackwater", 14, 10)
+End Sub
+
+Private Sub SetPOI(ByVal i As Long, ByVal sName As String, ByVal nMap As Long, ByVal nRoom As Long)
+sPOIName(i) = sName
+nPOIIdx(i) = RoomIndex(nMap, nRoom)
 End Sub
 
 Private Function Nz0(ByVal v As Variant) As Long
@@ -779,13 +913,20 @@ Private Function SpellIndex(ByVal n As Long) As Long
 If dSpell.Exists(n) Then SpellIndex = dSpell(n)
 End Function
 
+Private Function SpellName(ByVal n As Long) As String
+Dim nIdx As Long
+nIdx = SpellIndex(n)
+If nIdx > 0 Then SpellName = spName(nIdx)
+If SpellName = "" Then SpellName = "#" & n
+End Function
+
 Private Sub AddOut(ByVal nRoom As Long, ByVal nMap As Long, ByVal nMin As Long, ByVal nMax As Long, _
     ByVal sItems As String, ByVal nLine As Long)
 If nOut = 0 Then ReDim tOut(0 To 255)
 If nOut > UBound(tOut) Then ReDim Preserve tOut(0 To nOut * 2)
 With tOut(nOut)
     .Room = nRoom: .Map = nMap: .MinLvl = nMin: .MaxLvl = nMax
-    .IsRandom = False: .RoomItems = sItems: .LineNo = nLine
+    .IsRandom = False: .RoomItems = sItems: .LineNo = nLine: .Cmd = ""
 End With
 nOut = nOut + 1
 End Sub
@@ -893,6 +1034,7 @@ End Sub
 Private Sub ChainOutputs(ByVal sKind As String, ByVal n As Long, ByRef nStart As Long, ByRef nCount As Long)
 Dim sKey As String, v As Variant, nIdx As Long, lines As Variant, i As Long
 Dim sCmd As String, bHasCmd As Boolean, sOps() As String, nOps As Long, nLine As Long
+Dim nFirst As Long, k As Long
 
 sKey = sKind & n
 If dChainCache.Exists(sKey) Then
@@ -914,11 +1056,15 @@ Select Case sKind
                     nLine = nLine + 1
                     Call SplitLine(lines(i), False, sCmd, bHasCmd, sOps, nOps)
                     If IsCommandLine(sCmd) Then
+                        nFirst = nOut
                         If sKind = "C" Then
                             Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, ",", sCmd, True, nLine)
                         Else
                             Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, ",t" & n & ",", "", False, nLine)
                         End If
+                        For k = nFirst To nOut - 1   'for route labels (FromOps' random rollback is already done)
+                            tOut(k).Cmd = sCmd
+                        Next k
                     End If
                 End If
             Next i
@@ -943,26 +1089,32 @@ End Sub
 '=============================================================== edges
 
 Private Sub AddEdge(ByVal nFrom As Long, ByVal nTo As Long, ByVal nMin As Long, ByVal nMax As Long, _
-    ByVal nGroup As Long)
+    ByVal nGroup As Long, ByVal nKind As Byte, ByVal nDir As Byte, ByVal sLabel As String)
 If nFrom = 0 Or nTo = 0 Then Exit Sub
 If nEdges = 0 Then
     ReDim eFrom(1 To 65536): ReDim eTo(1 To 65536): ReDim eMin(1 To 65536)
     ReDim eMax(1 To 65536): ReDim eGroup(1 To 65536)
+    ReDim eKind(1 To 65536): ReDim eDir(1 To 65536): ReDim eLabel(1 To 65536)
 End If
 nEdges = nEdges + 1
 If nEdges > UBound(eFrom) Then
     ReDim Preserve eFrom(1 To nEdges * 2): ReDim Preserve eTo(1 To nEdges * 2)
     ReDim Preserve eMin(1 To nEdges * 2): ReDim Preserve eMax(1 To nEdges * 2)
     ReDim Preserve eGroup(1 To nEdges * 2)
+    ReDim Preserve eKind(1 To nEdges * 2): ReDim Preserve eDir(1 To nEdges * 2)
+    ReDim Preserve eLabel(1 To nEdges * 2)
 End If
 eFrom(nEdges) = nFrom: eTo(nEdges) = nTo: eMin(nEdges) = nMin: eMax(nEdges) = nMax: eGroup(nEdges) = nGroup
+eKind(nEdges) = nKind: eDir(nEdges) = nDir
+If LenB(sLabel) > 0 Then eLabel(nEdges) = sLabel   'plain exits stay unallocated
 End Sub
 
 'Edges from one room for chain outputs tPool(nStart..): random outputs get a group id
-'per (room, top-level line).
+'per (room, top-level line). Edge labels: room command = the output's command; NPC greet =
+'sLabelPrefix (NPC name) & "|" & keyword; room spell = sLabelPrefix (spell name).
 Private Sub AddChainEdges(ByVal nFromIdx As Long, ByVal nStart As Long, ByVal nCount As Long, _
-    ByVal bSkipSelf As Boolean)
-Dim i As Long, nTo As Long, nMap As Long, nGroup As Long, nLastLine As Long
+    ByVal bSkipSelf As Boolean, ByVal nKind As Byte, ByVal sLabelPrefix As String)
+Dim i As Long, nTo As Long, nMap As Long, nGroup As Long, nLastLine As Long, sLabel As String
 nLastLine = -1
 For i = nStart To nStart + nCount - 1
     nMap = tPool(i).Map
@@ -974,7 +1126,12 @@ For i = nStart To nStart + nCount - 1
             If tPool(i).LineNo <> nLastLine Then nGroups = nGroups + 1: nLastLine = tPool(i).LineNo
             nGroup = nGroups
         End If
-        Call AddEdge(nFromIdx, nTo, tPool(i).MinLvl, tPool(i).MaxLvl, nGroup)
+        Select Case nKind
+            Case EK_COMMAND: sLabel = tPool(i).Cmd
+            Case EK_NPC: sLabel = sLabelPrefix & "|" & tPool(i).Cmd
+            Case Else: sLabel = sLabelPrefix
+        End Select
+        Call AddEdge(nFromIdx, nTo, tPool(i).MinLvl, tPool(i).MaxLvl, nGroup, nKind, NO_DIR, sLabel)
     End If
 Next i
 End Sub
@@ -1003,6 +1160,23 @@ Do While x > 0
 Loop
 End Sub
 
+'Non-level part of an exit's restriction text: its "(...)" groups other than "(Level: ...)", e.g.
+'"(Key: 1234)"; "" for a plain or level-only exit. Text with no parentheses is returned as is.
+Private Function ExitRestriction(ByVal sRest As String) As String
+Dim x As Long, y As Long, sBody As String, s As String
+If LenB(sRest) = 0 Then Exit Function
+x = InStr(1, sRest, "(")
+If x = 0 Then ExitRestriction = sRest: Exit Function
+Do While x > 0
+    y = InStr(x + 1, sRest, ")")
+    If y = 0 Then Exit Do
+    sBody = TrimWS(mid$(sRest, x + 1, y - x - 1))
+    If Left$(sBody, 7) <> "Level: " Then s = s & IIf(s = "", "", " ") & mid$(sRest, x, y - x + 1)
+    x = InStr(y + 1, sRest, "(")
+Loop
+ExitRestriction = s
+End Function
+
 '"<map>/<room> (restriction)" -> True with the parts; False for 0/blank/Action fields.
 Private Function ParseExit(ByVal s As String, ByRef nMap As Long, ByRef nRoom As Long, ByRef sRest As String) As Boolean
 Dim i As Long, sM As String, sR As String
@@ -1030,7 +1204,7 @@ Private Sub BuildEdges()
 Dim i As Long, j As Long, nMap As Long, nRoom As Long, sRest As String, nMin As Long, nMax As Long
 Dim nStart As Long, nCount As Long, m As Long, vKey As Variant, dWhere As Dictionary
 Dim s As Long, nTo As Long, sNeed As Variant, k As Long, dHold As Dictionary, c As Collection, vR As Variant
-Dim dNPCRooms As Dictionary
+Dim dNPCRooms As Dictionary, sItemList As String
 On Error GoTo error:
 
 'exits, room spells, room commands
@@ -1038,16 +1212,16 @@ For i = 1 To nRooms
     For j = 0 To 9
         If ParseExit(rExit(j, i), nMap, nRoom, sRest) Then
             Call ExitLevel(sRest, nMin, nMax)
-            Call AddEdge(i, RoomIndex(nMap, nRoom), nMin, nMax, 0)
+            Call AddEdge(i, RoomIndex(nMap, nRoom), nMin, nMax, 0, EK_EXIT, CByte(j), ExitRestriction(sRest))
         End If
     Next j
     If rSpell(i) <> 0 Then
         Call ChainOutputs("S", rSpell(i), nStart, nCount)
-        Call AddChainEdges(i, nStart, nCount, True)
+        Call AddChainEdges(i, nStart, nCount, True, EK_ROOMSPELL, SpellName(rSpell(i)))
     End If
     If rCMD(i) <> 0 Then
         Call ChainOutputs("C", rCMD(i), nStart, nCount)
-        Call AddChainEdges(i, nStart, nCount, False)
+        Call AddChainEdges(i, nStart, nCount, False, EK_COMMAND, "")
     End If
     If i Mod 2000 = 0 Then Call SetProgress(35 + (i * 25) \ nRooms)
 Next i
@@ -1075,7 +1249,7 @@ For m = 1 To nMons
             Call ChainOutputs("G", mGreet(m), nStart, nCount)
             If nCount > 0 Then
                 For Each vKey In dWhere.Keys
-                    Call AddChainEdges(CLng(vKey), nStart, nCount, False)
+                    Call AddChainEdges(CLng(vKey), nStart, nCount, False, EK_NPC, mName(m))
                 Next vKey
             End If
         End If
@@ -1095,7 +1269,9 @@ For s = 1 To nSpells
                     If spReqLevel(s) > nMin Then nMin = spReqLevel(s)
                     sNeed = NumbersIn(tPool(k).RoomItems)
                     Set dHold = Nothing
+                    sItemList = ""
                     For j = 0 To UBound(sNeed)
+                        sItemList = sItemList & IIf(j > 0, ",", "") & sNeed(j)
                         Set dWhere = New Dictionary
                         If dItemRooms.Exists(CLng(sNeed(j))) Then
                             Set c = dItemRooms(CLng(sNeed(j)))
@@ -1111,7 +1287,7 @@ For s = 1 To nSpells
                     Next j
                     If Not dHold Is Nothing Then
                         For Each vR In dHold.Keys
-                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0)
+                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0, EK_ITEMSPELL, NO_DIR, SpellName(spNum(s)) & "|" & sItemList)
                         Next vR
                     End If
                 End If
@@ -1396,11 +1572,28 @@ End Sub
 'includes L plus random groups usable at L: visited(1..nRooms) = 1 if reachable.
 'Uses adjStart/adjEdge, grpOK, grpSrc, nStartIdx from ComputeReachability.
 Private Sub VisitAtLevel(ByVal L As Long, visited() As Long)
-Dim queue() As Long, qHead As Long, qTail As Long, j As Long
+Dim nSeeds() As Long, parentEdge() As Long, dist() As Long
+
+If nStartIdx = 0 Then
+    ReDim visited(1 To nRooms)   'all 0
+    Exit Sub
+End If
+ReDim nSeeds(1 To 1)
+nSeeds(1) = nStartIdx
+Call VisitFromSeeds(nSeeds, 1, L, visited, parentEdge, dist)
+End Sub
+
+'Rooms reachable at level L from any of nSeeds(1..nSeedCount), following only edges whose level range
+'includes L plus random groups usable at L: visited(1..nRooms) = 1 if reachable, parentEdge() = the edge
+'it was first reached by (0 at a seed), dist() = steps from its seed. Seeds are queued in order, so
+'equal-distance ties go to the earlier seed. Uses adjStart/adjEdge, grpOK, grpSrc from ComputeReachability.
+Private Sub VisitFromSeeds(nSeeds() As Long, ByVal nSeedCount As Long, ByVal L As Long, visited() As Long, _
+    parentEdge() As Long, dist() As Long)
+Dim queue() As Long, qHead As Long, qTail As Long, i As Long, j As Long
 Dim u As Long, e As Long, bChanged As Boolean, g As Long, bLvlOK() As Boolean
 
-ReDim visited(1 To nRooms)   'all 0
-If nStartIdx = 0 Then Exit Sub
+ReDim visited(1 To nRooms): ReDim parentEdge(1 To nRooms): ReDim dist(1 To nRooms)   'all 0
+If nSeedCount < 1 Then Exit Sub
 ReDim queue(1 To nRooms)
 ReDim bLvlOK(0 To nGroups)
 For g = 1 To nGroups
@@ -1414,7 +1607,12 @@ For e = 1 To nEdges
 Next e
 
 qHead = 1: qTail = 0
-visited(nStartIdx) = 1: qTail = qTail + 1: queue(qTail) = nStartIdx
+For i = 1 To nSeedCount
+    u = nSeeds(i)
+    If u >= 1 And u <= nRooms Then
+        If visited(u) = 0 Then visited(u) = 1: qTail = qTail + 1: queue(qTail) = u
+    End If
+Next i
 Do
     Do While qHead <= qTail
         u = queue(qHead): qHead = qHead + 1
@@ -1422,7 +1620,8 @@ Do
             e = adjEdge(j)
             If visited(eTo(e)) = 0 Then
                 If L >= eMin(e) And L <= eMax(e) Then
-                    visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
+                    visited(eTo(e)) = 1: parentEdge(eTo(e)) = e: dist(eTo(e)) = dist(u) + 1
+                    qTail = qTail + 1: queue(qTail) = eTo(e)
                 End If
             End If
         Next j
@@ -1433,7 +1632,8 @@ Do
         If g > 0 Then
             If bLvlOK(g) Then
                 If visited(grpSrc(g)) = 1 And visited(eTo(e)) = 0 Then
-                    visited(eTo(e)) = 1: qTail = qTail + 1: queue(qTail) = eTo(e)
+                    visited(eTo(e)) = 1: parentEdge(eTo(e)) = e: dist(eTo(e)) = dist(grpSrc(g)) + 1
+                    qTail = qTail + 1: queue(qTail) = eTo(e)
                     bChanged = True
                 End If
             End If
@@ -1441,6 +1641,105 @@ Do
     Next e
 Loop While bChanged
 End Sub
+
+'The level gate blocking monster nIdx, given the rooms reachable at some level (visited): a reverse BFS
+'from the monster's rooms over all edges (levels ignored), through rooms not reachable at this level,
+'stopping at the first edge whose source room IS reachable (fewest hops). 0 = none (no known path).
+'Callers make sure none of the monster's rooms is reachable first.
+Private Function FindGateEdge(ByVal nIdx As Long, visited() As Long) As Long
+Dim seen() As Long, queue() As Long, qHead As Long, qTail As Long
+Dim u As Long, j As Long, e As Long, r As Long, vKey As Variant
+
+If Not bRevAdjBuilt Then Call BuildReverseAdjacency
+ReDim seen(1 To nRooms): ReDim queue(1 To nRooms)
+qHead = 1: qTail = 0
+For Each vKey In mRooms(nIdx).Keys
+    r = CLng(vKey)
+    If r >= 1 And r <= nRooms Then
+        If seen(r) = 0 Then seen(r) = 1: qTail = qTail + 1: queue(qTail) = r
+    End If
+Next vKey
+
+Do While qHead <= qTail
+    u = queue(qHead): qHead = qHead + 1
+    For j = radjStart(u) To radjStart(u + 1) - 1
+        e = radjEdge(j)
+        If visited(eFrom(e)) = 1 Then
+            FindGateEdge = e
+            Exit Function
+        ElseIf seen(eFrom(e)) = 0 Then
+            seen(eFrom(e)) = 1: qTail = qTail + 1: queue(qTail) = eFrom(e)
+        End If
+    Next j
+Loop
+End Function
+
+'Edge has a level range (a max of LEVEL_CAP or more means no upper limit).
+Private Function EdgeHasLevel(ByVal e As Long) As Boolean
+EdgeHasLevel = (eMin(e) > 1 Or eMax(e) < LEVEL_CAP)
+End Function
+
+'REACH_STEP_* flags for a route step taken over edge e.
+Private Function StepFlags(ByVal e As Long) As Long
+Dim f As Long
+If eKind(e) <> EK_EXIT Then f = f Or REACH_STEP_ACTION
+If EdgeHasLevel(e) Then f = f Or REACH_STEP_LEVEL
+If eKind(e) = EK_EXIT And LenB(eLabel(e)) > 0 Then f = f Or REACH_STEP_RESTRICT
+If rMap(eFrom(e)) <> rMap(eTo(e)) Then f = f Or REACH_STEP_MAPCHANGE
+If eGroup(e) > 0 Then f = f Or REACH_STEP_RANDOM
+StepFlags = f
+End Function
+
+'First typed form of a textblock command ("*" wildcards dropped, "a|b" alternatives -> "a").
+Private Function CmdText(ByVal sCmd As String) As String
+Dim names As Variant, i As Long
+names = Split(Replace(sCmd, "*", ""), "|")
+For i = 0 To UBound(names)
+    If TrimWS(names(i)) <> "" Then CmdText = TrimWS(names(i)): Exit Function
+Next i
+CmdText = TrimWS(sCmd)
+End Function
+
+'Player-facing action for a route step taken over edge e.
+Private Function StepLabel(ByVal e As Long) As String
+Dim s As String, x As Long, nLo As Long
+
+Select Case eKind(e)
+    Case EK_EXIT
+        If eDir(e) <= 9 And IsArray(sDirs) Then s = "go " & sDirs(eDir(e)) Else s = "go ?"
+        If LenB(eLabel(e)) > 0 Then s = s & " " & eLabel(e)
+    Case EK_COMMAND
+        s = "type """ & CmdText(eLabel(e)) & """"
+    Case EK_ROOMSPELL
+        s = "room spell: " & eLabel(e)
+    Case EK_NPC
+        x = InStr(1, eLabel(e), "|")
+        If x > 0 Then
+            s = "ask " & Left$(eLabel(e), x - 1) & " " & CmdText(mid$(eLabel(e), x + 1))
+        Else
+            s = "ask " & eLabel(e)
+        End If
+    Case EK_ITEMSPELL
+        x = InStrRev(eLabel(e), "|")
+        If x > 0 Then
+            s = "cast " & Left$(eLabel(e), x - 1) & " here (needs item " & mid$(eLabel(e), x + 1) & ")"
+        Else
+            s = "cast " & eLabel(e) & " here"
+        End If
+End Select
+
+If EdgeHasLevel(e) Then
+    nLo = eMin(e)
+    If nLo < 1 Then nLo = 1
+    If eMax(e) >= LEVEL_CAP Then
+        s = s & " (Level " & nLo & "+)"
+    Else
+        s = s & " (Level " & nLo & " to " & eMax(e) & ")"
+    End If
+End If
+If eGroup(e) > 0 Then s = s & " (random destination)"
+StepLabel = s
+End Function
 
 'Reverse adjacency (CSR keyed on eTo) over ALL edges, random groups included, for gate tracing.
 Private Sub BuildReverseAdjacency()
