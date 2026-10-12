@@ -1,5 +1,5 @@
 Attribute VB_Name = "modMain"
-#Const DEVELOPMENT_MODE = 1 'TURN OFF BEFORE RELEASE - LOC 1/4
+#Const DEVELOPMENT_MODE = 0 'TURN OFF BEFORE RELEASE - LOC 1/4
 
 #If DEVELOPMENT_MODE Then
     Public Const DEVELOPMENT_MODE_RT As Boolean = True
@@ -2478,7 +2478,7 @@ Dim nReachableAtLvl As Long, bReachRowAdded As Boolean, bReachRoute As Boolean, 
 Dim nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String, nRouteSteps As Long
 Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String
 Dim nRouteCoin As Long, nRouteAltSteps As Long, nRouteAltCoin As Long, sRouteAltSrcName As String
-Dim nFullCoin As Long, nFullAltSteps As Long, nFullAltCoin As Long, sFullAltSrcName As String
+Dim nFullCoin As Long, nFullAltSteps As Long, nFullAltCoin As Long, sFullAltSrcName As String, sHelpText As String
 
 If Not ReachIsComputed() Then
     Set oLI = DetailLV.ListItems.Add()
@@ -2489,6 +2489,7 @@ If Not ReachIsComputed() Then
     oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
     bReachRowAdded = True
 Else
+    sHelpText = " - Double-Click for Detail"
     nReachLevel = val(frmMain.txtGlobalLevel(0).Text)
     eReach = ReachMonsterInfo(nMonsterNum, nReachLevel, False, nReachGateMap, nReachGateRoom, _
         nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup, nReachableAtLvl)
@@ -2503,9 +2504,9 @@ Else
             If bReachRoute Then
                 oLI.Tag = "reach_route"
                 oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
-                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")"
+                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")" & sHelpText
             Else
-                oLI.ListSubItems.Add (1), "Detail", "Yes"
+                oLI.ListSubItems.Add (1), "Detail", "Yes" & sHelpText
             End If
             oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
             bReachRowAdded = True
