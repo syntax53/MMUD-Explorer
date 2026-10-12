@@ -18752,57 +18752,61 @@ Begin VB.Form frmMain
          Shortcut        =   ^P
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "Calc. &Monster Dmg vs Char"
+         Caption         =   "Calc&ulate Reachability"
          Index           =   1
+      End
+      Begin VB.Menu mnuOptionsItems 
+         Caption         =   "Calc. &Monster Dmg vs Char"
+         Index           =   2
          Shortcut        =   ^D
       End
       Begin VB.Menu mnuOptionsItems 
          Caption         =   "Calc. Monster Dmg vs Part&y"
          Enabled         =   0   'False
-         Index           =   2
-      End
-      Begin VB.Menu mnuOptionsItems 
-         Caption         =   "Clear Calculated Monster &Dmg"
          Index           =   3
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "&Clear Learned Spells"
+         Caption         =   "Clear Calculated Monster &Dmg"
          Index           =   4
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "Reset All Character Fields"
+         Caption         =   "&Clear Learned Spells"
          Index           =   5
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "&Import Character from NMR"
+         Caption         =   "Reset All Character Fields"
          Index           =   6
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "&Export Character to NMR"
+         Caption         =   "&Import Character from NMR"
          Index           =   7
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "-"
+         Caption         =   "&Export Character to NMR"
          Index           =   8
       End
       Begin VB.Menu mnuOptionsItems 
-         Caption         =   "&Reload MME"
+         Caption         =   "-"
          Index           =   9
+      End
+      Begin VB.Menu mnuOptionsItems 
+         Caption         =   "&Reload MME"
+         Index           =   10
          Shortcut        =   ^R
       End
       Begin VB.Menu mnuOptionsItems 
          Caption         =   "Remove All &Filters"
-         Index           =   10
+         Index           =   11
          Shortcut        =   ^{F5}
       End
       Begin VB.Menu mnuOptionsItems 
          Caption         =   "&Settings"
-         Index           =   11
+         Index           =   12
          Shortcut        =   ^{F2}
       End
       Begin VB.Menu mnuOptionsItems 
          Caption         =   "-"
-         Index           =   12
+         Index           =   13
       End
       Begin VB.Menu mnuJumpToCompare 
          Caption         =   "Jump to Equip/Lists on Add"
@@ -21092,7 +21096,7 @@ lblLabelArray(3).Tag = 0
 
 'default exp/hour globals
 nGlobalMonsterSimRounds = 500
-nRouteWaypointInterval = 50
+nRouteWaypointInterval = 25
 
 nGlobal_cephXP_Knob = 1
 nGlobal_cephDMG_Knob = 1
@@ -23669,7 +23673,7 @@ If optMonsterFilter(0).Value = True Then 'by mob
     txtMonsterDamageOUT(0).Visible = False 'party phys value
     txtMonsterDamageOUT(1).Visible = False 'party mag value
     
-    mnuOptionsItems(2).Enabled = False
+    mnuOptionsItems(3).Enabled = False
 Else 'bylair / saved (legacy)
         
     optMonsterFilter(0).FontBold = False
@@ -23702,13 +23706,13 @@ Else 'bylair / saved (legacy)
         End If
         lblLabelArray(40).Visible = True 'dmg/heals caption
         txtMonsterDamage.Visible = True 'dmg/heals value
-        mnuOptionsItems(2).Enabled = True
+        mnuOptionsItems(3).Enabled = True
     Else
         lblLabelArray(44).Visible = False 'party phys caption
         lblLabelArray(57).Visible = False 'party mag caption
         txtMonsterDamageOUT(0).Visible = False 'party phys value
         txtMonsterDamageOUT(1).Visible = False 'party mag value
-        mnuOptionsItems(2).Enabled = False
+        mnuOptionsItems(3).Enabled = False
         
         If nNMRVer >= 1.83 And bGlobal_cephRecoveryOnly = False Then
             lblLabelArray(40).Visible = False 'dmg/heals caption
@@ -32510,58 +32514,75 @@ End Select
 
 End Sub
 
-'results window listing the reachability route to a monster (or to the level gate that blocks it):
-'the start room, every non-plain step (command, teleport, gated/restricted exit, map change), a waypoint
-'every nRouteWaypointInterval steps, and the destination. Rows are "Room: ..." + Tag "m/r" for GotoLocation.
+'results window listing the reachability route to a monster; for an unreachable (level-gated) monster, the
+'full route with level gates ignored. Columns: step number, then "Room: ..." (subitem Tag "m/r" for GotoLocation).
+'Rows: the start room, every non-plain step (command, teleport, gated/restricted/coin exit, map change), an
+'automatic row whenever nothing was listed for nRouteWaypointInterval rooms, and the destination.
 Public Sub ShowMonsterRoute(ByVal nMonsterNum As Long)
 On Error GoTo error:
-Dim eReach As ReachStatus, nLevel As Long, bToGate As Boolean, i As Long, nInterval As Long
+Dim eReach As ReachStatus, nLevel As Long, bIgnoreLevel As Boolean, i As Long, nInterval As Long
 Dim nGateMap As Long, nGateRoom As Long, nDestMap As Long, nDestRoom As Long
 Dim nMinLvl As Long, nMaxLvl As Long, bRandomGroup As Boolean, sLastRow As String
 Dim nSourceMap As Long, nSourceRoom As Long, sSourceName As String, nSteps As Long
 Dim nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String
+Dim nLastShown As Long, nLastRowRoom As Long
 
 nLevel = val(txtGlobalLevel(0).Text)
 eReach = ReachMonsterInfo(nMonsterNum, nLevel, False, nGateMap, nGateRoom, nDestMap, nDestRoom, _
     nMinLvl, nMaxLvl, bRandomGroup)
 Select Case eReach
-    Case reachYes: bToGate = False
-    Case reachNo: bToGate = True
+    Case reachYes: bIgnoreLevel = False
+    Case reachNo: bIgnoreLevel = True 'full route past the blocking level gate
     Case Else:
         MsgBox "No route information for this monster.", vbInformation
         GoTo out:
 End Select
 
-If Not ReachRoute(nMonsterNum, nLevel, bToGate, nSourceMap, nSourceRoom, sSourceName, _
+If Not ReachRoute(nMonsterNum, nLevel, False, bIgnoreLevel, nSourceMap, nSourceRoom, sSourceName, _
     nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps) Then
     MsgBox "No route found.", vbInformation
     GoTo out:
 End If
 
 nInterval = nRouteWaypointInterval
-If nInterval < 1 Then nInterval = 50
+If nInterval < 1 Then nInterval = 25
 
 Call frmResults.SetupResultsWindow(False, Me)
+frmResults.lvResults.ColumnHeaders.clear
+'(a ListView's first column is always left-aligned; lvwColumnRight there raises run-time error 380)
+frmResults.lvResults.ColumnHeaders.Add 1, "Step", "Step", 600, lvwColumnLeft
+frmResults.lvResults.ColumnHeaders.Add 2, "Location", "Location", 9000
 
-Call AddMonsterRouteResultRow(nSourceMap, nSourceRoom, "start (" & sSourceName & ")", sLastRow)
+'nLastShown = last step index that got a row (gap counter for the automatic rows);
+'nLastRowRoom = step index of the room the last row points at (its Tag)
+Call AddMonsterRouteResultRow(0, nSourceMap, nSourceRoom, "Room: " & MonsterRouteRoomText(nSourceMap, nSourceRoom), sLastRow)
+nLastShown = 0
+nLastRowRoom = 0
 For i = 1 To nSteps
     If nStepFlags(i) <> 0 Then
         'listed at the room you act FROM
-        Call AddMonsterRouteResultRow(nStepMap(i - 1), nStepRoom(i - 1), "step " & i & ": " & sStepLabel(i) _
-            & " -> " & GetRoomName(, nStepMap(i), nStepRoom(i), False), sLastRow)
-    End If
-    If i Mod nInterval = 0 And i < nSteps Then
-        Call AddMonsterRouteResultRow(nStepMap(i), nStepRoom(i), "step " & i & " (waypoint)", sLastRow)
+        Call AddMonsterRouteResultRow(i, nStepMap(i - 1), nStepRoom(i - 1), "Room: " _
+            & MonsterRouteRoomText(nStepMap(i - 1), nStepRoom(i - 1)) & " -- " & FormatRouteLabel(sStepLabel(i)) _
+            & " -> " & MonsterRouteRoomText(nStepMap(i), nStepRoom(i)), sLastRow)
+        nLastShown = i
+        nLastRowRoom = i - 1
+    ElseIf i - nLastShown >= nInterval Then
+        Call AddMonsterRouteResultRow(i, nStepMap(i), nStepRoom(i), "Room: " _
+            & MonsterRouteRoomText(nStepMap(i), nStepRoom(i)), sLastRow)
+        nLastShown = i
+        nLastRowRoom = i
     End If
 Next i
-Call AddMonsterRouteResultRow(nStepMap(nSteps), nStepRoom(nSteps), "step " & nSteps & ": " _
-    & IIf(bToGate, "the level gate", "destination"), sLastRow)
+If nLastRowRoom <> nSteps Then
+    Call AddMonsterRouteResultRow(nSteps, nStepMap(nSteps), nStepRoom(nSteps), "Room: " _
+        & MonsterRouteRoomText(nStepMap(nSteps), nStepRoom(nSteps)), sLastRow)
+End If
 
 frmResults.lblCaption = "Route to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & " steps from " & sSourceName _
-    & IIf(bToGate, " to the level gate", "")
+    & IIf(bIgnoreLevel, " (ignoring level gates)", "")
 frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
-'frmResults.Form_Resize sizes the column to the list width (also on Show); widen it afterward so long lines fit
-If frmResults.lvResults.ColumnHeaders(1).Width < 9000 Then frmResults.lvResults.ColumnHeaders(1).Width = 9000
+'frmResults.Form_Resize sizes the last column to the remaining list width (also on Show); widen it afterward so long lines fit
+If frmResults.lvResults.ColumnHeaders(2).Width < 9000 Then frmResults.lvResults.ColumnHeaders(2).Width = 9000
 
 out:
 Exit Sub
@@ -32570,17 +32591,25 @@ Call HandleError("ShowMonsterRoute")
 Resume out:
 End Sub
 
-'one "Room: <name> (m/r) -- <suffix>" row in frmResults; skips a row identical to the previous one
-Private Sub AddMonsterRouteResultRow(ByVal nMap As Long, ByVal nRoom As Long, ByVal sSuffix As String, ByRef sLastRow As String)
+'"<room name> (m/r)" for a route row (room numbers always shown)
+Private Function MonsterRouteRoomText(ByVal nMap As Long, ByVal nRoom As Long) As String
+MonsterRouteRoomText = GetRoomName(, nMap, nRoom, True) & " (" & nMap & "/" & nRoom & ")"
+End Function
+
+'one route row in frmResults: Text = step number, subitem 1 = sText ("Room: ..."), subitem Tag = "m/r";
+'skips a row identical to the previous one
+Private Sub AddMonsterRouteResultRow(ByVal nStep As Long, ByVal nMap As Long, ByVal nRoom As Long, _
+    ByVal sText As String, ByRef sLastRow As String)
 Dim oLI As ListItem, sRow As String
 
-sRow = "Room: " & GetRoomName(, nMap, nRoom, True) & " (" & nMap & "/" & nRoom & ") -- " & sSuffix
+sRow = nStep & vbTab & sText
 If sRow = sLastRow Then Exit Sub
 sLastRow = sRow
 
 Set oLI = frmResults.lvResults.ListItems.Add()
-oLI.Text = sRow
-oLI.Tag = nMap & "/" & nRoom
+oLI.Text = CStr(nStep)
+oLI.ListSubItems.Add 1, , sText
+oLI.ListSubItems(1).Tag = nMap & "/" & nRoom
 Set oLI = Nothing
 End Sub
 
@@ -35287,9 +35316,9 @@ Select Case Index
             Me.Enabled = False
             bDebugExpPerHour = False
             If val(frmMain.txtMonsterLairFilter(0).Text) > 1 Then 'party
-                If bMonsterDamageVsPartyCalculated = False Then Call mnuOptionsItems_Click(2)
+                If bMonsterDamageVsPartyCalculated = False Then Call mnuOptionsItems_Click(3)
             Else
-                If sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription Then Call mnuOptionsItems_Click(1)
+                If sMonsterDamageVsCharDefenseConfig <> sGlobalCharDefenseDescription Then Call mnuOptionsItems_Click(2)
             End If
             
             If Not DEVELOPMENT_MODE_RT Then Call InitDebugLog
@@ -36664,7 +36693,27 @@ Select Case Index
     Case 0: 'PasteCharacter
         Call PasteCharacter
         
-    Case 1: 'calc mon dmg
+    Case 1: 'calc reachability
+        Me.MousePointer = vbHourglass
+        DoEvents
+        Call ReachRecompute
+        If framNav(8).Visible And Not (framNav(3).Visible Or framCompareNav(3).Visible) Then
+            If Not lvMonsters.SelectedItem Is Nothing Then
+                Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+            ElseIf lvMonsters.ListItems.count > 0 Then
+                Call lvMonsters_ItemClick(lvMonsters.ListItems(1))
+            End If
+        ElseIf framNav(3).Visible And framCompareNav(3).Visible And Not framNav(8).Visible Then
+            If Not lvMonsterCompare.SelectedItem Is Nothing Then
+                Call lvMonsterCompare_ItemClick(lvMonsterCompare.SelectedItem)
+            ElseIf lvMonsterCompare.ListItems.count > 0 Then
+                Call lvMonsterCompare_ItemClick(lvMonsterCompare.ListItems(1))
+            End If
+        End If
+        If filter_Monster_bExtrasEnabled And filter_Monster_bReachableOnly Then Call FilterMonsters
+        Me.MousePointer = vbDefault
+
+    Case 2: 'calc mon dmg
         Me.MousePointer = vbHourglass
         DoEvents
         CalculateMonsterDamageVsCharALL
@@ -36682,9 +36731,9 @@ Select Case Index
             End If
         End If
         Call RefreshMonsterColors
-    Case 2: 'calc mon dmg
+    Case 3: 'calc mon dmg
         Call CalculateMonsterPartyDamage
-    Case 3: 'clear mon dmg
+    Case 4: 'clear mon dmg
         Me.MousePointer = vbHourglass
         DoEvents
         Call ClearMonsterDamageVsCharALL
@@ -36706,14 +36755,14 @@ Select Case Index
             End If
         End If
         
-    Case 4: 'ClearLearnedSpells
+    Case 5: 'ClearLearnedSpells
         x = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset Learned Spells")
         If Not x = vbYes Then Exit Sub
         Me.MousePointer = vbHourglass
         DoEvents
         Call ClearLearnedSpells
     
-    Case 5: 'reset all character fields
+    Case 6: 'reset all character fields
         x = MsgBox("Are you sure?", vbYesNo + vbDefaultButton2 + vbQuestion, "Reset All Character Fields")
         If Not x = vbYes Then Exit Sub
         
@@ -36776,34 +36825,34 @@ Select Case Index
         Call cmdEquipButtons_Click(514)
         Call cmdEquipButtons_Click(10)
         
-    Case 6: 'NMR_Import
+    Case 7: 'NMR_Import
         Me.MousePointer = vbHourglass
         DoEvents
         Call NMR_Import
         
-    Case 7: 'NMR_Export
+    Case 8: 'NMR_Export
         Me.MousePointer = vbHourglass
         DoEvents
         Call NMR_Export
         
-    Case 8: '-
+    Case 9: '-
     
-    Case 9: 'Reload
+    Case 10: 'Reload
         Call SaveSettings
         Call AppReload(False)
         
-    Case 10: 'RemoveFilters
+    Case 11: 'RemoveFilters
         Me.MousePointer = vbHourglass
         DoEvents
         Call RemoveFilters
         
-    Case 11: 'Settings
+    Case 12: 'Settings
         If FormIsLoaded("frmMap") Then frmMap.WindowState = vbMinimized
         bReloadWithNewSettings = False
         frmSettings.Show vbModal, Me
         If bReloadWithNewSettings Then Call AppReload(True)
         
-    Case 12: '-
+    Case 13: '-
         
 End Select
 

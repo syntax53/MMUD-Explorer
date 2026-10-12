@@ -2281,7 +2281,7 @@ On Error GoTo error:
 Dim oLI As ListItem, i As Long, nInterval As Long, nShown As Long, nMore As Long
 
 nInterval = nRouteWaypointInterval
-If nInterval < 1 Then nInterval = 50
+If nInterval < 1 Then nInterval = 25
 
 Set oLI = DetailLV.ListItems.Add()
 oLI.Text = ""
@@ -2326,6 +2326,102 @@ error:
 Call HandleError("AddRouteRows")
 Resume out:
 End Sub
+
+'route step label (modReachability.ReachRoute) with its raw spell/item/class/race/toll numbers replaced by
+'names, record numbers per bHideRecordNumbers -- e.g. "go N (Key: 1076)" -> "go N (Key: silver key (1076))".
+'Only the listed prefixes are touched, so "(m/r)" room references and other digits are left alone.
+Public Function FormatRouteLabel(ByVal s As String) As String
+On Error GoTo error:
+Dim x As Long, y As Long, a As Long, b As Long, sWord As String, sNew As String
+
+s = RouteLabelNames(s, "spell #", 2)
+s = RouteLabelNames(s, "item #", 1)
+s = RouteLabelNames(s, "(Key: ", 1)
+s = RouteLabelNames(s, "(Item: ", 1)
+s = RouteLabelNames(s, "(Ticket/Item: ", 1)
+s = RouteLabelNames(s, "(Spell Trap: ", 2)
+s = RouteLabelNames(s, "(Toll: ", 3)
+If InStr(1, s, "(Cast: ") > 0 Then
+    s = RouteLabelNames(s, "pre-", 2)
+    s = RouteLabelNames(s, "post-", 2)
+End If
+
+'(Class: a OK, b NO) / (Race: a OK, b NO) -> the map's exit-text wording (see MapMapExits)
+For y = 1 To 2
+    If y = 1 Then sWord = "Class" Else sWord = "Race"
+    x = InStr(1, s, "(" & sWord & ": ")
+    If x > 0 Then
+        a = ExtractValueFromString(s, "(" & sWord & ": ")
+        b = ExtractValueFromString(s, "(" & sWord & ": " & a & " OK, ")
+        If a > 0 And b = 0 Then
+            sNew = "(" & sWord & " Only: " & RouteLabelClassRace(y, a)
+        ElseIf a > 0 And b > 0 Then
+            sNew = "(" & sWord & " OK: " & RouteLabelClassRace(y, a) & ", " & sWord & " NO: " & RouteLabelClassRace(y, b)
+        ElseIf b > 0 Then
+            sNew = "(NOT " & sWord & ": " & RouteLabelClassRace(y, b)
+        Else
+            sNew = "(" & sWord & "?"
+        End If
+        sNew = sNew & ")"
+        'replace through the closing paren of the original text
+        b = InStr(x, s, ")")
+        If b = 0 Then b = Len(s)
+        s = Left$(s, x - 1) & sNew & mid$(s, b + 1)
+    End If
+Next y
+
+out:
+FormatRouteLabel = s
+Exit Function
+error:
+Call HandleError("FormatRouteLabel")
+Resume out:
+End Function
+
+'every "<sPrefix><digits>" in s gets the digits replaced by a name: nKind 1 = item, 2 = spell, 3 = toll (gold)
+Private Function RouteLabelNames(ByVal s As String, ByVal sPrefix As String, ByVal nKind As Long) As String
+On Error GoTo error:
+Dim x As Long, y As Long, nNum As Long, sName As String
+
+x = InStr(1, s, sPrefix)
+Do While x > 0
+    y = x + Len(sPrefix)
+    Do While y <= Len(s)
+        If InStr(1, "0123456789", mid$(s, y, 1)) = 0 Then Exit Do
+        y = y + 1
+    Loop
+    If y > x + Len(sPrefix) Then
+        nNum = val(mid$(s, x + Len(sPrefix), y - x - Len(sPrefix)))
+        Select Case nKind
+            Case 1: sName = GetItemName(nNum, bHideRecordNumbers)
+            Case 2: If nNum = 0 Then sName = "none" Else sName = GetSpellName(nNum, bHideRecordNumbers)
+            Case 3: sName = Format$(nNum, "#,##0") & " gold"
+            Case Else: sName = CStr(nNum)
+        End Select
+        s = Left$(s, x + Len(sPrefix) - 1) & sName & mid$(s, y)
+        x = InStr(x + Len(sPrefix) + Len(sName), s, sPrefix)
+    Else
+        x = InStr(x + Len(sPrefix), s, sPrefix)
+    End If
+Loop
+
+out:
+RouteLabelNames = s
+Exit Function
+error:
+Call HandleError("RouteLabelNames")
+Resume out:
+End Function
+
+'class (nKind 1) or race (nKind 2) name + "(n)" unless bHideRecordNumbers, as MapMapExits writes them
+Private Function RouteLabelClassRace(ByVal nKind As Long, ByVal nNum As Long) As String
+If nKind = 1 Then
+    RouteLabelClassRace = GetClassName(nNum)
+Else
+    RouteLabelClassRace = GetRaceName(nNum)
+End If
+If Not bHideRecordNumbers Then RouteLabelClassRace = RouteLabelClassRace & "(" & nNum & ")"
+End Function
 
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
@@ -4113,7 +4209,7 @@ Else
         nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup)
     Select Case eReach
         Case reachYes:
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
                 nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
@@ -4149,38 +4245,19 @@ Else
                 sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
             End If
 
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
                 nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
 
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
             If bReachRoute Then oLI.Tag = "reach_route"
             oLI.ForeColor = TColor(&HC0&)
-            oLI.ListSubItems.Add (1), "Detail", "No"
+            oLI.ListSubItems.Add (1), "Detail", "No - blocked by " _
+                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & ", " & sReachReason
             oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
             bReachRowAdded = True
 
-            Set oLI = DetailLV.ListItems.Add()
-            oLI.Text = ""
-            oLI.Tag = "room"
-            oLI.ForeColor = TColor(&HC0&)
-            oLI.ListSubItems.Add (1), "Detail", "blocked by " _
-                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & " - " & sReachReason
-            oLI.ListSubItems(1).Tag = nReachGateMap & "/" & nReachGateRoom
-            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
-
-            If nReachDestMap <> nReachGateMap Or nReachDestRoom <> nReachGateRoom Then
-                Set oLI = DetailLV.ListItems.Add()
-                oLI.Text = ""
-                oLI.Tag = "room"
-                oLI.ForeColor = TColor(&HC0&)
-                oLI.ListSubItems.Add (1), "Detail", "leads to " _
-                    & GetRoomName(, nReachDestMap, nReachDestRoom, bHideRecordNumbers)
-                oLI.ListSubItems(1).Tag = nReachDestMap & "/" & nReachDestRoom
-                oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
-            End If
-
-            'route to the room holding the blocking gate
+            'route to the room holding the blocking gate (double-click the row for the full route past it)
             If bReachRoute Then
                 Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
                     nRouteStepMap, nRouteStepRoom, nRouteSteps, "No")
