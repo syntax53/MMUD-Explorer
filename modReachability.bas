@@ -27,6 +27,8 @@ Option Explicit
 '
 ' Routes (ReachRoute, for the detail pane) use RouteSearch rather than the BFS: fewest coin-costing
 ' steps first (toll exits, chains with 'price N'), then fewest steps; optionally ignoring level gates.
+' When a shorter route costs coin and the coin-avoiding one is more than ROUTE_DETOUR_MAX times its length,
+' the shorter one is used; the other is offered as the alternate route (ReachRoute bAltRoute).
 ' Monster rooms carry a category (RCAT_*: Room < Group(lair) < resolved summon < Group) so a route
 ' prefers a fixed spawn room. Reference fields cut off at 250 chars end in '+' ("Room 14/62+" is
 ' really 14/62xx); such truncated references are skipped.
@@ -92,6 +94,7 @@ Private Const RCAT_GROUP As Byte = 4      '[Summoned By] "Group: m/r"
 
 Private Const ROUTE_COIN_COST As Long = 1000000   'RouteSearch: one coin-costing step outweighs any step count
 Private Const ROUTE_INF As Long = 2147483647
+Private Const ROUTE_DETOUR_MAX As Long = 3        'ReachRoute: a coin-free route over 3x a shorter coin route's steps loses to it
 
 Private Type tTeleOut
     Room As Long
@@ -290,27 +293,36 @@ End Function
 'action i; index 0 = the source room. sStepLabel(i) = player-facing action leading INTO step i.
 'Returns False when not computed / unknown monster / no route. Never triggers the computation.
 'Sources are Bank of Godfrey plus the other points of interest (ResolvePOIs) that are reachable from it
-'at this level; one RouteSearch seeded with all of them (Godfrey first, so it wins ties) finds the paths
-'with the fewest coin-costing steps (toll / price), then the fewest steps. Destination: among the
-'monster's reachable rooms, the lowest category (RCAT_*: Room, Group(lair), resolved summon, Group),
-'then the fewest steps, then the lowest room index.
-'bIgnoreLevel: the search ignores level gates (the sources are still chosen at the character's level, see
+'at this level. Two RouteSearches are seeded with all of them (Godfrey first, so it wins ties): one finds the
+'paths with the fewest coin-costing steps (toll / price), then the fewest steps; the other just the fewest
+'steps. Destination: among the monster's reachable rooms, the lowest category (RCAT_*: Room, Group(lair),
+'resolved summon, Group), then the lowest search cost, then the lowest room index (see RouteDest).
+'The coin-avoiding route is used unless the shortest route is shorter with more coin-costing steps and the
+'coin-avoiding one is more than ROUTE_DETOUR_MAX times its length. When the two differ like that, the one not
+'used is the alternate route: nAltSteps/nAltCoinSteps/sAltSourceName describe it (nAltSteps = 0 = none).
+'bAltRoute=True returns the alternate instead (the alt outputs then describe the default route), or False when
+'there is none. nCoinSteps = coin-costing steps on the returned route.
+'bIgnoreLevel: the searches ignore level gates (the sources are still chosen at the character's level, see
 'below); bToGate is then ignored as well (the route goes to the monster's rooms). Labels still show each
 'step's level range, so a gated step is visible in the route.
 'bToGate=True also returns False when the monster is reachable at this level (nothing blocks it); the
 'gate is the same one ReachMonsterInfo reports. nSteps = 0 with True = the destination is the source.
 'Output arrays are always ReDim'd (0 To nSteps); on False they are (0 To 0) and nSteps = 0.
 Public Function ReachRoute(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVal bToGate As Boolean, _
-    ByVal bIgnoreLevel As Boolean, ByRef nSourceMap As Long, ByRef nSourceRoom As Long, ByRef sSourceName As String, _
-    ByRef nStepMap() As Long, ByRef nStepRoom() As Long, ByRef nStepFlags() As Long, _
-    ByRef sStepLabel() As String, ByRef nSteps As Long) As Boolean
-Dim nIdx As Long, i As Long, p As Long, r As Long, e As Long, n As Long, nDest As Long
-Dim nCat As Long, nDestCat As Long
-Dim visG() As Long, visited() As Long, parentEdge() As Long, dist() As Long
-Dim nSeeds() As Long, nSeedCount As Long, pathE() As Long, vKey As Variant
+    ByVal bIgnoreLevel As Boolean, ByVal bAltRoute As Boolean, ByRef nSourceMap As Long, ByRef nSourceRoom As Long, _
+    ByRef sSourceName As String, ByRef nStepMap() As Long, ByRef nStepRoom() As Long, ByRef nStepFlags() As Long, _
+    ByRef sStepLabel() As String, ByRef nSteps As Long, ByRef nCoinSteps As Long, ByRef nAltSteps As Long, _
+    ByRef nAltCoinSteps As Long, ByRef sAltSourceName As String) As Boolean
+Dim nIdx As Long, p As Long, r As Long, e As Long
+Dim visG() As Long, visF() As Long, parF() As Long, distF() As Long, costF() As Long
+Dim visS() As Long, parS() As Long, distS() As Long, costS() As Long
+Dim nSeeds() As Long, nSeedCount As Long, vKey As Variant
+Dim nDestF As Long, nDestS As Long, nF As Long, nS As Long, nCoinF As Long, nCoinS As Long
+Dim nSrcF As Long, nSrcS As Long, bHasAlt As Boolean, bUseShort As Boolean
 On Error GoTo error:
 
 nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+nCoinSteps = 0: nAltSteps = 0: nAltCoinSteps = 0: sAltSourceName = ""
 ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
 
 If Not ReachIsComputed() Then Exit Function
@@ -333,9 +345,10 @@ For p = 1 To NUM_POIS - 1
         If visG(r) = 1 Then nSeedCount = nSeedCount + 1: nSeeds(nSeedCount) = r
     End If
 Next p
-Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, visited, parentEdge, dist)
+'F = fewest coin-costing steps, then fewest steps; S = fewest steps (both reach the same rooms)
+Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, True, visF, parF, distF, costF)
+Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, False, visS, parS, distS, costS)
 
-nDest = 0
 If bToGate And Not bIgnoreLevel Then
     For Each vKey In mRooms(nIdx).Keys
         r = CLng(vKey)
@@ -345,58 +358,43 @@ If bToGate And Not bIgnoreLevel Then
     Next vKey
     e = FindGateEdge(nIdx, visG)
     If e = 0 Then Exit Function
-    nDest = eFrom(e)
+    nDestF = eFrom(e): nDestS = nDestF
 Else
-    For Each vKey In mRooms(nIdx).Keys
-        r = CLng(vKey)
-        If r >= 1 And r <= nRooms Then
-            If visited(r) = 1 Then
-                nCat = CLng(mRooms(nIdx)(vKey))
-                If nDest = 0 Then
-                    nDest = r: nDestCat = nCat
-                ElseIf nCat < nDestCat Then
-                    nDest = r: nDestCat = nCat
-                ElseIf nCat = nDestCat And (dist(r) < dist(nDest) Or (dist(r) = dist(nDest) And r < nDest)) Then
-                    nDest = r: nDestCat = nCat
-                End If
-            End If
-        End If
-    Next vKey
-    If nDest = 0 Then Exit Function
+    nDestF = RouteDest(nIdx, visF, costF)
+    nDestS = RouteDest(nIdx, visS, costS)
 End If
-If visited(nDest) = 0 Then Exit Function
+If nDestF = 0 Or nDestS = 0 Then Exit Function
+If visF(nDestF) = 0 Or visS(nDestS) = 0 Then Exit Function
 
-'walk the parent edges back to the source (parentEdge = 0 at a seed)
-ReDim pathE(1 To nRooms)
-n = 0: r = nDest
-Do While parentEdge(r) <> 0
-    n = n + 1
-    If n > nRooms Then Exit Function    'safety; the parent links form a tree
-    pathE(n) = parentEdge(r)
-    r = eFrom(pathE(n))
-Loop
+nF = RoutePathInfo(nDestF, parF, nCoinF, nSrcF)
+nS = RoutePathInfo(nDestS, parS, nCoinS, nSrcS)
+If nF < 0 Or nS < 0 Then Exit Function
 
-For p = 0 To NUM_POIS - 1
-    If nPOIIdx(p) = r Then Exit For
-Next p
-If p < NUM_POIS Then sSourceName = sPOIName(p)
-nSourceMap = rMap(r): nSourceRoom = rRoom(r)
+'the coin-avoiding route, unless a shorter coin-costing one exists and it's more than ROUTE_DETOUR_MAX times longer
+bHasAlt = (nCoinS > nCoinF And nS < nF)
+bUseShort = False
+If bHasAlt Then bUseShort = (nF > ROUTE_DETOUR_MAX * nS)
+If bAltRoute Then
+    If Not bHasAlt Then Exit Function
+    bUseShort = Not bUseShort
+End If
 
-ReDim nStepMap(0 To n): ReDim nStepRoom(0 To n): ReDim nStepFlags(0 To n): ReDim sStepLabel(0 To n)
-nStepMap(0) = rMap(r): nStepRoom(0) = rRoom(r)
-For i = 1 To n
-    e = pathE(n - i + 1)
-    nStepMap(i) = rMap(eTo(e)): nStepRoom(i) = rRoom(eTo(e))
-    nStepFlags(i) = StepFlags(e)
-    sStepLabel(i) = StepLabel(e)
-Next i
-nSteps = n
+If bUseShort Then
+    Call RouteSteps(nDestS, nS, parS, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
+    sSourceName = POIName(nSrcS): nSteps = nS: nCoinSteps = nCoinS
+    If bHasAlt Then nAltSteps = nF: nAltCoinSteps = nCoinF: sAltSourceName = POIName(nSrcF)
+Else
+    Call RouteSteps(nDestF, nF, parF, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
+    sSourceName = POIName(nSrcF): nSteps = nF: nCoinSteps = nCoinF
+    If bHasAlt Then nAltSteps = nS: nAltCoinSteps = nCoinS: sAltSourceName = POIName(nSrcS)
+End If
 ReachRoute = True
 
 Exit Function
 error:
 Call HandleError("ReachRoute")
 nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+nCoinSteps = 0: nAltSteps = 0: nAltCoinSteps = 0: sAltSourceName = ""
 ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
 ReachRoute = False
 End Function
@@ -1716,25 +1714,26 @@ Do
 Loop While bChanged
 End Sub
 
-'Cheapest paths from nSeeds(1..nSeedCount) for ReachRoute: Dijkstra over rooms keyed on
-'coin-costing steps * ROUTE_COIN_COST + steps, i.e. fewest toll/price steps first, then fewest steps.
+'Cheapest paths from nSeeds(1..nSeedCount) for ReachRoute: Dijkstra over rooms keyed on steps, plus
+'ROUTE_COIN_COST per coin-costing step when bAvoidCoin (fewest toll/price steps first, then fewest steps).
 'Edges are usable when bIgnoreLevel or their level range includes L; random groups when grpOK and (bIgnoreLevel
 'or every edge of the group allows L). visited(room) = 1 when reached, parentEdge() = edge of the chosen path
-'(0 at a seed), dist() = its step count. Seeds start at 0 in order and equal keys go to the earlier-pushed
-'entry, so the earlier seed (Godfrey) wins ties. Uses adjStart/adjEdge, grpOK from ComputeReachability.
+'(0 at a seed), dist() = its step count, cost() = its key (ROUTE_INF when not reached). Seeds start at 0 in
+'order and equal keys go to the earlier-pushed entry, so the earlier seed (Godfrey) wins ties. Uses
+'adjStart/adjEdge, grpOK from ComputeReachability.
 Private Sub RouteSearch(nSeeds() As Long, ByVal nSeedCount As Long, ByVal L As Long, ByVal bIgnoreLevel As Boolean, _
-    visited() As Long, parentEdge() As Long, dist() As Long)
-Dim best() As Long, bLvlOK() As Boolean, g As Long, e As Long, i As Long, j As Long, nPass As Long
+    ByVal bAvoidCoin As Boolean, visited() As Long, parentEdge() As Long, dist() As Long, cost() As Long)
+Dim bLvlOK() As Boolean, g As Long, e As Long, i As Long, j As Long, nPass As Long
 Dim hKey() As Long, hSeq() As Long, hNode() As Long, nHeap As Long, nSeq As Long
 Dim u As Long, v As Long, nKey As Long, nNew As Long
 
 ReDim visited(1 To nRooms): ReDim parentEdge(1 To nRooms): ReDim dist(1 To nRooms)   'all 0
+ReDim cost(1 To nRooms)
+For i = 1 To nRooms
+    cost(i) = ROUTE_INF
+Next i
 If nSeedCount < 1 Then Exit Sub
 If Not bGrpAdjBuilt Then Call BuildGroupAdjacency
-ReDim best(1 To nRooms)
-For i = 1 To nRooms
-    best(i) = ROUTE_INF
-Next i
 ReDim bLvlOK(0 To nGroups)
 For g = 1 To nGroups
     bLvlOK(g) = grpOK(g)
@@ -1752,15 +1751,15 @@ ReDim hKey(1 To 1024): ReDim hSeq(1 To 1024): ReDim hNode(1 To 1024)
 For i = 1 To nSeedCount
     u = nSeeds(i)
     If u >= 1 And u <= nRooms Then
-        If best(u) > 0 Then
-            best(u) = 0
+        If cost(u) > 0 Then
+            cost(u) = 0
             Call HeapPush(hKey, hSeq, hNode, nHeap, nSeq, 0, u)
         End If
     End If
 Next i
 Do While nHeap > 0
     Call HeapPop(hKey, hSeq, hNode, nHeap, nKey, u)
-    If visited(u) = 0 And nKey = best(u) Then
+    If visited(u) = 0 And nKey = cost(u) Then
         visited(u) = 1
         'pass 1: plain edges (CSR on eFrom); pass 2: random-group edges leaving u
         For nPass = 1 To 2
@@ -1782,9 +1781,9 @@ Do While nHeap > 0
                         GoTo next_edge:
                     End If
                     nNew = nKey + 1
-                    If eCoin(e) > 0 And nNew < ROUTE_INF - ROUTE_COIN_COST Then nNew = nNew + ROUTE_COIN_COST
-                    If nNew < best(v) Then
-                        best(v) = nNew: parentEdge(v) = e: dist(v) = dist(u) + 1
+                    If bAvoidCoin And eCoin(e) > 0 And nNew < ROUTE_INF - ROUTE_COIN_COST Then nNew = nNew + ROUTE_COIN_COST
+                    If nNew < cost(v) Then
+                        cost(v) = nNew: parentEdge(v) = e: dist(v) = dist(u) + 1
                         Call HeapPush(hKey, hSeq, hNode, nHeap, nSeq, nNew, v)
                     End If
                 End If
@@ -1794,6 +1793,76 @@ next_edge:
     End If
 Loop
 End Sub
+
+'ReachRoute destination among monster nIdx's rooms reached by a RouteSearch: the lowest category (RCAT_*),
+'then the lowest cost (so a coin-free room beats a closer coin-costing one when the search avoided coin),
+'then the lowest room index. 0 = none of its rooms reached.
+Private Function RouteDest(ByVal nIdx As Long, visited() As Long, cost() As Long) As Long
+Dim r As Long, nCat As Long, nDest As Long, nDestCat As Long, vKey As Variant
+
+For Each vKey In mRooms(nIdx).Keys
+    r = CLng(vKey)
+    If r >= 1 And r <= nRooms Then
+        If visited(r) = 1 Then
+            nCat = CLng(mRooms(nIdx)(vKey))
+            If nDest = 0 Then
+                nDest = r: nDestCat = nCat
+            ElseIf nCat < nDestCat Then
+                nDest = r: nDestCat = nCat
+            ElseIf nCat = nDestCat And (cost(r) < cost(nDest) Or (cost(r) = cost(nDest) And r < nDest)) Then
+                nDest = r: nDestCat = nCat
+            End If
+        End If
+    End If
+Next vKey
+RouteDest = nDest
+End Function
+
+'Steps on the RouteSearch path to nDest (parentEdge = 0 at a seed), or -1 if the links don't lead back to a
+'seed. nCoinSteps = coin-costing steps on it; nSrc = the seed room it starts from.
+Private Function RoutePathInfo(ByVal nDest As Long, parentEdge() As Long, ByRef nCoinSteps As Long, _
+    ByRef nSrc As Long) As Long
+Dim n As Long, r As Long, e As Long
+
+nCoinSteps = 0: nSrc = 0
+r = nDest
+Do While parentEdge(r) <> 0
+    n = n + 1
+    If n > nRooms Then RoutePathInfo = -1: Exit Function   'safety; the parent links form a tree
+    e = parentEdge(r)
+    If eCoin(e) > 0 Then nCoinSteps = nCoinSteps + 1
+    r = eFrom(e)
+Loop
+nSrc = r
+RoutePathInfo = n
+End Function
+
+'Fills ReachRoute's source and step outputs for the n-step path (from RoutePathInfo) to nDest along parentEdge.
+Private Sub RouteSteps(ByVal nDest As Long, ByVal n As Long, parentEdge() As Long, ByRef nSourceMap As Long, _
+    ByRef nSourceRoom As Long, nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String)
+Dim i As Long, r As Long, e As Long
+
+ReDim nStepMap(0 To n): ReDim nStepRoom(0 To n): ReDim nStepFlags(0 To n): ReDim sStepLabel(0 To n)
+'walk back from the destination, filling the steps from the last one
+r = nDest
+For i = n To 1 Step -1
+    e = parentEdge(r)
+    nStepMap(i) = rMap(eTo(e)): nStepRoom(i) = rRoom(eTo(e))
+    nStepFlags(i) = StepFlags(e)
+    sStepLabel(i) = StepLabel(e)
+    r = eFrom(e)
+Next i
+nStepMap(0) = rMap(r): nStepRoom(0) = rRoom(r)
+nSourceMap = rMap(r): nSourceRoom = rRoom(r)
+End Sub
+
+'Name of the route source (point of interest) at room index r; "" if it isn't one.
+Private Function POIName(ByVal r As Long) As String
+Dim p As Long
+For p = 0 To NUM_POIS - 1
+    If nPOIIdx(p) = r Then POIName = sPOIName(p): Exit Function
+Next p
+End Function
 
 'Binary min-heap on (key, seq): equal keys pop in push order.
 Private Sub HeapPush(hKey() As Long, hSeq() As Long, hNode() As Long, ByRef nHeap As Long, ByRef nSeq As Long, _

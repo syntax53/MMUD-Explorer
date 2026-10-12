@@ -32400,6 +32400,8 @@ Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
         End If
     Case "reach_route":
         If Not lvMonsterCompare.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsterCompare.SelectedItem.Text))
+    Case "reach_route_alt":
+        If Not lvMonsterCompare.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsterCompare.SelectedItem.Text), True)
     Case "item":
         Call GotoItem(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
     Case "spell":
@@ -32459,6 +32461,10 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
         If Not lvMonsters.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsters.SelectedItem.Text))
         Exit Sub
 
+    Case "reach_route_alt":
+        If Not lvMonsters.SelectedItem Is Nothing Then Call ShowMonsterRoute(val(lvMonsters.SelectedItem.Text), True)
+        Exit Sub
+
     Case "greet_text", "textblock":
         If lvMonsterDetail.ListItems.count > 0 Then
             For x = 1 To lvMonsterDetail.ListItems.count
@@ -32515,17 +32521,20 @@ End Select
 End Sub
 
 'results window listing the reachability route to a monster; for an unreachable (level-gated) monster, the
-'full route with level gates ignored. Columns: step number, then "Room: ..." (subitem Tag "m/r" for GotoLocation).
-'Rows: the start room, every non-plain step (command, teleport, gated/restricted/coin exit, map change), an
-'automatic row whenever nothing was listed for nRouteWaypointInterval rooms, and the destination.
-Public Sub ShowMonsterRoute(ByVal nMonsterNum As Long)
+'full route with level gates ignored. bAltRoute: ReachRoute's alternate route instead (the coin-free one when the
+'default takes a toll/fee, or the shorter coin-costing one). Columns: step number, then "Room: ..." (subitem Tag
+'"m/r" for GotoLocation). Rows: the start room, every non-plain step (command, teleport, gated/restricted/coin
+'exit, map change), an automatic row whenever nothing was listed for nRouteWaypointInterval rooms, and the
+'destination.
+Public Sub ShowMonsterRoute(ByVal nMonsterNum As Long, Optional ByVal bAltRoute As Boolean = False)
 On Error GoTo error:
 Dim eReach As ReachStatus, nLevel As Long, bIgnoreLevel As Boolean, i As Long, nInterval As Long
 Dim nGateMap As Long, nGateRoom As Long, nDestMap As Long, nDestRoom As Long
 Dim nMinLvl As Long, nMaxLvl As Long, bRandomGroup As Boolean, sLastRow As String
 Dim nSourceMap As Long, nSourceRoom As Long, sSourceName As String, nSteps As Long
 Dim nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String
-Dim nLastShown As Long, nLastRowRoom As Long
+Dim nLastShown As Long, nLastRowRoom As Long, sCaption As String
+Dim nCoinSteps As Long, nAltSteps As Long, nAltCoinSteps As Long, sAltSourceName As String
 
 nLevel = val(txtGlobalLevel(0).Text)
 eReach = ReachMonsterInfo(nMonsterNum, nLevel, False, nGateMap, nGateRoom, nDestMap, nDestRoom, _
@@ -32538,9 +32547,13 @@ Select Case eReach
         GoTo out:
 End Select
 
-If Not ReachRoute(nMonsterNum, nLevel, False, bIgnoreLevel, nSourceMap, nSourceRoom, sSourceName, _
-    nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps) Then
-    MsgBox "No route found.", vbInformation
+If Not ReachRoute(nMonsterNum, nLevel, False, bIgnoreLevel, bAltRoute, nSourceMap, nSourceRoom, sSourceName, _
+    nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps, nCoinSteps, nAltSteps, nAltCoinSteps, sAltSourceName) Then
+    If bAltRoute Then
+        MsgBox "No alternate route found.", vbInformation
+    Else
+        MsgBox "No route found.", vbInformation
+    End If
     GoTo out:
 End If
 
@@ -32578,8 +32591,15 @@ If nLastRowRoom <> nSteps Then
         & MonsterRouteRoomText(nStepMap(nSteps), nStepRoom(nSteps)), sLastRow)
 End If
 
-frmResults.lblCaption = "Route to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & " steps from " & sSourceName _
-    & IIf(bIgnoreLevel, " (ignoring level gates)", "")
+'caption: the alternate is named by what sets it apart; the default mentions its alternate (offered in the details)
+If bAltRoute Then sCaption = RouteKindText(nCoinSteps, nAltCoinSteps) Else sCaption = "Route"
+sCaption = sCaption & " to " & GetMonsterName(nMonsterNum, True) & ": " & nSteps & " steps from " & sSourceName _
+    & IIf(bIgnoreLevel, " (ignoring level gates)", "") & IIf(nCoinSteps > 0, ", " & RouteCoinText(nCoinSteps), "")
+If nAltSteps > 0 And Not bAltRoute Then
+    sCaption = sCaption & "; " & LCase$(RouteKindText(nAltCoinSteps, nCoinSteps)) & ": " & nAltSteps & " steps from " _
+        & sAltSourceName
+End If
+frmResults.lblCaption = sCaption
 frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
 'frmResults.Form_Resize sizes the last column to the remaining list width (also on Show); widen it afterward so long lines fit
 If frmResults.lvResults.ColumnHeaders(2).Width < 9000 Then frmResults.lvResults.ColumnHeaders(2).Width = 9000

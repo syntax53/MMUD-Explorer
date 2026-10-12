@@ -12,9 +12,37 @@ This file is untracked scratch for continuity; delete or commit at the end.
   Lost City 16/426, Albion 14/1, Port Blackwater 14/10), waypoint rows every N (Settings option
   `RouteWaypointInterval`, dialog grown), results window via double-click on Yes/No.
 
-## Round 2 (IN PROGRESS, uncommitted) — the user's eight requests
+## Round 3 — coin-detour cap + alternate-route row (2026-10-12, session f70ac558)
+STATUS: EDITS APPLIED, UNCOMPILED, UNCOMMITTED. **VB6 is not installed on the user's current PC**, so
+nothing was compiled or run. Only static checks were done: high-byte counts unchanged (0/1/6), zero lone
+LFs, and stripped diffs show only the intended hunks. The user compiles and tests in the IDE, then commits.
+Files: modReachability.bas, modMain.bas, frmMain.frm, docs/changelog.txt, README.md.
+- `RouteSearch` gains `bAvoidCoin` + `cost()` output. `ReachRoute` runs it twice: F (fewest coin steps,
+  then steps) and S (fewest steps).
+  - It uses S when `nCoinS > nCoinF And nS < nF And nF > ROUTE_DETOUR_MAX(3) * nS`, otherwise F.
+  - The other route is the "alternate".
+  - New signature (17 args): `bAltRoute` after `bIgnoreLevel`, then `nCoinSteps, nAltSteps, nAltCoinSteps,
+    sAltSourceName` at the end. `bAltRoute=True` returns the alternate (False if none).
+  - New helpers: `RouteDest` (category → cost → index, so a coin-free destination beats a closer paid one),
+    `RoutePathInfo`, `RouteSteps`, `POIName`.
+- modMain:
+  - `RouteCoinText` ("1 toll/fee"), `RouteKindText` ("Coin-free route" / "Shorter route" /
+    "Route with fewer tolls/fees"), and private `AddRouteAltRow` (Tag `reach_route_alt`, gray).
+  - Yes row appends ", N toll(s)/fee(s)". The Yes alt row goes after the route rows.
+  - The No case makes an extra `ReachRoute(bIgnoreLevel=True)` call. Its alt row reads
+    "... past the level gate: N steps from X (double-click to view)".
+- frmMain: `ShowMonsterRoute(nMon, Optional bAltRoute)`. The caption names the route kind, adds the coin
+  count, and mentions the alternate. `reach_route_alt` cases are added in both detail double-click
+  handlers.
+- Expected for 2352 at L49:
+  - No row unchanged.
+  - Alt row "Coin-free route past the level gate: 187 steps from Bank of Khazarad".
+  - No-row results: the 30-step ship route from Port Blackwater.
+  - Alt-row results: the 187-step route.
+
+## Round 2 — the user's eight requests
 STATUS: ROUND 2 COMMITTED as `3ecfcf8` (after the user's own `fb4613c` "Enable dev mode and ignore
-reachability CSV"). Nothing pending. Open question for the user: cap coin avoidance by route length?
+reachability CSV"). The coin-cap question it left open is answered by round 3.
 (previous status kept below)
 STATUS 2026-10-12 04:20: ROUND 2 COMPLETE AND VERIFIED IN-APP (second compile after the two
 follow-up edits succeeded; captain 2352 No-row results now run from Bank of Khazarad with the full
@@ -101,6 +129,12 @@ the plan file, and finish the rest. Agents' scratch .ps1 scripts live in the ses
   recompute and for future class/race/alignment gates (then: record a char config string at compute
   time and prompt in `FilterMonsters` like `sMonsterDamageVsCharDefenseConfig`).
 - Coin avoidance = toll exits + priced commands only (not item-consuming steps).
+- Coin avoidance is capped: if the coin-free route is more than 3× the shorter coin route, show the coin
+  route. Either way, offer the other route as a detail row (double-click opens it in the results window).
+  Coin is shown as a count of paid steps, not a gold total, because toll and `price N` units may differ.
+  The No case's alt row covers the full route past the gate (what the No row opens). The results window
+  has no switch row of its own: `SetupResultsWindow` unloads the form, so it can't reload from its own
+  click handler.
 - Interval default 25; detail pane caps waypoint rows at 10 then "... plus N more".
 
 ## Known facts worth keeping

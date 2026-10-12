@@ -9,6 +9,7 @@ v2.3.5 (10/##/2026)
 - UP: Monster details now show whether the monster is reachable at the character's level and, if not, the room whose level gate blocks it (double-click to jump there)  
 - UP: Monster details now show a route to the monster (or to its blocking level gate) from Bank of Godfrey or the nearest major bank, with a waypoint every N rooms (new Settings option, default 25); double-click Yes/No for a results window listing every command, teleport, gated or restricted exit and map change along the way  
 - UP: Route results now list the step number first, show item/key/spell/class/race names, skip automatic waypoints unless nothing was listed for N rooms, and prefer coin-free paths over tolls and paid passages  
+- UP: Routes take a toll or paid passage when the coin-free path is more than three times longer, and monster details offer the other route (coin-free or shorter) as an extra row to double-click  
 - UP: Unreachable monsters now show the blocking room on the No row; double-clicking it lists the full route past the level gate  
 - UP: Route destinations prefer placed rooms, then lairs, then summon spells/textblocks, then roaming groups  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  

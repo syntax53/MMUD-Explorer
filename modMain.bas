@@ -2327,6 +2327,47 @@ Call HandleError("AddRouteRows")
 Resume out:
 End Sub
 
+'detail row after the route rows offering ReachRoute's alternate route (double-click: frmMain.ShowMonsterRoute
+'with bAltRoute); sWhere = text after the route kind ("" or " past the level gate")
+Private Sub AddRouteAltRow(DetailLV As ListView, ByVal sWhere As String, ByVal nAltSteps As Long, _
+    ByVal nAltCoinSteps As Long, ByVal sAltSourceName As String, ByVal nCoinSteps As Long)
+On Error GoTo error:
+Dim oLI As ListItem
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+oLI.Tag = "reach_route_alt"
+oLI.ListSubItems.Add (1), "Detail", RouteKindText(nAltCoinSteps, nCoinSteps) & sWhere & ": " & nAltSteps _
+    & " step" & IIf(nAltSteps = 1, "", "s") & " from " & sAltSourceName _
+    & IIf(nAltCoinSteps > 0, ", " & RouteCoinText(nAltCoinSteps), "") & " (double-click to view)"
+oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRouteAltRow")
+Resume out:
+End Sub
+
+'"1 toll/fee" / "N tolls/fees": coin-costing steps on a route (ReachRoute nCoinSteps)
+Public Function RouteCoinText(ByVal nCoinSteps As Long) As String
+RouteCoinText = nCoinSteps & IIf(nCoinSteps = 1, " toll/fee", " tolls/fees")
+End Function
+
+'what sets a route apart from the other one when ReachRoute offers an alternate (the one with more coin-costing
+'steps is always the shorter): "Coin-free route", "Shorter route" or "Route with fewer tolls/fees"
+Public Function RouteKindText(ByVal nCoinSteps As Long, ByVal nOtherCoinSteps As Long) As String
+If nCoinSteps = 0 Then
+    RouteKindText = "Coin-free route"
+ElseIf nCoinSteps > nOtherCoinSteps Then
+    RouteKindText = "Shorter route"
+Else
+    RouteKindText = "Route with fewer tolls/fees"
+End If
+End Function
+
 'route step label (modReachability.ReachRoute) with its raw spell/item/class/race/toll numbers replaced by
 'names, record numbers per bHideRecordNumbers -- e.g. "go N (Key: 1076)" -> "go N (Key: silver key (1076))".
 'Only the listed prefixes are touched, so "(m/r)" room references and other digits are left alone.
@@ -2450,6 +2491,7 @@ Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGat
 Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
 Dim bReachRowAdded As Boolean, bReachRoute As Boolean, nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String
 Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String, nRouteSteps As Long
+Dim nRouteCoin As Long, nRouteAltSteps As Long, nRouteAltCoin As Long, sRouteAltSrcName As String
             
 On Error GoTo error:
 
@@ -4209,15 +4251,16 @@ Else
         nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup)
     Select Case eReach
         Case reachYes:
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
-                nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
             oLI.ForeColor = TColor(&H8000&)
             If bReachRoute Then
                 oLI.Tag = "reach_route"
                 oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
-                    & " from " & sRouteSrcName & ")"
+                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")"
             Else
                 oLI.ListSubItems.Add (1), "Detail", "Yes"
             End If
@@ -4226,6 +4269,9 @@ Else
             If bReachRoute Then
                 Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
                     nRouteStepMap, nRouteStepRoom, nRouteSteps, "Yes")
+                If nRouteAltSteps > 0 Then
+                    Call AddRouteAltRow(DetailLV, "", nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName, nRouteCoin)
+                End If
             End If
 
         Case reachNoGate:
@@ -4245,8 +4291,9 @@ Else
                 sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
             End If
 
-            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
-                nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps)
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
 
             Set oLI = DetailLV.ListItems.Add()
             oLI.Text = "Reachable"
@@ -4261,6 +4308,16 @@ Else
             If bReachRoute Then
                 Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
                     nRouteStepMap, nRouteStepRoom, nRouteSteps, "No")
+            End If
+
+            'the full route past the gate (what the No row opens) may have an alternate (see ReachRoute)
+            If ReachRoute(nMonsterNum, nReachLevel, False, True, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName) Then
+                If nRouteAltSteps > 0 Then
+                    Call AddRouteAltRow(DetailLV, " past the level gate", nRouteAltSteps, nRouteAltCoin, _
+                        sRouteAltSrcName, nRouteCoin)
+                End If
             End If
 
         'reachUnknown: not computed / monster not located -- show nothing
