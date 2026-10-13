@@ -21124,7 +21124,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & " v261012a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
+sNormalCaption = sNormalCaption & " v261012b" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -22715,7 +22715,7 @@ Set cReg = New clsRegistryRoutines
 'End If
 'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -23330,7 +23330,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -23360,7 +23360,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -31266,7 +31266,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER 'HKEY_LOCAL_MACHINE
+cReg.hKey = HKEY_CURRENT_USER 'HKEY_LOCAL_MACHINE
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
