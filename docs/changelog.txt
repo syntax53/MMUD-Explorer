@@ -14,6 +14,7 @@ v2.3.5 (10/##/2026)
 - FIX: Map tooltip showed a per-round lair damage value labeled as per-clear  
 - FIX: Map's "Find room with Exits" window broken after setting attack (frame visibility issue)  
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
+- FIX: Double-clicking a Textblock/Command row in an item's references no longer uses the item number as the default map; "Room" rows in item references now navigate with record numbers hidden  
 - FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
 - FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  

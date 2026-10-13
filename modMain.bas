@@ -7271,7 +7271,10 @@ nonumber:
                     oLI.Text = sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
-                If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
+                'only a shop's rooms (sHeader "Shop: ", nAuxValue = shop number) carry the aux number: GotoLocation
+                'reads the shop from it. An item's own "Room m/r" rows keep the room so they still navigate
+                'when record numbers are hidden (the text has no "m/r" to fall back on then).
+                If nAuxValue > 0 And Len(sHeader) > 0 Then
                     If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = nAuxValue
                     Else

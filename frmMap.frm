@@ -46025,7 +46025,7 @@ Private Sub lvMapLoc_DblClick()
 On Error GoTo error:
 
 If lvMapLoc.ListItems.count = 0 Then Exit Sub
-Call frmMain.GotoLocation(lvMapLoc.SelectedItem, nMapStartMap, Me)
+Call frmMain.GotoLocation(lvMapLoc.SelectedItem, , Me, nMapStartMap)
 'If frmMain.WindowState = vbMinimized Then frmMain.WindowState = vbNormal
 'frmMain.SetFocus
 

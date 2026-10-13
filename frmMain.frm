@@ -26751,8 +26751,10 @@ Set oLV = Nothing
 
 End Sub
 
+'AuxNumber: the item to select when the row is a shop. nDefaultMap: the map that "teleport <room>" lines
+'without a map resolve against in a textblock/command tree (a row Tag "N@map" supplies it too).
 Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long, _
-    Optional ByRef objFormOwner As Form)
+    Optional ByRef objFormOwner As Form, Optional ByVal nDefaultMap As Long)
 On Error GoTo error:
 Dim oLI As ListItem, oLV As ListView, iGotoType As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType, sMegaCode As String, sText As String, sLocationText As String
@@ -26832,7 +26834,7 @@ Else
     nNum = val(sLocationText)
     If nNum <= 0 Then GoTo out:
     'a row may carry the map its textblock belongs to as "N@map" (see ShowRoomCmdRoomList); val() stops at the "@"
-    If AuxNumber = 0 And InStr(1, sLocationText, "@") > 0 Then AuxNumber = val(mid(sLocationText, InStr(1, sLocationText, "@") + 1))
+    If nDefaultMap = 0 And InStr(1, sLocationText, "@") > 0 Then nDefaultMap = val(mid(sLocationText, InStr(1, sLocationText, "@") + 1))
 End If
 
 try_find_again:
@@ -26845,7 +26847,7 @@ Select Case iGotoType
     Case 3: 'textblock
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateExecutionTree(nNum)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26886,7 +26888,7 @@ Select Case iGotoType
     Case 8: 'command
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, True, False)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26900,7 +26902,7 @@ Select Case iGotoType
     Case 13: 'execute
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, False)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26914,7 +26916,7 @@ Select Case iGotoType
     Case 16: 'npc greet commands
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -33135,7 +33137,7 @@ If lvSpellLoc.ListItems.count = 0 Then Exit Sub
 If FormIsLoaded("frmMap") Then
     If frmMap.lvMapLoc.ListItems.count > 0 Then
         If val(frmMap.lvMapLoc.SelectedItem.Tag) = val(lvSpells.SelectedItem.Text) Then
-            Call GotoLocation(lvSpellLoc.SelectedItem, frmMap.nMapStartMap, frmMap)
+            Call GotoLocation(lvSpellLoc.SelectedItem, , frmMap, frmMap.nMapStartMap)
             If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hWnd, True)
             Exit Sub
         End If
