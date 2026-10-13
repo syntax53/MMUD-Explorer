@@ -1167,6 +1167,7 @@ Public Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() A
                 itm.encum = NzLong(rs.Fields("Encum").Value)                      ' <- NEW
                 itm.ObtainedFrom = NzStr(rs.Fields("Obtained From").Value)
                 
+                itm.Gettable = 0 'itm is reused across hits; only ever set to 1 below
                 If NzLong(rs.Fields("Gettable").Value) = 1 Then
                     itm.Gettable = 1
                 ElseIf ObtainedFromIsGettable(itm.ObtainedFrom) Then
