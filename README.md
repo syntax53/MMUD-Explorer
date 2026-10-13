@@ -4,20 +4,12 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 
 v2.3.5 (10/##/2026)  
 ------------------------------------------  
-- NEW: Monster reachability filter (by character level, etc) for the extra monsters tab filters  
-- NEW: Options menu item to (re)calculate monster reachability  
-- UP: Monster details now show whether the monster is reachable at the character's level and, if not, the room whose level gate blocks it  
-- UP: Monster details now show a route to the monster (or to its blocking level gate) from Bank of Godfrey or the nearest other hub (major banks, Port Blackwater), with a waypoint every N rooms (new Settings option, default 25); double-click Yes/No for a results window listing every command, teleport, gated or restricted exit and map change along the way  
-- UP: Route results now list the step number first, show item/key/spell/class/race names, skip automatic waypoints unless nothing was listed for N rooms, and prefer coin-free paths over tolls and paid passages  
-- UP: Routes take a toll or paid passage when the coin-free path is more than three times longer, and monster details offer the other route (coin-free or shorter) as an extra row to double-click  
-- UP: Unreachable monsters now show the blocking room on the No row; double-clicking it lists the full route past the level gate  
-- UP: Route destinations prefer placed rooms, then lairs, then summon spells/textblocks, then roaming groups  
+- NEW: Monster reachability (by character level) filter and path to monster in detail pane  
+- NEW: Item references now list the room commands that give the item (e.g. "pry coffin" in the crypt) from NMR v1.8.4+ exports; double-click to list every room  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
-- UP: GreaterMUD: Vile Ward from equipment and bless spells is now included vs evil monsters (hit calculator + monster attack sim) when the character filter is on and the Evil alignment is selected  
-- UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps (99% for silk/ninja/leather classes)  
-- UP: Hit calculator now checks the Shadow box for a character with shadow and shows its AC without the +10 shadow bonus (was folded into the AC field)  
-- FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
-- FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
+- UP: GreaterMUD: Vile Ward from equipment and bless spells is now considered vs evil monsters  
+- UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
+- UP: GreaterMUD: Hit calculator now checks the Shadow box for a character with shadow and shows proper AC value  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
@@ -26,7 +18,9 @@ v2.3.5 (10/##/2026)
 - FIX: Map tooltip showed a per-round lair damage value labeled as per-clear  
 - FIX: Map's "Find room with Exits" window broken after setting attack (frame visibility issue)  
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
-- FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items (e.g. the fachan's -50 accy boulder)  
+- FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
+- FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
+- FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
 
 v2.3.4 (09/06/2026)  

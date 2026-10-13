@@ -26813,6 +26813,15 @@ Select Case iGotoType
         sStr = "Spell"
 End Select
 
+'a room command row (see AddRoomCmdLocationRow) for several rooms: list them all
+If iGotoType = 1 And (Left(sText, 9) = "Room cmd " Or Left(sText, 12) = "Room action:") Then
+    If InStr(1, sLocationText, "|") > 0 Or InStr(1, sLocationText, "-") > 0 Then
+        Call ShowRoomCmdRoomList(sLocationText, sText, _
+            IIf(oliSource.ListSubItems.count > 0, Trim(oliSource.Text), ""), objFormOwner)
+        GoTo out:
+    End If
+End If
+
 If iGotoType = 1 Or iGotoType = 11 Then 'room/group
     If InStr(1, sLocationText, "/", vbTextCompare) = 0 And InStr(1, sText, "/", vbTextCompare) > 0 Then
         RoomExits = ExtractMapRoom(sText)
@@ -27097,6 +27106,53 @@ Set oLV = Nothing
 Exit Sub
 error:
 Call HandleError("GotoLocation")
+Resume out:
+End Sub
+
+'Lists the rooms of a room command row (see GotoLocation) in the results window: the command
+'textblocks of those rooms first (click: command tree), then every room (click: map).
+Private Sub ShowRoomCmdRoomList(ByVal sRoomList As String, ByVal sRowText As String, _
+    ByVal sPercent As String, ByRef objOwner As Form)
+On Error GoTo error:
+Dim sRooms() As String, nRoomCount As Long, x As Long, nCMD As Long, sSeen As String
+Dim oLI As ListItem, sCaption As String
+
+nRoomCount = ExpandRoomCmdRooms(sRoomList, sRooms())
+If nRoomCount = 0 Then Exit Sub
+
+Call frmResults.SetupResultsWindow(False, objOwner, nMapStartMap)
+frmResults.lvResults.ListItems.clear
+
+sSeen = "|"
+For x = 0 To nRoomCount - 1
+    nCMD = GetRoomCMDTB(sRooms(x))
+    If nCMD > 0 And InStr(1, sSeen, "|" & nCMD & "|") = 0 Then
+        sSeen = sSeen & nCMD & "|"
+        Set oLI = frmResults.lvResults.ListItems.Add()
+        oLI.Text = "Commands: Textblock " & nCMD
+        oLI.Tag = nCMD
+    End If
+Next x
+
+For x = 0 To nRoomCount - 1
+    Set oLI = frmResults.lvResults.ListItems.Add()
+    oLI.Text = "Room: " & GetRoomName(sRooms(x))
+    oLI.Tag = sRooms(x)
+Next x
+
+'"Room cmd "pry coffin": Tomb (17/278) +93 more" -> "Room cmd "pry coffin" (0.3%), 94 rooms:"
+sCaption = sRowText
+If InStr(1, sCaption, ": ") > 0 Then sCaption = Left(sCaption, InStr(1, sCaption, ": ") - 1)
+If Len(sPercent) > 0 Then sCaption = sCaption & " (" & sPercent & ")"
+frmResults.lblCaption.Caption = sCaption & ", " & nRoomCount & " rooms:"
+frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objOwner Is frmMap, Nothing, objOwner)
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("ShowRoomCmdRoomList")
 Resume out:
 End Sub
 
@@ -35000,7 +35056,7 @@ find_negates2:
     Case 9: 'set shop on item manager
         If lvItemManager.ListItems.count > 0 And Not lvItemManager.SelectedItem Is Nothing Then
             If lvItemManagerLoc.ListItems.count > 0 And Not lvItemManagerLoc.SelectedItem Is Nothing Then
-                If LCase(Left(lvItemManagerLoc.SelectedItem.ListSubItems(1).Text, 4)) = "shop" And lvItemManagerLoc.SelectedItem.ListSubItems(1).Tag > 0 Then
+                If LCase(Left(lvItemManagerLoc.SelectedItem.ListSubItems(1).Text, 4)) = "shop" And val(lvItemManagerLoc.SelectedItem.ListSubItems(1).Tag) > 0 Then
                     x = 0
                     For Each oLI In lvItemManager.ListItems
                         If oLI.Selected Then x = x + 1

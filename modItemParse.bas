@@ -1169,9 +1169,7 @@ Public Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() A
                 
                 If NzLong(rs.Fields("Gettable").Value) = 1 Then
                     itm.Gettable = 1
-                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-                    itm.Gettable = 1
-                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(rs.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+                ElseIf ObtainedFromIsGettable(itm.ObtainedFrom) Then
                     itm.Gettable = 1
                 End If
                 
@@ -1730,9 +1728,7 @@ have_row:
     
     If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
         hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-        hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+    ElseIf ObtainedFromIsGettable(hit.ObtainedFrom) Then
         hit.Gettable = 1
     End If
     
@@ -1815,9 +1811,7 @@ have_row:
     
     If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
         hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-        hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+    ElseIf ObtainedFromIsGettable(hit.ObtainedFrom) Then
         hit.Gettable = 1
     End If
     

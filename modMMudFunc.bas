@@ -49,6 +49,20 @@ Public Type RoomExitType
     ExitType As String
 End Type
 
+'One "Room(<command>[|<command>...]) <map/room>[|<map/room>...][(<chance>%)]" entry of an item's
+'"Obtained From" (NMR 1.8.4+): commands typed in those rooms that hand the item out.
+'See SplitRoomCmdSources.
+Public Type tRoomCmdSource
+    sCommands As String     'the commands as exported, "|" separated
+    sLabel As String        'for display: "pry coffin" / "push coffin" (empty when bAction)
+    sRoomList As String     'the rooms as exported ("17/278|17/2073-2096"), unusable tokens removed
+    sFirstRoom As String    '"17/278"
+    nRoomCount As Long      'number of rooms, ranges counted out
+    nChance As Double       '-1 = always (giveitem), 0 = unknown ("?%"), else the percent
+    bCut As Boolean         'cut off by the column's 2000 character limit; the room list may be short
+    bAction As Boolean      'the "command" is only a textblock action ("message 1421"), nothing to type
+End Type
+
 Public Enum eAttackTypeMUD
     a0_none = 0
     a1_Punch = 1
@@ -2413,6 +2427,233 @@ Exit Function
 
 error:
 Call HandleError("ExtractMapRoom")
+
+End Function
+
+'Splits the room command entries (see tRoomCmdSource) off an item's "Obtained From" text; NMR
+'writes them after every other entry. Returns the text without them, and without the "+" & Chr(0)
+'that marks a column cut at 2000 characters (callers that show "... plus more." test the original
+'text). nOut is the number of entries in tOut(1 To nOut).
+'Without any "Room(" entry the text comes back unchanged and nOut = 0.
+Public Function SplitRoomCmdSources(ByVal sObtained As String, ByRef tOut() As tRoomCmdSource, _
+    ByRef nOut As Long) As String
+On Error GoTo error:
+Dim sBody As String, sRest As String, sParts() As String, x As Long, nStart As Long
+Dim bCut As Boolean, tSource As tRoomCmdSource
+
+nOut = 0
+Erase tOut
+SplitRoomCmdSources = sObtained
+
+'"Room(" without a blank: "Room 1/157" is an item lying in a room, something else
+If Left(sObtained, 5) = "Room(" Then
+    nStart = 1
+Else
+    nStart = InStr(1, sObtained, ", Room(", vbBinaryCompare)
+    If nStart = 0 Then Exit Function
+    nStart = nStart + 2
+End If
+
+sBody = sObtained
+If Right(sBody, 2) = "+" & Chr(0) Then
+    bCut = True
+    sBody = Left(sBody, Len(sBody) - 2)
+ElseIf Right(sBody, 1) = "+" Then
+    bCut = True
+    sBody = Left(sBody, Len(sBody) - 1)
+End If
+
+sRest = Left(sBody, nStart - 1)
+If Right(sRest, 2) = ", " Then sRest = Left(sRest, Len(sRest) - 2)
+
+sParts = Split(mid(sBody, nStart), ", ")
+For x = 0 To UBound(sParts)
+    If Left(sParts(x), 5) = "Room(" Then
+        If ParseRoomCmdEntry(sParts(x), (bCut And x = UBound(sParts)), tSource) Then
+            nOut = nOut + 1
+            ReDim Preserve tOut(1 To nOut)
+            tOut(nOut) = tSource
+        End If
+    ElseIf Not (bCut And x = UBound(sParts)) Then
+        'not expected behind a Room( entry, but kept with the other references
+        sRest = AutoAppend(sRest, sParts(x))
+    End If
+Next x
+
+SplitRoomCmdSources = sRest
+
+out:
+Exit Function
+error:
+Call HandleError("SplitRoomCmdSources")
+nOut = 0
+SplitRoomCmdSources = sObtained
+Resume out:
+End Function
+
+'One "Room(<cmd>|<cmd>) <rooms>[(<chance>%)]" entry. bCutHere: it is the last entry of a cut
+'column, so its last room may be incomplete ("17/2" of "17/2073-2096") and is dropped.
+'False when nothing usable is left.
+Private Function ParseRoomCmdEntry(ByVal sEntry As String, ByVal bCutHere As Boolean, _
+    ByRef tSource As tRoomCmdSource) As Boolean
+Dim tEmpty As tRoomCmdSource, sRooms As String, sChance As String, sTokens() As String
+Dim sCommands() As String, x As Long, nLast As Long, nPos As Long
+Dim nMap As Long, nFirstRoom As Long, nLastRoom As Long
+
+tSource = tEmpty
+tSource.nChance = -1
+tSource.bCut = bCutHere
+
+'the commands end at the first ")" (NMR writes any "(" ")" "|" "," inside a command as "[" "]" "/" ";")
+nPos = InStr(6, sEntry, ")")
+If nPos = 0 Then Exit Function
+tSource.sCommands = mid(sEntry, 6, nPos - 6)
+sRooms = Trim(mid(sEntry, nPos + 1))
+
+nPos = InStr(1, sRooms, "(")
+If nPos > 0 Then
+    sChance = Trim(mid(sRooms, nPos + 1))
+    sRooms = Left(sRooms, nPos - 1)
+    If Right(sChance, 2) = "%)" Then
+        sChance = Trim(Left(sChance, Len(sChance) - 2))
+    Else
+        sChance = "?" 'cut inside the chance
+    End If
+    If sChance = "?" Or Len(sChance) = 0 Then
+        tSource.nChance = 0
+    Else
+        'written with the exporting PC's decimal mark ("18,6"); val() always reads "."
+        tSource.nChance = val(Replace(sChance, ",", "."))
+        If tSource.nChance < 0 Then tSource.nChance = 0
+    End If
+    bCutHere = False 'the rooms ended at the "(", so they are complete
+ElseIf bCutHere Then
+    tSource.nChance = 0 'cut before a chance could follow: unknown, not "always"
+End If
+
+sTokens = Split(sRooms, "|")
+nLast = UBound(sTokens)
+If bCutHere Then nLast = nLast - 1
+For x = 0 To nLast
+    If ParseRoomCmdToken(sTokens(x), nMap, nFirstRoom, nLastRoom) Then
+        tSource.sRoomList = AutoAppend(tSource.sRoomList, Trim(sTokens(x)), "|")
+        If tSource.nRoomCount = 0 Then tSource.sFirstRoom = nMap & "/" & nFirstRoom
+        tSource.nRoomCount = tSource.nRoomCount + (nLastRoom - nFirstRoom + 1)
+    End If
+Next x
+If tSource.nRoomCount = 0 Then Exit Function
+
+sCommands = Split(tSource.sCommands, "|")
+For x = 0 To UBound(sCommands)
+    If Len(Trim(sCommands(x))) > 0 And Not IsRoomCmdAction(sCommands(x)) Then
+        tSource.sLabel = AutoAppend(tSource.sLabel, """" & Trim(sCommands(x)) & """", " / ")
+    End If
+Next x
+tSource.bAction = (Len(tSource.sLabel) = 0)
+
+ParseRoomCmdEntry = True
+End Function
+
+'"17/278" or "17/2073-2096" -> map, first and last room
+Private Function ParseRoomCmdToken(ByVal sToken As String, ByRef nMap As Long, _
+    ByRef nFirstRoom As Long, ByRef nLastRoom As Long) As Boolean
+Dim nSlash As Long, nDash As Long, sMap As String, sFirst As String, sLast As String
+
+sToken = Trim(sToken)
+nSlash = InStr(1, sToken, "/")
+If nSlash < 2 Then Exit Function
+sMap = Left(sToken, nSlash - 1)
+nDash = InStr(nSlash, sToken, "-")
+If nDash > 0 Then
+    sFirst = mid(sToken, nSlash + 1, nDash - nSlash - 1)
+    sLast = mid(sToken, nDash + 1)
+Else
+    sFirst = mid(sToken, nSlash + 1)
+    sLast = sFirst
+End If
+If Not IsRoomCmdNumber(sMap) Or Not IsRoomCmdNumber(sFirst) Or Not IsRoomCmdNumber(sLast) Then Exit Function
+
+nMap = val(sMap)
+nFirstRoom = val(sFirst)
+nLastRoom = val(sLast)
+If nMap < 1 Or nFirstRoom < 1 Or nLastRoom < nFirstRoom Then Exit Function
+
+ParseRoomCmdToken = True
+End Function
+
+Private Function IsRoomCmdNumber(ByVal sText As String) As Boolean
+If Len(sText) = 0 Or Len(sText) > 9 Then Exit Function
+IsRoomCmdNumber = Not (sText Like "*[!0-9]*")
+End Function
+
+'True when a Room( "command" is only a textblock action and its numbers ("message 1421"). NMR takes
+'the text before the first ":" of each line as the command, and a few command textblocks start
+'with an action instead of something to type.
+Private Function IsRoomCmdAction(ByVal sCommand As String) As Boolean
+Dim sWords() As String, x As Long
+
+sCommand = LCase(Trim(sCommand))
+If Len(sCommand) = 0 Then Exit Function
+sWords = Split(sCommand, " ")
+If UBound(sWords) < 1 Then Exit Function
+For x = 1 To UBound(sWords)
+    If Not IsRoomCmdNumber(sWords(x)) Then Exit Function
+Next x
+
+Select Case sWords(0)
+    Case "message", "text", "random", "giveitem", "takeitem", "checkitem", "clearitem", "roomitem", _
+        "failroomitem", "teleport", "cast", "summon", "delay", "price", "class", "race", "minlevel", _
+        "maxlevel", "checkability", "testability", "failability", "removeability":
+        IsRoomCmdAction = True
+End Select
+End Function
+
+'"17/278|17/2073-2075" -> sRooms(0 To 3) = "17/278", "17/2073", "17/2074", "17/2075"; returns
+'the count (at most 5000).
+Public Function ExpandRoomCmdRooms(ByVal sRoomList As String, ByRef sRooms() As String) As Long
+On Error GoTo error:
+Dim sTokens() As String, x As Long, nCount As Long
+Dim nMap As Long, nFirstRoom As Long, nLastRoom As Long, nRoom As Long
+
+Erase sRooms
+If Len(sRoomList) = 0 Then Exit Function
+
+sTokens = Split(sRoomList, "|")
+For x = 0 To UBound(sTokens)
+    If ParseRoomCmdToken(sTokens(x), nMap, nFirstRoom, nLastRoom) Then
+        For nRoom = nFirstRoom To nLastRoom
+            If nCount >= 5000 Then GoTo done:
+            ReDim Preserve sRooms(nCount)
+            sRooms(nCount) = nMap & "/" & nRoom
+            nCount = nCount + 1
+        Next nRoom
+    End If
+Next x
+
+done:
+ExpandRoomCmdRooms = nCount
+
+out:
+Exit Function
+error:
+Call HandleError("ExpandRoomCmdRooms")
+ExpandRoomCmdRooms = nCount
+Resume out:
+End Function
+
+'The "Obtained From" half of ItemIsGetable (and its copies in modItemParse): an NPC hands it out,
+'or a textblock does and it is not also lying in a room. Room command entries are left out first
+'so their command text ("search room ...") can't change the answer.
+Public Function ObtainedFromIsGettable(ByVal sObtained As String) As Boolean
+Dim tSkip() As tRoomCmdSource, nSkip As Long
+
+If InStr(1, sObtained, "Room(", vbBinaryCompare) > 0 Then sObtained = SplitRoomCmdSources(sObtained, tSkip(), nSkip)
+
+If InStr(1, sObtained, "NPC #", vbTextCompare) > 0 Then
+    ObtainedFromIsGettable = True
+ElseIf InStr(1, sObtained, "Textblock #", vbTextCompare) > 0 And InStr(1, sObtained, "Room ", vbTextCompare) = 0 Then
+    ObtainedFromIsGettable = True
+End If
 
 End Function
 
