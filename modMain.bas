@@ -6997,7 +6997,9 @@ For Each oLI In lv.ListItems
                             str = str & oLI.SubItems(x)
                         End If
                     ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.count > 0 Then
-                        If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
+                        If Left(oLI.SubItems(x), 9) = "Room cmd " Or Left(oLI.SubItems(x), 12) = "Room action:" Then
+                            str = str & oLI.SubItems(x) 'the command is the point of these rows
+                        ElseIf InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.SubItems(x)
@@ -7720,12 +7722,14 @@ If bPercentColumn Then
     If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
         nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
         If nPercent2 > 0 Then
-            sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
             If tSource.nChance < 0 Then
                 nPercent = nPercent2
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
             ElseIf nPercent > 0 Then
                 nPercent = (nPercent * nPercent2) / 100
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
             End If
+            'an unknown ("?") chance keeps the container's % in the footer: it is the half that is known
         End If
     End If
 
@@ -7734,7 +7738,7 @@ If bPercentColumn Then
         sPercent = Round(nPercent) & "%"
     ElseIf Round(nPercent, 2) > 0 Then
         sPercent = Round(nPercent, 2) & "%"
-    ElseIf nPercent > 0 Then
+    ElseIf tSource.nChance > 0 Then
         sPercent = "<0.01%"
     ElseIf tSource.nChance = 0 Then
         sPercent = "?"

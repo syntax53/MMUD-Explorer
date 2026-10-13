@@ -3353,7 +3353,7 @@ End If
 ready:
 On Error GoTo error:
 
-'note: this is repeated in GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem
+'note: the "Obtained From" half is shared with GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem (ObtainedFromIsGettable)
 If tabItems.Fields("Gettable") = 1 Then
     ItemIsGetable = True
 ElseIf ObtainedFromIsGettable(tabItems.Fields("Obtained From") & "") Then

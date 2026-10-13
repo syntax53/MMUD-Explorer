@@ -2499,6 +2499,7 @@ Private Function ParseRoomCmdEntry(ByVal sEntry As String, ByVal bCutHere As Boo
 Dim tEmpty As tRoomCmdSource, sRooms As String, sChance As String, sTokens() As String
 Dim sCommands() As String, x As Long, nLast As Long, nPos As Long
 Dim nMap As Long, nFirstRoom As Long, nLastRoom As Long
+On Error GoTo error:
 
 tSource = tEmpty
 tSource.nChance = -1
@@ -2527,6 +2528,7 @@ If nPos > 0 Then
         If tSource.nChance < 0 Then tSource.nChance = 0
     End If
     bCutHere = False 'the rooms ended at the "(", so they are complete
+    tSource.bCut = False
 ElseIf bCutHere Then
     tSource.nChance = 0 'cut before a chance could follow: unknown, not "always"
 End If
@@ -2545,13 +2547,20 @@ If tSource.nRoomCount = 0 Then Exit Function
 
 sCommands = Split(tSource.sCommands, "|")
 For x = 0 To UBound(sCommands)
-    If Len(Trim(sCommands(x))) > 0 And Not IsRoomCmdAction(sCommands(x)) Then
-        tSource.sLabel = AutoAppend(tSource.sLabel, """" & Trim(sCommands(x)) & """", " / ")
+    If Len(Trim(Replace(sCommands(x), "*", ""))) > 0 And Not IsRoomCmdAction(Replace(sCommands(x), "*", "")) Then
+        tSource.sLabel = AutoAppend(tSource.sLabel, """" & Trim(Replace(sCommands(x), "*", "")) & """", " / ")
     End If
 Next x
 tSource.bAction = (Len(tSource.sLabel) = 0)
 
 ParseRoomCmdEntry = True
+
+out:
+Exit Function
+error:
+Call HandleError("ParseRoomCmdEntry")
+ParseRoomCmdEntry = False
+Resume out:
 End Function
 
 '"17/278" or "17/2073-2096" -> map, first and last room
@@ -2577,6 +2586,7 @@ nMap = val(sMap)
 nFirstRoom = val(sFirst)
 nLastRoom = val(sLast)
 If nMap < 1 Or nFirstRoom < 1 Or nLastRoom < nFirstRoom Then Exit Function
+If nLastRoom - nFirstRoom > 100000 Then Exit Function 'no real map has a range like that; keeps the room count in a Long
 
 ParseRoomCmdToken = True
 End Function

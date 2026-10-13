@@ -26831,6 +26831,8 @@ If iGotoType = 1 Or iGotoType = 11 Then 'room/group
 Else
     nNum = val(sLocationText)
     If nNum <= 0 Then GoTo out:
+    'a row may carry the map its textblock belongs to as "N@map" (see ShowRoomCmdRoomList); val() stops at the "@"
+    If AuxNumber = 0 And InStr(1, sLocationText, "@") > 0 Then AuxNumber = val(mid(sLocationText, InStr(1, sLocationText, "@") + 1))
 End If
 
 try_find_again:
@@ -27115,14 +27117,17 @@ Private Sub ShowRoomCmdRoomList(ByVal sRoomList As String, ByVal sRowText As Str
     ByVal sPercent As String, ByRef objOwner As Form)
 On Error GoTo error:
 Dim sRooms() As String, nRoomCount As Long, x As Long, nCMD As Long, sSeen As String
-Dim oLI As ListItem, sCaption As String
+Dim oLI As ListItem, sCaption As String, tRoom As RoomExitType
 
 nRoomCount = ExpandRoomCmdRooms(sRoomList, sRooms())
 If nRoomCount = 0 Then Exit Sub
 
-Call frmResults.SetupResultsWindow(False, objOwner, nMapStartMap)
+tRoom = ExtractMapRoom(sRooms(0))
+Call frmResults.SetupResultsWindow(False, objOwner, tRoom.Map)
 frmResults.lvResults.ListItems.clear
 
+'the command textblocks of these rooms, each with the map of the first room that uses it (the
+'command tree resolves "teleport <room>" without a map against it)
 sSeen = "|"
 For x = 0 To nRoomCount - 1
     nCMD = GetRoomCMDTB(sRooms(x))
@@ -27130,21 +27135,28 @@ For x = 0 To nRoomCount - 1
         sSeen = sSeen & nCMD & "|"
         Set oLI = frmResults.lvResults.ListItems.Add()
         oLI.Text = "Commands: Textblock " & nCMD
-        oLI.Tag = nCMD
+        tRoom = ExtractMapRoom(sRooms(x))
+        oLI.Tag = nCMD & "@" & tRoom.Map
     End If
 Next x
 
 For x = 0 To nRoomCount - 1
     Set oLI = frmResults.lvResults.ListItems.Add()
-    oLI.Text = "Room: " & GetRoomName(sRooms(x))
+    oLI.Text = "Room: " & GetRoomName(sRooms(x), , , bHideRecordNumbers)
     oLI.Tag = sRooms(x)
 Next x
 
 '"Room cmd "pry coffin": Tomb (17/278) +93 more" -> "Room cmd "pry coffin" (0.3%), 94 rooms:"
+'(a row reached through a container keeps its " -> chest" part: the % is the combined chance)
 sCaption = sRowText
-If InStr(1, sCaption, ": ") > 0 Then sCaption = Left(sCaption, InStr(1, sCaption, ": ") - 1)
+If InStr(1, sCaption, ": ") > 0 Then
+    sCaption = Left(sCaption, InStr(1, sCaption, ": ") - 1)
+    If InStr(1, sRowText, " -> ") > 0 Then sCaption = sCaption & mid(sRowText, InStr(1, sRowText, " -> "))
+End If
 If Len(sPercent) > 0 Then sCaption = sCaption & " (" & sPercent & ")"
-frmResults.lblCaption.Caption = sCaption & ", " & nRoomCount & " rooms:"
+sCaption = sCaption & ", " & nRoomCount & " rooms"
+If nRoomCount >= 5000 Then sCaption = sCaption & " (first 5000 only)"
+frmResults.lblCaption.Caption = sCaption & ":"
 frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objOwner Is frmMap, Nothing, objOwner)
 
 out:
