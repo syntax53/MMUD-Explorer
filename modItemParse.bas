@@ -1167,11 +1167,10 @@ Public Function GetItemsByExactNameArr(ByVal exactName As String, ByRef hits() A
                 itm.encum = NzLong(rs.Fields("Encum").Value)                      ' <- NEW
                 itm.ObtainedFrom = NzStr(rs.Fields("Obtained From").Value)
                 
+                itm.Gettable = 0 'itm is reused across hits; only ever set to 1 below
                 If NzLong(rs.Fields("Gettable").Value) = 1 Then
                     itm.Gettable = 1
-                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-                    itm.Gettable = 1
-                ElseIf InStr(1, NzStr(rs.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(rs.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+                ElseIf ObtainedFromIsGettable(itm.ObtainedFrom) Then
                     itm.Gettable = 1
                 End If
                 
@@ -1730,9 +1729,7 @@ have_row:
     
     If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
         hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-        hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+    ElseIf ObtainedFromIsGettable(hit.ObtainedFrom) Then
         hit.Gettable = 1
     End If
     
@@ -1815,9 +1812,7 @@ have_row:
     
     If NzLong(tabItems.Fields("Gettable").Value) = 1 Then
         hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "NPC #", vbTextCompare) > 0 Then
-        hit.Gettable = 1
-    ElseIf InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Textblock #", vbTextCompare) > 0 And InStr(1, NzStr(tabItems.Fields("Obtained From").Value), "Room ", vbTextCompare) = 0 Then
+    ElseIf ObtainedFromIsGettable(hit.ObtainedFrom) Then
         hit.Gettable = 1
     End If
     

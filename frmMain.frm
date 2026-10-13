@@ -21124,7 +21124,7 @@ ReDim nMonsterDamageVsParty(0)
 sNormalCaption = App.title & " v" & App.Major & "." & App.Minor
 If App.Revision > 0 Then sNormalCaption = sNormalCaption & "." & App.Revision
 
-sNormalCaption = sNormalCaption & " v261012a" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
+sNormalCaption = sNormalCaption & " v261012b" 'TURN OFF BEFORE RELEASE - LOC 4/4 (comment/uncomment this)
 
 If DEVELOPMENT_MODE_RT Then sNormalCaption = sNormalCaption & " (DEV MODE)"
 Me.Caption = sNormalCaption
@@ -22715,7 +22715,7 @@ Set cReg = New clsRegistryRoutines
 'End If
 'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -23330,7 +23330,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -23360,7 +23360,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -26751,8 +26751,10 @@ Set oLV = Nothing
 
 End Sub
 
+'AuxNumber: the item to select when the row is a shop. nDefaultMap: the map that "teleport <room>" lines
+'without a map resolve against in a textblock/command tree (a row Tag "N@map" supplies it too).
 Public Sub GotoLocation(oliSource As ListItem, Optional ByVal AuxNumber As Long, _
-    Optional ByRef objFormOwner As Form)
+    Optional ByRef objFormOwner As Form, Optional ByVal nDefaultMap As Long)
 On Error GoTo error:
 Dim oLI As ListItem, oLV As ListView, iGotoType As Integer, sStr As String, nNum As Long
 Dim RoomExits As RoomExitType, sMegaCode As String, sText As String, sLocationText As String
@@ -26813,6 +26815,15 @@ Select Case iGotoType
         sStr = "Spell"
 End Select
 
+'a room command row (see AddRoomCmdLocationRow) for several rooms: list them all
+If iGotoType = 1 And (Left(sText, 9) = "Room cmd " Or Left(sText, 12) = "Room action:") Then
+    If InStr(1, sLocationText, "|") > 0 Or InStr(1, sLocationText, "-") > 0 Then
+        Call ShowRoomCmdRoomList(sLocationText, sText, _
+            IIf(oliSource.ListSubItems.count > 0, Trim(oliSource.Text), ""), objFormOwner)
+        GoTo out:
+    End If
+End If
+
 If iGotoType = 1 Or iGotoType = 11 Then 'room/group
     If InStr(1, sLocationText, "/", vbTextCompare) = 0 And InStr(1, sText, "/", vbTextCompare) > 0 Then
         RoomExits = ExtractMapRoom(sText)
@@ -26822,6 +26833,8 @@ If iGotoType = 1 Or iGotoType = 11 Then 'room/group
 Else
     nNum = val(sLocationText)
     If nNum <= 0 Then GoTo out:
+    'a row may carry the map its textblock belongs to as "N@map" (see ShowRoomCmdRoomList); val() stops at the "@"
+    If nDefaultMap = 0 And InStr(1, sLocationText, "@") > 0 Then nDefaultMap = val(mid(sLocationText, InStr(1, sLocationText, "@") + 1))
 End If
 
 try_find_again:
@@ -26834,7 +26847,7 @@ Select Case iGotoType
     Case 3: 'textblock
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateExecutionTree(nNum)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26875,7 +26888,7 @@ Select Case iGotoType
     Case 8: 'command
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, True, False)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26889,7 +26902,7 @@ Select Case iGotoType
     Case 13: 'execute
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, False)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -26903,7 +26916,7 @@ Select Case iGotoType
     Case 16: 'npc greet commands
         'Load frmResults
         Call frmResults.SetupResultsWindow(True, objFormOwner, _
-            IIf(AuxNumber > 0, AuxNumber, nMapStartMap))
+            IIf(nDefaultMap > 0, nDefaultMap, nMapStartMap))
         Call frmResults.CreateCommandTree(nNum, False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objFormOwner Is frmMap, Nothing, objFormOwner)
         'this has to be here 'cause for some damn reason the activate event keeps firing off on frmMap when the cmdNav_Click goes (i think)
@@ -27097,6 +27110,63 @@ Set oLV = Nothing
 Exit Sub
 error:
 Call HandleError("GotoLocation")
+Resume out:
+End Sub
+
+'Lists the rooms of a room command row (see GotoLocation) in the results window: the command
+'textblocks of those rooms first (click: command tree), then every room (click: map).
+Private Sub ShowRoomCmdRoomList(ByVal sRoomList As String, ByVal sRowText As String, _
+    ByVal sPercent As String, ByRef objOwner As Form)
+On Error GoTo error:
+Dim sRooms() As String, nRoomCount As Long, x As Long, nCMD As Long, sSeen As String
+Dim oLI As ListItem, sCaption As String, tRoom As RoomExitType
+
+nRoomCount = ExpandRoomCmdRooms(sRoomList, sRooms())
+If nRoomCount = 0 Then Exit Sub
+
+tRoom = ExtractMapRoom(sRooms(0))
+Call frmResults.SetupResultsWindow(False, objOwner, tRoom.Map)
+frmResults.lvResults.ListItems.clear
+
+'the command textblocks of these rooms, each with the map of the first room that uses it (the
+'command tree resolves "teleport <room>" without a map against it)
+sSeen = "|"
+For x = 0 To nRoomCount - 1
+    nCMD = GetRoomCMDTB(sRooms(x))
+    If nCMD > 0 And InStr(1, sSeen, "|" & nCMD & "|") = 0 Then
+        sSeen = sSeen & nCMD & "|"
+        Set oLI = frmResults.lvResults.ListItems.Add()
+        oLI.Text = "Commands: Textblock " & nCMD
+        tRoom = ExtractMapRoom(sRooms(x))
+        oLI.Tag = nCMD & "@" & tRoom.Map
+    End If
+Next x
+
+For x = 0 To nRoomCount - 1
+    Set oLI = frmResults.lvResults.ListItems.Add()
+    oLI.Text = "Room: " & GetRoomName(sRooms(x), , , bHideRecordNumbers)
+    oLI.Tag = sRooms(x)
+Next x
+
+'"Room cmd "pry coffin": Tomb (17/278) +93 more" -> "Room cmd "pry coffin" (0.3%), 94 rooms:"
+'(a row reached through a container keeps its " -> chest" part: the % is the combined chance)
+sCaption = sRowText
+If InStr(1, sCaption, ": ") > 0 Then
+    sCaption = Left(sCaption, InStr(1, sCaption, ": ") - 1)
+    If InStr(1, sRowText, " -> ") > 0 Then sCaption = sCaption & mid(sRowText, InStr(1, sRowText, " -> "))
+End If
+If Len(sPercent) > 0 Then sCaption = sCaption & " (" & sPercent & ")"
+sCaption = sCaption & ", " & nRoomCount & " rooms"
+If nRoomCount >= 5000 Then sCaption = sCaption & " (first 5000 only)"
+frmResults.lblCaption.Caption = sCaption & ":"
+frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objOwner Is frmMap, Nothing, objOwner)
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("ShowRoomCmdRoomList")
 Resume out:
 End Sub
 
@@ -31196,7 +31266,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER 'HKEY_LOCAL_MACHINE
+cReg.hKey = HKEY_CURRENT_USER 'HKEY_LOCAL_MACHINE
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -33067,7 +33137,7 @@ If lvSpellLoc.ListItems.count = 0 Then Exit Sub
 If FormIsLoaded("frmMap") Then
     If frmMap.lvMapLoc.ListItems.count > 0 Then
         If val(frmMap.lvMapLoc.SelectedItem.Tag) = val(lvSpells.SelectedItem.Text) Then
-            Call GotoLocation(lvSpellLoc.SelectedItem, frmMap.nMapStartMap, frmMap)
+            Call GotoLocation(lvSpellLoc.SelectedItem, , frmMap, frmMap.nMapStartMap)
             If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hWnd, True)
             Exit Sub
         End If
@@ -35000,7 +35070,7 @@ find_negates2:
     Case 9: 'set shop on item manager
         If lvItemManager.ListItems.count > 0 And Not lvItemManager.SelectedItem Is Nothing Then
             If lvItemManagerLoc.ListItems.count > 0 And Not lvItemManagerLoc.SelectedItem Is Nothing Then
-                If LCase(Left(lvItemManagerLoc.SelectedItem.ListSubItems(1).Text, 4)) = "shop" And lvItemManagerLoc.SelectedItem.ListSubItems(1).Tag > 0 Then
+                If LCase(Left(lvItemManagerLoc.SelectedItem.ListSubItems(1).Text, 4)) = "shop" And val(lvItemManagerLoc.SelectedItem.ListSubItems(1).Tag) > 0 Then
                     x = 0
                     For Each oLI In lvItemManager.ListItems
                         If oLI.Selected Then x = x + 1

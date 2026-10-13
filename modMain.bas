@@ -6997,7 +6997,9 @@ For Each oLI In lv.ListItems
                             str = str & oLI.SubItems(x)
                         End If
                     ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.count > 0 Then
-                        If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
+                        If Left(oLI.SubItems(x), 9) = "Room cmd " Or Left(oLI.SubItems(x), 12) = "Room action:" Then
+                            str = str & oLI.SubItems(x) 'the command is the point of these rows
+                        ElseIf InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.SubItems(x)
@@ -7106,6 +7108,7 @@ Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String, nMarkup 
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
 Dim tValue As tItemValue, sShopValue As String, nTemp As Double, sRegexPattern As String, iMatch As Integer, nMulti As Integer
 Dim nCount As Integer, nTB_Ref As Long, i As Integer, sTBcmd As String
+Dim sScan As String, tRoomCmd() As tRoomCmdSource, nRoomCmd As Long, iRoomCmd As Long
 
 sDisplayFooter = sFooter
 
@@ -7118,7 +7121,11 @@ sLairRegex = "Group\(lair\): (\d+)\/(\d+)"
 If nNMRVer >= 1.82 Then sLairRegex = "\[(\d+)\]" & sLairRegex
 If nNMRVer >= 1.83 Then sLairRegex = "\[([\d\-]+)\]" & sLairRegex
 
-sTest = LCase(sLoc)
+'room command entries ("Room(pry coffin) 17/278|...") get their own rows after the loop below, and
+'are kept out of its scan so their command text can't be read as some other reference
+sScan = sLoc
+If InStr(1, sLoc, "Room(", vbBinaryCompare) > 0 Then sScan = SplitRoomCmdSources(sLoc, tRoomCmd(), nRoomCmd)
+sTest = LCase(sScan)
 
 'SCRAPPED THIS IDEA 2025.11.09
 'If InStr(1, sFooter, " <-> ", vbTextCompare) > 0 Then
@@ -7264,7 +7271,10 @@ nonumber:
                     oLI.Text = sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
-                If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
+                'only a shop's rooms (sHeader "Shop: ", nAuxValue = shop number) carry the aux number: GotoLocation
+                'reads the shop from it. An item's own "Room m/r" rows keep the room so they still navigate
+                'when record numbers are hidden (the text has no "m/r" to fall back on then).
+                If nAuxValue > 0 And Len(sHeader) > 0 Then
                     If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = nAuxValue
                     Else
@@ -7641,6 +7651,13 @@ skip:
     End If
 Next z
 
+'room command entries, one row each
+For iRoomCmd = 1 To nRoomCmd
+    If nLimit > 0 Then nCount = nCount + 1
+    If nLimit > 0 And nCount > nLimit Then GoTo finish:
+    Call AddRoomCmdLocationRow(lv, tRoomCmd(iRoomCmd), bTwoColumns, bPercentColumn, sFooter)
+Next iRoomCmd
+
 finish:
 
 If lv.ListItems.count > 1 And Not bDontSort And Not bPercentColumn Then
@@ -7677,6 +7694,88 @@ error:
 HandleError
 Set oLI = Nothing
 
+End Sub
+
+'GetLocations' row for a room command entry (see SplitRoomCmdSources), e.g.
+'    0.3% | Room cmd "pry coffin": Tomb (17/278) +93 more
+'The room text's Tag is the entry's room list: GotoLocation goes to that room, or lists them all.
+Private Sub AddRoomCmdLocationRow(lv As ListView, tSource As tRoomCmdSource, _
+    ByVal bTwoColumns As Boolean, ByVal bPercentColumn As Boolean, ByVal sFooter As String)
+On Error GoTo error:
+Dim oLI As ListItem, sLocation As String, sRoom As String, sPercent As String, sDisplayFooter As String
+Dim nPercent As Currency, nPercent2 As Currency
+
+If tSource.bAction Then
+    sLocation = "Room action: "
+Else
+    sLocation = "Room cmd " & tSource.sLabel & ": "
+End If
+
+sRoom = GetRoomName(tSource.sFirstRoom, , , bHideRecordNumbers)
+If tSource.nRoomCount > 1 Then sRoom = sRoom & " +" & (tSource.nRoomCount - 1) & " more"
+If tSource.bCut Then sRoom = sRoom & " (list cut short)"
+
+sDisplayFooter = sFooter
+Set oLI = lv.ListItems.Add()
+
+If bPercentColumn Then
+    If tSource.nChance > 0 Then nPercent = CCur(tSource.nChance)
+
+    'in a container's list (sFooter " -> chest (5%)") the container's chance applies too, as in GetLocations
+    If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
+        nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
+        If nPercent2 > 0 Then
+            If tSource.nChance < 0 Then
+                nPercent = nPercent2
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
+            ElseIf nPercent > 0 Then
+                nPercent = (nPercent * nPercent2) / 100
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
+            End If
+            'an unknown ("?") chance keeps the container's % in the footer: it is the half that is known
+        End If
+    End If
+
+    'rounded as the other rows; blank = always (giveitem), "?" = unknown
+    If nPercent > 1 Then
+        sPercent = Round(nPercent) & "%"
+    ElseIf Round(nPercent, 2) > 0 Then
+        sPercent = Round(nPercent, 2) & "%"
+    ElseIf tSource.nChance > 0 Then
+        sPercent = "<0.01%"
+    ElseIf tSource.nChance = 0 Then
+        sPercent = "?"
+    End If
+
+    oLI.Text = sPercent
+    oLI.Tag = nPercent
+    oLI.ListSubItems.Add 1, , sLocation & sRoom & sDisplayFooter
+    oLI.ListSubItems(1).Tag = tSource.sRoomList
+Else
+    If tSource.nChance > 0 Then
+        sPercent = " (" & tSource.nChance & "%)"
+    ElseIf tSource.nChance = 0 Then
+        sPercent = " (?%)"
+    End If
+
+    If bTwoColumns Then
+        oLI.Text = sLocation
+        oLI.ListSubItems.Add 1, , sRoom & sPercent & sDisplayFooter
+        oLI.Tag = "Room"
+        oLI.ListSubItems(1).Tag = tSource.sRoomList
+    Else
+        oLI.Text = sLocation & sRoom & sPercent & sDisplayFooter
+        oLI.Tag = tSource.sRoomList
+    End If
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRoomCmdLocationRow")
+Resume out:
 End Sub
 
 'Public Function GetLocations_STR(ByVal sLoc As String) As String
