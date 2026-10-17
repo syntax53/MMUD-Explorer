@@ -6,12 +6,14 @@ v2.3.5 (10/##/2026)
 ------------------------------------------  
 - NEW: Monster reachability filter (by level only) and path to monster in detail pane (Thanks Apathy)  
 - NEW: Item references now list the room commands that give the item (e.g. pry coffin) from NMR v1.8.4+ exports (Thanks Fujin)  
+- NEW: Extra monster filters: Follow % >= and <= filters  
 - UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now considered vs evil monsters  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
 - UP: GreaterMUD: Hit calculator now checks the Shadow box for a character with shadow and shows proper AC value  
+- UP: Extra monster filters: "Mobs/ Lair <=" now accepts decimal values (e.g. 2.5)  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
-- FIX: Quick & Deadly bonus now calculated correctly calculated with respect to 6 maximum swings in GreaterMUD  
+- FIX: Quick & Deadly bonus now calculated correctly with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
 - FIX: Mob SpellImmu for spells of equal level (was only working if spell was > SpellImmu value)  
 - FIX: Lair damage per round/clear formula updated  

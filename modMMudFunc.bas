@@ -1993,8 +1993,9 @@ If eEvil > e7_FIEND Then eEvil = e7_FIEND: If eEvil < e0_Saint Then eEvil = e0_S
 accTemp = (nAccy * nAccy) \ 140
 If accTemp < 1 Then accTemp = 1
 
-'GET HIT CHANCE
-If nAC + nDefense <= 0 Then
+'GET HIT CHANCE (normal attacks and GreaterMUD backstabs vs players also count prot/vile ward/shadow,
+'which the hit calculator keeps out of its AC box)
+If nAC + IIf(Not bBackstab Or (bGreaterMUD And bVSplayer), nProtEv + nProtGd + nVileWard + IIf(bShadow, 10, 0), 0) <= 0 Then
     nHitChance = 100
 Else
     If bBackstab Then '[BACKSTAB]
@@ -2907,7 +2908,7 @@ If bGreaterMUD = False Then
 Else
     ' ===== GMUD mode (monotone search; softcap + DR preserves monotonicity vs ACC) =====
     
-    If nTargetPct > GMUD_DODGE_CAP Then nTargetPct = GMUD_DODGE_CAP
+    If nTargetPct > GetDodgeCap(nClass) Then nTargetPct = GetDodgeCap(nClass)
     '    DodgeMaxAccForPercent = -1
     '    GoTo out:
     'End If

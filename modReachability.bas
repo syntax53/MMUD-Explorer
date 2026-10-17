@@ -302,8 +302,9 @@ If g > 0 Then
             If eMax(e) < nHi Then nHi = eMax(e)
         End If
     Next e
+    If nLo > nHi Then bRandomGroup = True   'no level satisfies every edge: unusable at any level
 End If
-nMinLvl = nLo
+If nLo < 1 Then nMinLvl = 1 Else nMinLvl = nLo   'an edge with only a max ("Level: 0 to 10") reads as Level 1
 If nHi >= NO_MAX Or nHi >= LEVEL_CAP Then nMaxLvl = 0 Else nMaxLvl = nHi
 ReachMonsterInfo = reachNo
 
@@ -452,15 +453,24 @@ ReDim nPOIIdx(0 To NUM_POIS - 1): ReDim sPOIName(0 To NUM_POIS - 1)
 Erase radjStart, radjEdge, gadjStart, gadjEdge, visCache
 Set dChainCache = New Dictionary
 
+'each build step handles its own errors (HandleError) and returns; stop at the first failure (later steps would
+'run on partial data and raise errors of their own) -- partial data must not count as computed
 Call LoadTextblocks:  Call SetProgress(10)
+If bBuildError Then GoTo failed:
 Call LoadSpells:      Call SetProgress(15)
-Call LoadRooms:       Call ResolvePOIs: Call SetProgress(30)
+If bBuildError Then GoTo failed:
+Call LoadRooms
+If bBuildError Then GoTo failed:
+Call ResolvePOIs:     Call SetProgress(30)
 Call LoadItemRooms
+If bBuildError Then GoTo failed:
 Call LoadMonsters:    Call SetProgress(35)
+If bBuildError Then GoTo failed:
 Call BuildEdges:      Call SetProgress(70)
+If bBuildError Then GoTo failed:
 Call ResolveMonsterRooms: Call SetProgress(80)
+If bBuildError Then GoTo failed:
 Call ComputeReachability: Call SetProgress(100)
-'each build step handles its own errors (HandleError) and returns; partial data must not count as computed
 If bBuildError Then GoTo failed:
 
 sReachDatabase = sCurrentDatabaseFile

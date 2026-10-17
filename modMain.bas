@@ -102,8 +102,10 @@ Global filter_Monster_nAtkAccuracyMaj As Long
 Global filter_Monster_nAtkAccuracyMax As Long
 Global filter_Monster_nDodge As Long
 Global filter_Monster_nNumLairs As Long
-Global filter_Monster_nNumMobsLTE As Long
+Global filter_Monster_nNumMobsLTE As Double
 Global filter_Monster_nNumMobsGTE As Long
+Global filter_Monster_nFollowGTE As Long
+Global filter_Monster_nFollowLTE As Long
 
 'Index / 0=abil, 1=operator, 2=value
 Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
@@ -2531,13 +2533,14 @@ Else
                 sReachReason = "random teleport (unusable)"
             ElseIf nReachLevel < nReachMinLvl Then
                 sReachReason = "needs Level " & nReachMinLvl & IIf(nReachMaxLvl > 0, " to " & nReachMaxLvl, "+")
-                If nReachableAtLvl > nReachMinLvl Then
-                    sReachReason = sReachReason & " (reachable from Level " & nReachableAtLvl & ")"
-                ElseIf nReachableAtLvl = 0 Then
-                    sReachReason = sReachReason & " (still blocked at higher levels)"
-                End If
+                If nReachableAtLvl = 0 Then sReachReason = sReachReason & " (still blocked at higher levels)"
             Else
                 sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
+            End If
+            'the gate shown is the nearest one, not the lowest: a gate behind it, or another path, sets the level
+            'the monster actually becomes reachable at (higher or lower than this gate's)
+            If nReachableAtLvl > 0 And (bReachRandomGroup Or nReachableAtLvl <> nReachMinLvl) Then
+                sReachReason = sReachReason & " (reachable from Level " & nReachableAtLvl & ")"
             End If
 
             'the full route past the gate is what double-clicking the No row opens (frmMain.ShowMonsterRoute),
@@ -7586,10 +7589,10 @@ nonumber:
                     sTemp = GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
                     'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
-                    If tLairInfo.nAvgDmgLair > 0 And tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
-                        sTemp = sTemp & ", Dmg In/Out: " & Round(tLairInfo.nAvgDmgLair) & "/" & tLairInfo.nDamageOut
-                    ElseIf tLairInfo.nAvgDmgLair > 0 Then
-                        sTemp = sTemp & ", Dmg In: " & Round(tLairInfo.nAvgDmgLair)
+                    If tLairInfo.nAvgDmgClearRound > 0 And tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
+                        sTemp = sTemp & ", Dmg In/Out: " & Round(tLairInfo.nAvgDmgClearRound) & "/" & tLairInfo.nDamageOut
+                    ElseIf tLairInfo.nAvgDmgClearRound > 0 Then
+                        sTemp = sTemp & ", Dmg In: " & Round(tLairInfo.nAvgDmgClearRound)
                     ElseIf tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
                         sTemp = sTemp & ", Dmg Out: " & tLairInfo.nDamageOut
                     End If

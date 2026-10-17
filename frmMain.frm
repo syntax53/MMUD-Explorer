@@ -19533,6 +19533,8 @@ If filter_Monster_nDodge <> 9999 Then GoTo active:
 If filter_Monster_nNumLairs <> 0 Then GoTo active:
 If filter_Monster_nNumMobsLTE <> 9999 Then GoTo active:
 If filter_Monster_nNumMobsGTE <> 0 Then GoTo active:
+If filter_Monster_nFollowGTE <> 0 Then GoTo active:
+If filter_Monster_nFollowLTE <> 9999 Then GoTo active:
 
 '0=abil, 1=operator, 2=value
 If filter_Monster_nAbilities(0, 0) <> 0 Then GoTo active:
@@ -21348,6 +21350,8 @@ filter_Monster_nAtkAccuracyMax = 9999
 filter_Monster_nNumLairs = 0
 filter_Monster_nNumMobsLTE = 9999
 filter_Monster_nNumMobsGTE = 0
+filter_Monster_nFollowGTE = 0
+filter_Monster_nFollowLTE = 9999
 filter_Monster_nDodge = 9999
 
 filter_Monster_bDropsCash = False
@@ -25710,6 +25714,8 @@ Do Until tabMonsters.EOF
         If filter_Monster_nArmourClass <> 9999 And tabMonsters.Fields("ArmourClass") > filter_Monster_nArmourClass Then GoTo skip:
         If filter_Monster_nDamageResist <> 9999 And tabMonsters.Fields("DamageResist") > filter_Monster_nDamageResist Then GoTo skip:
         If filter_Monster_nMagicRes <> 9999 And tabMonsters.Fields("MagicRes") > filter_Monster_nMagicRes Then GoTo skip:
+        If filter_Monster_nFollowGTE > 0 And tabMonsters.Fields("Follow%") < filter_Monster_nFollowGTE Then GoTo skip:
+        If filter_Monster_nFollowLTE <> 9999 And tabMonsters.Fields("Follow%") > filter_Monster_nFollowLTE Then GoTo skip:
         
         If nNMRVer >= 1.83 And filter_Monster_nBSDef <> 9999 Then
             If tabMonsters.Fields("BSDefense") > filter_Monster_nBSDef Then GoTo skip:
@@ -30386,6 +30392,8 @@ filter_Monster_nAtkAccuracyMax = ReadINIFilterNum(sSectionName, "MonExtraFilterA
 filter_Monster_nNumLairs = ReadINIFilterNum(sSectionName, "MonExtraFilterNumLairs", sFile, 0, -2147483647, 2147483647)
 filter_Monster_nNumMobsLTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbLt", sFile, 9999, -2147483647, 2147483647)
 filter_Monster_nNumMobsGTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbGt", sFile, 0, -2147483647, 2147483647)
+filter_Monster_nFollowGTE = ReadINIFilterNum(sSectionName, "MonExtraFilterFollowGt", sFile, 0, -2147483647, 2147483647)
+filter_Monster_nFollowLTE = ReadINIFilterNum(sSectionName, "MonExtraFilterFollowLt", sFile, 9999, -2147483647, 2147483647)
 filter_Monster_nDodge = ReadINIFilterNum(sSectionName, "MonExtraFilterDodge", sFile, 9999, -2147483647, 2147483647)
 
 filter_Monster_bDropsCash = False
@@ -32480,14 +32488,14 @@ Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
         Call GotoSpell(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
     Case "greet_text":
         'Load frmResults
-        lvMonsters.SetFocus
-        Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
+        lvMonsterCompare.SetFocus
+        Call frmResults.SetupResultsWindow(True, Me, GetMonsterDetailMap(lvMonsterCompareLoc, nMapStartMap))
         Call frmResults.CreateCommandTree(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag), False, True)
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
     Case "textblock":
-        lvMonsters.SetFocus
-        Call frmResults.SetupResultsWindow(True, Me, nMapStartMap)
+        lvMonsterCompare.SetFocus
+        Call frmResults.SetupResultsWindow(True, Me, GetMonsterDetailMap(lvMonsterCompareLoc, nMapStartMap))
         Call frmResults.CreateExecutionTree(val(lvMonsterCompareLoc.SelectedItem.ListSubItems(1).Tag))
         frmResults.Show vbModeless, IIf(bNoAlwaysOnTop, Nothing, Me)
         
@@ -32503,6 +32511,25 @@ Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
 End Select
 
 End Sub
+
+'map of the first "Room:" (else "Group") row of a monster detail listview, for the map-less rooms in its
+'greet/textblock trees (same lookup as lvMonsterDetail_DblClick); nDefault when there is none
+Private Function GetMonsterDetailMap(lv As ListView, ByVal nDefault As Long) As Long
+Dim x As Integer, tRoomExits As RoomExitType, vPrefix As Variant
+
+GetMonsterDetailMap = nDefault
+For Each vPrefix In Array("Room:", "Group")
+    For x = 1 To lv.ListItems.count
+        If Left(lv.ListItems(x).Text, 5) = vPrefix Then
+            tRoomExits = ExtractMapRoom(lv.ListItems(x).ListSubItems(1).Tag)
+            If tRoomExits.Map > 1 And tRoomExits.Room > 1 Then
+                GetMonsterDetailMap = tRoomExits.Map
+                Exit Function
+            End If
+        End If
+    Next x
+Next vPrefix
+End Function
 
 Private Sub lvMonsterCompareLoc_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
 If Button = 2 Then
@@ -36810,6 +36837,7 @@ Select Case Index
         End If
         If filter_Monster_bExtrasEnabled And filter_Monster_bReachableOnly Then Call FilterMonsters
         Me.MousePointer = vbDefault
+        If Not ReachIsComputed() Then MsgBox "Reachability could not be computed for this database.", vbExclamation
 
     Case 2: 'calc mon dmg
         Me.MousePointer = vbHourglass
@@ -36913,7 +36941,7 @@ Select Case Index
         nGlobalAttackHealType = 0
         nGlobalAttackHealSpellNum = 0
         nGlobalAttackHealSpellLVL = 0
-        nGlobalAttackHealRounds = 0
+        nGlobalAttackHealRounds = 1
         nGlobalAttackHealManual = 0
         nGlobalAttackHealValue = 0
         nGlobalAttackHealCost = 0
@@ -39851,6 +39879,8 @@ Call WriteINI(sSectionName, "MonExtraFilterAccMax", filter_Monster_nAtkAccuracyM
 Call WriteINI(sSectionName, "MonExtraFilterNumLairs", filter_Monster_nNumLairs, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterMbLt", filter_Monster_nNumMobsLTE, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterMbGt", filter_Monster_nNumMobsGTE, sFile)
+Call WriteINI(sSectionName, "MonExtraFilterFollowGt", filter_Monster_nFollowGTE, sFile)
+Call WriteINI(sSectionName, "MonExtraFilterFollowLt", filter_Monster_nFollowLTE, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterDodge", filter_Monster_nDodge, sFile)
 
 If filter_Monster_bDropsCash Then
@@ -41951,6 +41981,15 @@ If framNav(2).Visible = True And Not lvSpells.SelectedItem Is Nothing Then
 End If
 If framNav(3).Visible = True And Not lvSpellCompare.SelectedItem Is Nothing Then
     Call lvSpellCompare_ItemClick(lvSpellCompare.SelectedItem)
+End If
+'the monster detail's "Reachable" rows (and their double-click routes) depend on the level
+If ReachIsComputed() Then
+    If framNav(8).Visible = True And Not lvMonsters.SelectedItem Is Nothing Then
+        Call lvMonsters_ItemClick(lvMonsters.SelectedItem)
+    End If
+    If framNav(3).Visible = True And framCompareNav(3).Visible = True And Not lvMonsterCompare.SelectedItem Is Nothing Then
+        Call lvMonsterCompare_ItemClick(lvMonsterCompare.SelectedItem)
+    End If
 End If
 
 Exit Sub
