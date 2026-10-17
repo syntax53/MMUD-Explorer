@@ -495,8 +495,15 @@ sReachDatabase = ""
 sReachFailedFor = sCurrentDatabaseFile
 done:
 On Error Resume Next
-If FormIsLoaded("frmProgressBar") Then Unload frmProgressBar
+'re-enable frmMain before closing the progress bar: if the active window closes while its owner is still
+'disabled, Windows activates another application's window and MME ends up behind it
 frmMain.Enabled = bWasEnabled
+If FormIsLoaded("frmProgressBar") Then
+    If bWasEnabled Then Call EnsureAppForeground(frmMain)
+    frmProgressBar.Hide
+    DoEvents
+    Unload frmProgressBar
+End If
 bReachComputing = False
 End Sub
 
