@@ -25,19 +25,10 @@ Begin VB.Form frmMonsterFilters
    End
    Begin VB.CheckBox chkAtLeastLairs 
       Caption         =   "At Least:"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   255
       Left            =   5280
       TabIndex        =   17
-      ToolTipText     =   "Must have at least X lairs < or > your values"
+      ToolTipText     =   "Must have at least X lairs within range of your values"
       Top             =   2580
       Width           =   1035
    End
