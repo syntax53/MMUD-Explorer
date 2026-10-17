@@ -395,6 +395,39 @@ Call HandleError("GetLairAveragesFromLocs")
 Resume out:
 End Function
 
+'Lairs in a monster's [Summoned By] (sLoc) whose own max regen is nMinRegen..nMaxRegen. Each lair's max regen is
+'only in NMR v1.82+ exports (same patterns as CalculateAverageLairs): 0 before that. Lairs with no regen don't count.
+Public Function CountLairsByMaxRegen(ByVal sLoc As String, ByVal nMinRegen As Double, ByVal nMaxRegen As Double) As Long
+On Error GoTo error:
+Dim sRegexPattern As String, tMatches() As RegexMatches, iLair As Integer, iRegenMatch As Integer, nRegen As Long
+
+If nNMRVer < 1.82 Then Exit Function
+
+'[6]Group(lair): 1/2345
+sRegexPattern = "\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
+iRegenMatch = 0
+If nNMRVer >= 1.83 Then
+    '[7-8-9][6]Group(lair): 1/2345
+    sRegexPattern = "\[([\d\-]+)\]" & sRegexPattern
+    iRegenMatch = 1
+End If
+
+tMatches = RegExpFindv2(sLoc, sRegexPattern)
+If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+    For iLair = 0 To UBound(tMatches)
+        nRegen = val(tMatches(iLair).sSubMatches(iRegenMatch))
+        If nRegen > 0 And nRegen >= nMinRegen And nRegen <= nMaxRegen Then CountLairsByMaxRegen = CountLairsByMaxRegen + 1
+    Next iLair
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CountLairsByMaxRegen")
+Resume out:
+End Function
+
 '----------------------------------------------------------------------
 ' Module: OutlierRemoval
 ' Purpose: Remove statistical outliers from a dynamic Double array and compute averages

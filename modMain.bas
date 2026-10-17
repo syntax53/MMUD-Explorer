@@ -106,6 +106,7 @@ Global filter_Monster_nNumMobsLTE As Double
 Global filter_Monster_nNumMobsGTE As Long
 Global filter_Monster_nFollowGTE As Long
 Global filter_Monster_nFollowLTE As Long
+Global filter_Monster_nAtLeastLairs As Long
 
 'Index / 0=abil, 1=operator, 2=value
 Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
@@ -114,6 +115,7 @@ Global filter_Monster_bIsUndead As Boolean
 Global filter_Monster_bIsNonHostile_vEvil As Boolean
 Global filter_Monster_bIsNonHostile_vNG As Boolean
 Global filter_Monster_bReachableOnly As Boolean
+Global filter_Monster_bAtLeastLairs As Boolean
 Global filter_Monster_bDropsCash As Boolean
 Global filter_Monster_bDropsR As Boolean
 Global filter_Monster_bDropsP As Boolean

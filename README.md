@@ -12,6 +12,7 @@ v2.3.5 (10/##/2026)
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
 - UP: GreaterMUD: Hit calculator now checks the Shadow box for a character with shadow and shows proper AC value  
 - UP: Extra monster filters: "Mobs/ Lair <=" now accepts decimal values (e.g. 2.5)  
+- UP: Extra monster filters: "At Least" option makes the Mobs/ Lair filters require X lairs with a max regen in range, instead of using the average  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  

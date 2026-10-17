@@ -21352,6 +21352,8 @@ filter_Monster_nNumMobsLTE = 9999
 filter_Monster_nNumMobsGTE = 0
 filter_Monster_nFollowGTE = 0
 filter_Monster_nFollowLTE = 9999
+filter_Monster_bAtLeastLairs = False
+filter_Monster_nAtLeastLairs = 1
 filter_Monster_nDodge = 9999
 
 filter_Monster_bDropsCash = False
@@ -25763,16 +25765,22 @@ Do Until tabMonsters.EOF
             End If
         End If
         
-        If filter_Monster_nNumMobsLTE <> 9999 Then
-            If nMonsterPossy(nMonsterNum) > filter_Monster_nNumMobsLTE Then GoTo skip:
-            If tLastAvgLairInfo.nMaxRegen > filter_Monster_nNumMobsLTE Then GoTo skip:
-        End If
-        
-        If filter_Monster_nNumMobsGTE > 0 Then
-            If nNMRVer >= 1.83 Then
-                If tLastAvgLairInfo.nMaxRegen < filter_Monster_nNumMobsGTE Then GoTo skip:
-            Else
-                If nMonsterPossy(nMonsterNum) < filter_Monster_nNumMobsGTE Then GoTo skip:
+        If filter_Monster_bAtLeastLairs And nNMRVer >= 1.82 And (filter_Monster_nNumMobsLTE <> 9999 Or filter_Monster_nNumMobsGTE > 0) Then
+            'at least N lairs whose own max regen is within the Mobs/ Lair limits, instead of the monster's average
+            If CountLairsByMaxRegen(tabMonsters.Fields("Summoned By"), IIf(filter_Monster_nNumMobsGTE > 0, filter_Monster_nNumMobsGTE, 1), _
+                IIf(filter_Monster_nNumMobsLTE <> 9999, filter_Monster_nNumMobsLTE, 9999)) < filter_Monster_nAtLeastLairs Then GoTo skip:
+        Else
+            If filter_Monster_nNumMobsLTE <> 9999 Then
+                If nMonsterPossy(nMonsterNum) > filter_Monster_nNumMobsLTE Then GoTo skip:
+                If tLastAvgLairInfo.nMaxRegen > filter_Monster_nNumMobsLTE Then GoTo skip:
+            End If
+            
+            If filter_Monster_nNumMobsGTE > 0 Then
+                If nNMRVer >= 1.83 Then
+                    If tLastAvgLairInfo.nMaxRegen < filter_Monster_nNumMobsGTE Then GoTo skip:
+                Else
+                    If nMonsterPossy(nMonsterNum) < filter_Monster_nNumMobsGTE Then GoTo skip:
+                End If
             End If
         End If
     End If
@@ -30394,6 +30402,8 @@ filter_Monster_nNumMobsLTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbLt"
 filter_Monster_nNumMobsGTE = ReadINIFilterNum(sSectionName, "MonExtraFilterMbGt", sFile, 0, -2147483647, 2147483647)
 filter_Monster_nFollowGTE = ReadINIFilterNum(sSectionName, "MonExtraFilterFollowGt", sFile, 0, -2147483647, 2147483647)
 filter_Monster_nFollowLTE = ReadINIFilterNum(sSectionName, "MonExtraFilterFollowLt", sFile, 9999, -2147483647, 2147483647)
+filter_Monster_bAtLeastLairs = IIf(val(ReadINI(sSectionName, "MonExtraFilterAtLeastLairs", sFile, 0)) > 0, True, False)
+filter_Monster_nAtLeastLairs = ReadINIFilterNum(sSectionName, "MonExtraFilterAtLeastLairsNum", sFile, 1, 1, 9999)
 filter_Monster_nDodge = ReadINIFilterNum(sSectionName, "MonExtraFilterDodge", sFile, 9999, -2147483647, 2147483647)
 
 filter_Monster_bDropsCash = False
@@ -39881,6 +39891,8 @@ Call WriteINI(sSectionName, "MonExtraFilterMbLt", filter_Monster_nNumMobsLTE, sF
 Call WriteINI(sSectionName, "MonExtraFilterMbGt", filter_Monster_nNumMobsGTE, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterFollowGt", filter_Monster_nFollowGTE, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterFollowLt", filter_Monster_nFollowLTE, sFile)
+Call WriteINI(sSectionName, "MonExtraFilterAtLeastLairs", IIf(filter_Monster_bAtLeastLairs, 1, 0), sFile)
+Call WriteINI(sSectionName, "MonExtraFilterAtLeastLairsNum", filter_Monster_nAtLeastLairs, sFile)
 Call WriteINI(sSectionName, "MonExtraFilterDodge", filter_Monster_nDodge, sFile)
 
 If filter_Monster_bDropsCash Then
