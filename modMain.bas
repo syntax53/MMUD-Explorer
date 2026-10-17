@@ -103,7 +103,7 @@ Global filter_Monster_nAtkAccuracyMax As Long
 Global filter_Monster_nDodge As Long
 Global filter_Monster_nNumLairs As Long
 Global filter_Monster_nNumMobsLTE As Double
-Global filter_Monster_nNumMobsGTE As Long
+Global filter_Monster_nNumMobsGTE As Double
 Global filter_Monster_nFollowGTE As Long
 Global filter_Monster_nFollowLTE As Long
 Global filter_Monster_nAtLeastLairs As Long

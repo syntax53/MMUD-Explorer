@@ -1532,7 +1532,7 @@ Call SelectAll(txtNumMobsGTE)
 End Sub
 
 Private Sub txtNumMobsGTE_KeyPress(KeyAscii As Integer)
-KeyAscii = NumberKeysOnly(KeyAscii)
+KeyAscii = NumberKeysOnly(KeyAscii, True)
 End Sub
 
 Private Sub txtNumMobsLTE_Change()
