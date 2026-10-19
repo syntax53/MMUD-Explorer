@@ -10624,12 +10624,12 @@ Begin VB.Form frmMap
          Width           =   195
       End
       Begin VB.CommandButton cmdNavigate 
-         Caption         =   "Path from Bank"
+         Caption         =   "Route to Room"
          Height          =   675
          Left            =   2475
          Style           =   1  'Graphical
          TabIndex        =   3359
-         ToolTipText     =   "Route to this room from the nearest bank or port (from Bank of Godfrey when this room is one of them)"
+         ToolTipText     =   "Route to this room from the nearest bank, port or the Lost City (from Bank of Godfrey when this room is one of those)"
          Top             =   2580
          Width           =   840
       End

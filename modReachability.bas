@@ -32,7 +32,7 @@ Option Explicit
 ' Monster rooms carry a category (RCAT_*: Room < Group(lair) < resolved summon < Group) so a route
 ' prefers a fixed spawn room. Reference fields cut off at 250 chars end in '+' ("Room 14/62+" is
 ' really 14/62xx); such truncated references are skipped.
-' Room routes (ReachRoomRoute, for the maps' Navigate button) use the same sources and searches with one room
+' Room routes (ReachRoomRoute, for the maps' "Route to Room" button) use the same sources and searches with one room
 ' as the destination; a room that is itself a point of interest is routed from Bank of Godfrey alone.
 
 Private Const START_MAP As Long = 1
@@ -193,6 +193,11 @@ Public Sub ReachRecompute(Optional ByVal objOwner As Form)
 Call ReachInvalidate
 Call ReachEnsureComputed(objOwner)
 End Sub
+
+'ReachEnsureComputed is running (a caller reached from its DoEvents should wait rather than report a failure).
+Public Function ReachIsComputing() As Boolean
+ReachIsComputing = bReachComputing
+End Function
 
 Public Function ReachIsComputed() As Boolean
 ReachIsComputed = (sReachDatabase <> "" And sReachDatabase = sCurrentDatabaseFile)
@@ -386,9 +391,10 @@ ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim
 ReachRoute = False
 End Function
 
-'Can room m/r be reached from Bank of Godfrey at this level: reachYes; reachNo = not at this level, but a path
-'leads there from a reachable room when level gates are ignored (ReachRoomRoute with bIgnoreLevel); reachNoGate =
-'no known path at all; reachUnknown = not computed / no such room. Never triggers the computation.
+'Can room m/r be reached from Bank of Godfrey at this level: reachYes; reachNo = not at this level, but some path
+'leads there from a reachable room (ReachRoomRoute with bIgnoreLevel finds it, unless every such path needs a random
+'teleport too scattered to be usable); reachNoGate = no known path at all; reachUnknown = not computed / no such
+'room. Never triggers the computation.
 Public Function ReachRoomStatus(ByVal nMap As Long, ByVal nRoom As Long, ByVal nLevel As Long) As ReachStatus
 Dim r As Long, visited() As Long
 On Error GoTo error:
@@ -415,7 +421,7 @@ Call HandleError("ReachRoomStatus")
 ReachRoomStatus = reachUnknown
 End Function
 
-'ReachRoute to room m/r (the maps' Navigate button): the same sources, searches, outputs and alternate route, with
+'ReachRoute to room m/r (the maps' "Route to Room" button): the same sources, searches, outputs and alternate route, with
 'that room as the destination. A room that is itself a point of interest (ResolvePOIs) is routed from Bank of Godfrey
 'alone; from the nearest point of interest it would be zero steps. nSteps = 0 with True = the room is Bank of Godfrey.
 'Returns False when not computed / no such room / no route. Never triggers the computation.
@@ -477,7 +483,7 @@ objOwner.Enabled = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(100)
 frmProgressBar.ProgressBar.Value = 1
-frmProgressBar.lblCaption.Caption = "Mapping monster reachability..."
+frmProgressBar.lblCaption.Caption = "Mapping reachability..."
 Set frmProgressBar.objFormOwner = objOwner
 frmProgressBar.Show vbModeless, objOwner
 DoEvents

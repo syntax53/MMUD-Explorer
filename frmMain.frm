@@ -953,7 +953,7 @@ Begin VB.Form frmMain
          Top             =   1500
          Width           =   3135
          Begin VB.CommandButton cmdRoomsButtons 
-            Caption         =   "Path from Bank"
+            Caption         =   "Route to Room"
             BeginProperty Font 
                Name            =   "MS Sans Serif"
                Size            =   8.25
@@ -968,7 +968,7 @@ Begin VB.Form frmMain
             Left            =   1440
             Style           =   1  'Graphical
             TabIndex        =   1350
-            ToolTipText     =   "Route to this room from the nearest bank or port (from Bank of Godfrey when this room is one of them)"
+            ToolTipText     =   "Route to this room from the nearest bank, port or the Lost City (from Bank of Godfrey when this room is one of those)"
             Top             =   2880
             Width           =   1575
          End
@@ -21010,7 +21010,7 @@ again:
         frmMegaMUDPath.Show
         frmMegaMUDPath.SetFocus
         
-    Case 6: 'Navigate
+    Case 6: 'RouteToRoom
         Call ShowRoomRoute(nMapStartMap, nMapStartRoom, Me)
         
 End Select
@@ -32505,7 +32505,8 @@ Dim tRoomExits As RoomExitType
 
 Select Case LCase(lvMonsterCompareLoc.SelectedItem.Tag)
     Case "reach_compute":
-        Call ReachRecompute
+        'the row is stale when something else (e.g. a map's Route to Room) computed it since: just refresh
+        If Not ReachIsComputed() Then Call ReachRecompute
         If Not ReachIsComputed() Then
             MsgBox "Reachability could not be computed for this database.", vbExclamation
         ElseIf Not lvMonsterCompare.SelectedItem Is Nothing Then
@@ -32583,7 +32584,8 @@ Select Case LCase(lvMonsterDetail.SelectedItem.Tag)
         Exit Sub
 
     Case "reach_compute":
-        Call ReachRecompute
+        'the row is stale when something else (e.g. a map's Route to Room) computed it since: just refresh
+        If Not ReachIsComputed() Then Call ReachRecompute
         If Not ReachIsComputed() Then
             MsgBox "Reachability could not be computed for this database.", vbExclamation
         ElseIf Not lvMonsters.SelectedItem Is Nothing Then
@@ -32701,7 +32703,7 @@ Call HandleError("ShowMonsterRoute")
 Resume out:
 End Sub
 
-'Navigate button (Rooms tab map, frmMap): results window listing the reachability route to room m/r from the
+'"Route to Room" button (Rooms tab map, frmMap): results window listing the reachability route to room m/r from the
 'nearest point of interest, or from Bank of Godfrey when the room is one (ReachRoomRoute). A room not reachable at
 'the character's level gets the full route with level gates ignored, as in ShowMonsterRoute. Computes the
 'reachability first when needed. objOwner: the form whose map clicking a result row moves (Me or frmMap).
@@ -32713,6 +32715,8 @@ Dim nStepMap() As Long, nStepRoom() As Long, nStepFlags() As Long, sStepLabel() 
 Dim nCoinSteps As Long, nAltSteps As Long, nAltCoinSteps As Long, sAltSourceName As String
 
 If nMap < 1 Or nRoom < 1 Then GoTo out:
+'clicked on frmMap (still enabled) while frmMain's computation runs: it isn't done, but it hasn't failed either
+If ReachIsComputing() Then GoTo out:
 If Not ReachIsComputed() Then
     Call ReachRecompute(objOwner) 'also retries a build that failed earlier
     If Not ReachIsComputed() Then
@@ -32735,7 +32739,8 @@ End Select
 
 If Not ReachRoomRoute(nMap, nRoom, nLevel, bIgnoreLevel, False, nSourceMap, nSourceRoom, sSourceName, _
     nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps, nCoinSteps, nAltSteps, nAltCoinSteps, sAltSourceName) Then
-    MsgBox "No route found.", vbInformation
+    'reachNo, but every path past the gate needs a random teleport too scattered to be usable (see ReachRoomStatus)
+    MsgBox "No known route leads to this room.", vbInformation
     GoTo out:
 End If
 If nSteps = 0 Then
@@ -32815,11 +32820,12 @@ End If
 
 frmResults.lblCaption = sCaption
 frmResults.lblCaption.ToolTipText = sCaption
-frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not objOwner Is frmMap, Nothing, objOwner)
+'(TypeOf: "objOwner Is frmMap" would create frmMap's default instance when the owner is Me)
+frmResults.Show vbModeless, IIf(bNoAlwaysOnTop And Not TypeOf objOwner Is frmMap, Nothing, objOwner)
 'frmResults.Form_Resize sizes the last column to the remaining list width (also on Show); widen it afterward so long lines fit
 If frmResults.lvResults.ColumnHeaders(2).Width < 9000 Then frmResults.lvResults.ColumnHeaders(2).Width = 9000
 'as in GotoLocation: an always-on-top external map has to be made topmost again after showing a window it owns
-If objOwner Is frmMap Then
+If TypeOf objOwner Is frmMap Then
     If frmMap.chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(frmMap.hWnd, True)
 End If
 End Sub
