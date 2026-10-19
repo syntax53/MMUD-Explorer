@@ -2,17 +2,21 @@
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
-v2.3.5 (10/##/2026)  
+v2.3.6 (10/##/2026)  
 ------------------------------------------  
-- NEW: Monster reachability filter (by level only) and path to monster in detail pane (Thanks Apathy)  
+- NEW: Navigate button on the Rooms map and the external map (Options) shows the route to the current room from the nearest bank/port, or from Bank of Godfrey when the room is one of them  
+
+v2.3.5 (10/18/2026)  
+------------------------------------------  
+- NEW: Monster reachability filter (by level) and path to monster in detail pane (Thanks Apathy)  
 - NEW: Item references now list the room commands that give the item (e.g. pry coffin) from NMR v1.8.4+ exports (Thanks Fujin)  
 - NEW: Extra monster filters: Follow % >= and <= filters  
-- UP: "By Mob" monster filters are now saved to the character file and restored after clearing the monster filter  
+- UP: Extra monster filters: "Mobs/ Lair <=" and ">=" now accept decimal values  
+- UP: Extra monster filters: "At Least" option makes the Mobs/Lair filters require X lairs with a max regen in range, instead of the average  
+- UP: By Mob monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now considered vs evil monsters  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
 - UP: GreaterMUD: Hit calculator now checks the Shadow box for a character with shadow and shows proper AC value  
-- UP: Extra monster filters: "Mobs/ Lair <=" and ">=" now accept decimal values (e.g. 2.5)  
-- UP: Extra monster filters: "At Least" option makes the Mobs/ Lair filters require X lairs with a max regen in range, instead of using the average  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  

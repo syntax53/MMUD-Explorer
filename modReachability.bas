@@ -32,6 +32,8 @@ Option Explicit
 ' Monster rooms carry a category (RCAT_*: Room < Group(lair) < resolved summon < Group) so a route
 ' prefers a fixed spawn room. Reference fields cut off at 250 chars end in '+' ("Room 14/62+" is
 ' really 14/62xx); such truncated references are skipped.
+' Room routes (ReachRoomRoute, for the maps' Navigate button) use the same sources and searches with one room
+' as the destination; a room that is itself a point of interest is routed from Bank of Godfrey alone.
 
 Private Const START_MAP As Long = 1
 Private Const START_ROOM As Long = 297
@@ -186,10 +188,10 @@ sReachDatabase = ""
 sReachFailedFor = ""
 End Sub
 
-'Drop the results and compute them again now (shows the progress bar).
-Public Sub ReachRecompute()
+'Drop the results and compute them again now (shows the progress bar; objOwner: see ReachEnsureComputed).
+Public Sub ReachRecompute(Optional ByVal objOwner As Form)
 Call ReachInvalidate
-Call ReachEnsureComputed
+Call ReachEnsureComputed(objOwner)
 End Sub
 
 Public Function ReachIsComputed() As Boolean
@@ -339,12 +341,8 @@ Public Function ReachRoute(ByVal nMonsterNum As Long, ByVal nLevel As Long, ByVa
     ByRef sSourceName As String, ByRef nStepMap() As Long, ByRef nStepRoom() As Long, ByRef nStepFlags() As Long, _
     ByRef sStepLabel() As String, ByRef nSteps As Long, ByRef nCoinSteps As Long, ByRef nAltSteps As Long, _
     ByRef nAltCoinSteps As Long, ByRef sAltSourceName As String) As Boolean
-Dim nIdx As Long, p As Long, r As Long, e As Long
-Dim visG() As Long, visF() As Long, parF() As Long, distF() As Long, costF() As Long
-Dim visS() As Long, parS() As Long, distS() As Long, costS() As Long
-Dim nSeeds() As Long, nSeedCount As Long, vKey As Variant
-Dim nDestF As Long, nDestS As Long, nF As Long, nS As Long, nCoinF As Long, nCoinS As Long
-Dim nSrcF As Long, nSrcS As Long, bHasAlt As Boolean, bUseShort As Boolean
+Dim nIdx As Long, r As Long, e As Long, nDest As Long
+Dim visG() As Long, nSeeds() As Long, nSeedCount As Long, vKey As Variant
 On Error GoTo error:
 
 nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
@@ -363,17 +361,7 @@ If nLevel < 1 Then nLevel = 1
 'character can actually get to, so the level gate shows up as a step instead of being skipped by starting
 'from a point of interest beyond it.
 Call VisitAtLevel(nLevel, visG)
-ReDim nSeeds(1 To NUM_POIS)
-nSeedCount = 1: nSeeds(1) = nStartIdx
-For p = 1 To NUM_POIS - 1
-    r = nPOIIdx(p)
-    If r >= 1 And r <= nRooms Then
-        If visG(r) = 1 Then nSeedCount = nSeedCount + 1: nSeeds(nSeedCount) = r
-    End If
-Next p
-'F = fewest coin-costing steps, then fewest steps; S = fewest steps (both reach the same rooms)
-Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, True, visF, parF, distF, costF)
-Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, False, visS, parS, distS, costS)
+Call RouteSources(visG, False, nSeeds, nSeedCount)
 
 If bToGate And Not bIgnoreLevel Then
     For Each vKey In mRooms(nIdx).Keys
@@ -384,37 +372,10 @@ If bToGate And Not bIgnoreLevel Then
     Next vKey
     e = FindGateEdge(nIdx, visG)
     If e = 0 Then Exit Function
-    nDestF = eFrom(e): nDestS = nDestF
-Else
-    nDestF = RouteDest(nIdx, visF, costF)
-    nDestS = RouteDest(nIdx, visS, costS)
+    nDest = eFrom(e)
 End If
-If nDestF = 0 Or nDestS = 0 Then Exit Function
-If visF(nDestF) = 0 Or visS(nDestS) = 0 Then Exit Function
-
-nF = RoutePathInfo(nDestF, parF, nCoinF, nSrcF)
-nS = RoutePathInfo(nDestS, parS, nCoinS, nSrcS)
-If nF < 0 Or nS < 0 Then Exit Function
-
-'the coin-avoiding route, unless a shorter coin-costing one exists and it's more than ROUTE_DETOUR_MAX times longer
-bHasAlt = (nCoinS > nCoinF And nS < nF)
-bUseShort = False
-If bHasAlt Then bUseShort = (nF > ROUTE_DETOUR_MAX * nS)
-If bAltRoute Then
-    If Not bHasAlt Then Exit Function
-    bUseShort = Not bUseShort
-End If
-
-If bUseShort Then
-    Call RouteSteps(nDestS, nS, parS, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
-    sSourceName = POIName(nSrcS): nSteps = nS: nCoinSteps = nCoinS
-    If bHasAlt Then nAltSteps = nF: nAltCoinSteps = nCoinF: sAltSourceName = POIName(nSrcF)
-Else
-    Call RouteSteps(nDestF, nF, parF, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
-    sSourceName = POIName(nSrcF): nSteps = nF: nCoinSteps = nCoinF
-    If bHasAlt Then nAltSteps = nS: nAltCoinSteps = nCoinS: sAltSourceName = POIName(nSrcS)
-End If
-ReachRoute = True
+ReachRoute = RouteBuild(nSeeds, nSeedCount, nLevel, bIgnoreLevel, bAltRoute, nIdx, nDest, nSourceMap, nSourceRoom, _
+    sSourceName, nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps, nCoinSteps, nAltSteps, nAltCoinSteps, sAltSourceName)
 
 Exit Function
 error:
@@ -425,9 +386,80 @@ ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim
 ReachRoute = False
 End Function
 
-Public Sub ReachEnsureComputed()
-Dim t As Single, bWasEnabled As Boolean
-bWasEnabled = True
+'Can room m/r be reached from Bank of Godfrey at this level: reachYes; reachNo = not at this level, but a path
+'leads there from a reachable room when level gates are ignored (ReachRoomRoute with bIgnoreLevel); reachNoGate =
+'no known path at all; reachUnknown = not computed / no such room. Never triggers the computation.
+Public Function ReachRoomStatus(ByVal nMap As Long, ByVal nRoom As Long, ByVal nLevel As Long) As ReachStatus
+Dim r As Long, visited() As Long
+On Error GoTo error:
+
+ReachRoomStatus = reachUnknown
+If Not ReachIsComputed() Then Exit Function
+If nStartIdx = 0 Or nRooms < 1 Then Exit Function
+r = FindRoomIdx(nMap, nRoom)
+If r = 0 Then Exit Function
+If nLevel < 1 Then nLevel = 1
+
+Call VisitAtLevel(nLevel, visited)
+If visited(r) = 1 Then
+    ReachRoomStatus = reachYes
+ElseIf FindGateEdge(0, visited, r) > 0 Then
+    ReachRoomStatus = reachNo
+Else
+    ReachRoomStatus = reachNoGate
+End If
+
+Exit Function
+error:
+Call HandleError("ReachRoomStatus")
+ReachRoomStatus = reachUnknown
+End Function
+
+'ReachRoute to room m/r (the maps' Navigate button): the same sources, searches, outputs and alternate route, with
+'that room as the destination. A room that is itself a point of interest (ResolvePOIs) is routed from Bank of Godfrey
+'alone; from the nearest point of interest it would be zero steps. nSteps = 0 with True = the room is Bank of Godfrey.
+'Returns False when not computed / no such room / no route. Never triggers the computation.
+Public Function ReachRoomRoute(ByVal nMap As Long, ByVal nRoom As Long, ByVal nLevel As Long, _
+    ByVal bIgnoreLevel As Boolean, ByVal bAltRoute As Boolean, ByRef nSourceMap As Long, ByRef nSourceRoom As Long, _
+    ByRef sSourceName As String, ByRef nStepMap() As Long, ByRef nStepRoom() As Long, ByRef nStepFlags() As Long, _
+    ByRef sStepLabel() As String, ByRef nSteps As Long, ByRef nCoinSteps As Long, ByRef nAltSteps As Long, _
+    ByRef nAltCoinSteps As Long, ByRef sAltSourceName As String) As Boolean
+Dim r As Long, p As Long, bIsPOI As Boolean, visG() As Long, nSeeds() As Long, nSeedCount As Long
+On Error GoTo error:
+
+nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+nCoinSteps = 0: nAltSteps = 0: nAltCoinSteps = 0: sAltSourceName = ""
+ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
+
+If Not ReachIsComputed() Then Exit Function
+If nStartIdx = 0 Or nRooms < 1 Then Exit Function
+r = FindRoomIdx(nMap, nRoom)
+If r = 0 Then Exit Function
+If nLevel < 1 Then nLevel = 1
+For p = 0 To NUM_POIS - 1
+    If nPOIIdx(p) = r Then bIsPOI = True: Exit For
+Next p
+
+'sources as in ReachRoute (chosen at the character's level even when bIgnoreLevel)
+Call VisitAtLevel(nLevel, visG)
+Call RouteSources(visG, bIsPOI, nSeeds, nSeedCount)
+ReachRoomRoute = RouteBuild(nSeeds, nSeedCount, nLevel, bIgnoreLevel, bAltRoute, 0, r, nSourceMap, nSourceRoom, _
+    sSourceName, nStepMap, nStepRoom, nStepFlags, sStepLabel, nSteps, nCoinSteps, nAltSteps, nAltCoinSteps, sAltSourceName)
+
+Exit Function
+error:
+Call HandleError("ReachRoomRoute")
+nSourceMap = 0: nSourceRoom = 0: sSourceName = "": nSteps = 0
+nCoinSteps = 0: nAltSteps = 0: nAltCoinSteps = 0: sAltSourceName = ""
+ReDim nStepMap(0 To 0): ReDim nStepRoom(0 To 0): ReDim nStepFlags(0 To 0): ReDim sStepLabel(0 To 0)
+ReachRoomRoute = False
+End Function
+
+'objOwner: the form the progress bar belongs to (default frmMain). It's disabled along with frmMain while computing
+'and brought back to the front afterward (frmMap passes itself, so a minimized frmMain stays minimized).
+Public Sub ReachEnsureComputed(Optional ByVal objOwner As Form)
+Dim t As Single, bWasEnabled As Boolean, bOwnerWasEnabled As Boolean
+bWasEnabled = True: bOwnerWasEnabled = True
 On Error GoTo error:
 
 If ReachIsComputed() Then Exit Sub
@@ -437,14 +469,17 @@ If sReachFailedFor <> "" And sReachFailedFor = sCurrentDatabaseFile Then Exit Su
 bReachComputing = True: bBuildError = False
 t = Timer
 
+If objOwner Is Nothing Then Set objOwner = frmMain
 bWasEnabled = frmMain.Enabled
+bOwnerWasEnabled = objOwner.Enabled
 frmMain.Enabled = False
+objOwner.Enabled = False
 Load frmProgressBar
 Call frmProgressBar.SetRange(100)
 frmProgressBar.ProgressBar.Value = 1
 frmProgressBar.lblCaption.Caption = "Mapping monster reachability..."
-Set frmProgressBar.objFormOwner = frmMain
-frmProgressBar.Show vbModeless, frmMain
+Set frmProgressBar.objFormOwner = objOwner
+frmProgressBar.Show vbModeless, objOwner
 DoEvents
 
 nOut = 0: nPool = 0: nEdges = 0: nGroups = 0: nDroppedRandom = 0
@@ -505,11 +540,12 @@ sReachDatabase = ""
 sReachFailedFor = sCurrentDatabaseFile
 done:
 On Error Resume Next
-'re-enable frmMain before closing the progress bar: if the active window closes while its owner is still
-'disabled, Windows activates another application's window and MME ends up behind it
+'re-enable frmMain and the owner before closing the progress bar: if the active window closes while its owner is
+'still disabled, Windows activates another application's window and MME ends up behind it
 frmMain.Enabled = bWasEnabled
+objOwner.Enabled = bOwnerWasEnabled
 If FormIsLoaded("frmProgressBar") Then
-    If bWasEnabled Then Call EnsureAppForeground(frmMain)
+    If bOwnerWasEnabled Then Call EnsureAppForeground(objOwner)
     frmProgressBar.Hide
     DoEvents
     Unload frmProgressBar
@@ -1867,6 +1903,73 @@ next_edge:
 Loop
 End Sub
 
+'Route sources (RouteSearch seeds) for ReachRoute / ReachRoomRoute: Bank of Godfrey first (so it wins ties), then,
+'unless bGodfreyOnly, every other point of interest reachable from it at the character's level (visG = VisitAtLevel).
+Private Sub RouteSources(visG() As Long, ByVal bGodfreyOnly As Boolean, nSeeds() As Long, ByRef nSeedCount As Long)
+Dim p As Long, r As Long
+
+ReDim nSeeds(1 To NUM_POIS)
+nSeedCount = 1: nSeeds(1) = nStartIdx
+If bGodfreyOnly Then Exit Sub
+For p = 1 To NUM_POIS - 1
+    r = nPOIIdx(p)
+    If r >= 1 And r <= nRooms Then
+        If visG(r) = 1 Then nSeedCount = nSeedCount + 1: nSeeds(nSeedCount) = r
+    End If
+Next p
+End Sub
+
+'The two searches and the route choice of ReachRoute / ReachRoomRoute; the outputs are ReachRoute's (the caller
+'resets them first and handles errors). Destination: room index nDest when > 0, else monster nIdx's best room
+'(RouteDest).
+Private Function RouteBuild(nSeeds() As Long, ByVal nSeedCount As Long, ByVal nLevel As Long, _
+    ByVal bIgnoreLevel As Boolean, ByVal bAltRoute As Boolean, ByVal nIdx As Long, ByVal nDest As Long, _
+    ByRef nSourceMap As Long, ByRef nSourceRoom As Long, ByRef sSourceName As String, nStepMap() As Long, _
+    nStepRoom() As Long, nStepFlags() As Long, sStepLabel() As String, ByRef nSteps As Long, _
+    ByRef nCoinSteps As Long, ByRef nAltSteps As Long, ByRef nAltCoinSteps As Long, ByRef sAltSourceName As String) As Boolean
+Dim visF() As Long, parF() As Long, distF() As Long, costF() As Long
+Dim visS() As Long, parS() As Long, distS() As Long, costS() As Long
+Dim nDestF As Long, nDestS As Long, nF As Long, nS As Long, nCoinF As Long, nCoinS As Long
+Dim nSrcF As Long, nSrcS As Long, bHasAlt As Boolean, bUseShort As Boolean
+
+'F = fewest coin-costing steps, then fewest steps; S = fewest steps (both reach the same rooms)
+Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, True, visF, parF, distF, costF)
+Call RouteSearch(nSeeds, nSeedCount, nLevel, bIgnoreLevel, False, visS, parS, distS, costS)
+
+If nDest > 0 Then
+    nDestF = nDest: nDestS = nDest
+Else
+    nDestF = RouteDest(nIdx, visF, costF)
+    nDestS = RouteDest(nIdx, visS, costS)
+End If
+If nDestF = 0 Or nDestS = 0 Then Exit Function
+If visF(nDestF) = 0 Or visS(nDestS) = 0 Then Exit Function
+
+nF = RoutePathInfo(nDestF, parF, nCoinF, nSrcF)
+nS = RoutePathInfo(nDestS, parS, nCoinS, nSrcS)
+If nF < 0 Or nS < 0 Then Exit Function
+
+'the coin-avoiding route, unless a shorter coin-costing one exists and it's more than ROUTE_DETOUR_MAX times longer
+bHasAlt = (nCoinS > nCoinF And nS < nF)
+bUseShort = False
+If bHasAlt Then bUseShort = (nF > ROUTE_DETOUR_MAX * nS)
+If bAltRoute Then
+    If Not bHasAlt Then Exit Function
+    bUseShort = Not bUseShort
+End If
+
+If bUseShort Then
+    Call RouteSteps(nDestS, nS, parS, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
+    sSourceName = POIName(nSrcS): nSteps = nS: nCoinSteps = nCoinS
+    If bHasAlt Then nAltSteps = nF: nAltCoinSteps = nCoinF: sAltSourceName = POIName(nSrcF)
+Else
+    Call RouteSteps(nDestF, nF, parF, nSourceMap, nSourceRoom, nStepMap, nStepRoom, nStepFlags, sStepLabel)
+    sSourceName = POIName(nSrcF): nSteps = nF: nCoinSteps = nCoinF
+    If bHasAlt Then nAltSteps = nS: nAltCoinSteps = nCoinS: sAltSourceName = POIName(nSrcS)
+End If
+RouteBuild = True
+End Function
+
 'ReachRoute destination among monster nIdx's rooms reached by a RouteSearch: the lowest category (RCAT_*),
 'then the lowest cost (so a coin-free room beats a closer coin-costing one when the search avoided coin),
 'then the lowest room index. 0 = none of its rooms reached.
@@ -1937,6 +2040,16 @@ For p = 0 To NUM_POIS - 1
 Next p
 End Function
 
+'Room index of m/r once the build is done (dRoomIdx is freed then, see ReachEnsureComputed). 0 = not in Rooms.
+Private Function FindRoomIdx(ByVal nMap As Long, ByVal nRoom As Long) As Long
+Dim i As Long
+For i = 1 To nRooms
+    If rRoom(i) = nRoom Then
+        If rMap(i) = nMap Then FindRoomIdx = i: Exit Function
+    End If
+Next i
+End Function
+
 'Binary min-heap on (key, seq): equal keys pop in push order.
 Private Sub HeapPush(hKey() As Long, hSeq() As Long, hNode() As Long, ByRef nHeap As Long, ByRef nSeq As Long, _
     ByVal nKey As Long, ByVal nNode As Long)
@@ -2000,19 +2113,24 @@ End Sub
 'from the monster's rooms over all edges (levels ignored), through rooms not reachable at this level,
 'stopping at the first edge whose source room IS reachable (fewest hops). 0 = none (no known path).
 'Callers make sure none of the monster's rooms is reachable first.
-Private Function FindGateEdge(ByVal nIdx As Long, visited() As Long) As Long
+'nRoomIdx > 0: the gate blocking that room instead (nIdx is then unused).
+Private Function FindGateEdge(ByVal nIdx As Long, visited() As Long, Optional ByVal nRoomIdx As Long = 0) As Long
 Dim seen() As Long, queue() As Long, qHead As Long, qTail As Long
 Dim u As Long, j As Long, e As Long, r As Long, vKey As Variant
 
 If Not bRevAdjBuilt Then Call BuildReverseAdjacency
 ReDim seen(1 To nRooms): ReDim queue(1 To nRooms)
 qHead = 1: qTail = 0
-For Each vKey In mRooms(nIdx).Keys
-    r = CLng(vKey)
-    If r >= 1 And r <= nRooms Then
-        If seen(r) = 0 Then seen(r) = 1: qTail = qTail + 1: queue(qTail) = r
-    End If
-Next vKey
+If nRoomIdx > 0 Then
+    seen(nRoomIdx) = 1: qTail = 1: queue(1) = nRoomIdx
+Else
+    For Each vKey In mRooms(nIdx).Keys
+        r = CLng(vKey)
+        If r >= 1 And r <= nRooms Then
+            If seen(r) = 0 Then seen(r) = 1: qTail = qTail + 1: queue(qTail) = r
+        End If
+    Next vKey
+End If
 
 Do While qHead <= qTail
     u = queue(qHead): qHead = qHead + 1
