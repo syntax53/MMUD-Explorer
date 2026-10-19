@@ -5,6 +5,7 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v2.3.6 (10/##/2026)  
 ------------------------------------------  
 - NEW: "Route to Room" button on the Rooms map and the external map (Options) shows the route to the current room from the nearest bank, port or the Lost City, or from Bank of Godfrey when the room is one of those  
+- UP: Results window: clicking an empty area of the list no longer jumps to the selected row; a row navigates only when the selection changes  
 
 v2.3.5 (10/18/2026)  
 ------------------------------------------  

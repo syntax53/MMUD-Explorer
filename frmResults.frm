@@ -239,6 +239,7 @@ Dim nNest As Integer
 Dim nNestMax As Integer
 Dim ScannedTB() As Boolean
 Dim nWindowState As Integer
+Dim oLastGotoItem As ListItem       'lvResults row last navigated to (GotoSelectedResult)
 Dim tWindowSize As WindowSizeProperties
 
 Public nLastPosTop As Long
@@ -486,6 +487,7 @@ End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
+Set oLastGotoItem = Nothing
 Call WriteINI("Settings", "HideTextblockResults", chkHideTextblocks.Value)
 Call WriteINI("Settings", "ResultsTop", Me.Top)
 Call WriteINI("Settings", "ResultsLeft", Me.Left)
@@ -510,12 +512,25 @@ If Not objFormOwner Is Nothing Then
 End If
 End Sub
 
-Private Sub lvResults_Click()
+'navigate on clicking a row (ItemClick), not on any click in the list (Click): a click in its empty area just to
+'focus the window would otherwise jump to the already-selected row (e.g. a route's start)
+Private Sub lvResults_ItemClick(ByVal Item As MSComctlLib.ListItem)
+Call GotoSelectedResult
+End Sub
+
+Private Sub lvResults_KeyUp(KeyCode As Integer, Shift As Integer)
+Call GotoSelectedResult
+End Sub
+
+'GotoLocation for the selected row, only when the selection has changed since the last one navigated to
+Private Sub GotoSelectedResult()
 On Error GoTo error:
 
 If objFormOwner Is Nothing Then Set objFormOwner = frmMain
 
 If lvResults.SelectedItem Is Nothing Then Exit Sub
+If lvResults.SelectedItem Is oLastGotoItem Then Exit Sub
+Set oLastGotoItem = lvResults.SelectedItem
 frmMain.bDontSetMainFocus = True
 Call frmMain.GotoLocation(lvResults.SelectedItem, , objFormOwner)
 'objFormOwner.SetFocus
@@ -524,11 +539,7 @@ frmMain.bDontSetMainFocus = False
 Exit Sub
 
 error:
-Call HandleError("lvResults_Click")
-End Sub
-
-Private Sub lvResults_KeyUp(KeyCode As Integer, Shift As Integer)
-Call lvResults_Click
+Call HandleError("GotoSelectedResult")
 End Sub
 
 Public Sub CreateExecutionTree(ByVal nTextblockNumber As Long)
