@@ -921,6 +921,7 @@ End Function
 Public Function OpenTables(ByVal sFile As String, Optional ByVal bQuiet As Boolean = False) As Boolean
 On Error GoTo error:
 Dim nMaxMon As Long, nYesNo As Integer, fso As Object, sCopyFile As String
+Dim bReconnect As Boolean, bKeepMonsterArrays As Boolean
 
 again:
 
@@ -929,8 +930,11 @@ UseExpMulti = False
 'Set WS = DAO.CreateWorkspace("MMUD_Explorer_WS", "MMUD_Explorer", False, dbUseJet)
 Set DB = OpenDatabase(sFile, False, True)
 
+'a reconnect (EnsureDatabaseConnection, e.g. after the file's handle went stale) reopens the same file, so
+'what was computed from it at load is still valid and must be kept: nothing recomputes it until a reload
+bReconnect = bDatabaseReconnectInProgress And StrComp(sFile, sCurrentDatabaseFile, vbTextCompare) = 0
 sCurrentDatabaseFile = sFile
-Call ReachInvalidate
+If Not bReconnect Then Call ReachInvalidate
 
 On Error GoTo missing_tables:
 Set tabItems = DB.OpenRecordset("Items")
@@ -949,17 +953,22 @@ Call TestMonExpMulti
 If tabMonsters.RecordCount > 0 Then
     tabMonsters.MoveLast
     nMaxMon = tabMonsters.Fields("Number")
-    ReDim nMonsterDamageVsChar(nMaxMon)
-    ReDim nMonsterPossy(nMaxMon)
-    ReDim nMonsterSpawnChance(nMaxMon)
-    ReDim nCharDamageVsMonster(nMaxMon)
-    ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
-    ReDim nCharSurpriseDamageVsMonster(nMaxMon)
-    ReDim nMonsterDamageVsDefault(nMaxMon)
-    ReDim nMonsterDamageVsParty(nMaxMon)
-    ReDim nCharMinRoundDamageVsMonster(nMaxMon)
-    ReDim nCharSurpriseChanceVsMonster(nMaxMon)
-    ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
+    'a reconnect keeps the per-monster arrays: a ReDim zeroes the lair stats (nMonsterPossy/nMonsterSpawnChance,
+    'filled only by LoadMonsters/CalculateAverageLairs) and turns the -1 "not calculated" damage markers into a cached 0
+    If bReconnect Then bKeepMonsterArrays = (UBound(nMonsterPossy) = nMaxMon)
+    If Not bKeepMonsterArrays Then
+        ReDim nMonsterDamageVsChar(nMaxMon)
+        ReDim nMonsterPossy(nMaxMon)
+        ReDim nMonsterSpawnChance(nMaxMon)
+        ReDim nCharDamageVsMonster(nMaxMon)
+        ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
+        ReDim nCharSurpriseDamageVsMonster(nMaxMon)
+        ReDim nMonsterDamageVsDefault(nMaxMon)
+        ReDim nMonsterDamageVsParty(nMaxMon)
+        ReDim nCharMinRoundDamageVsMonster(nMaxMon)
+        ReDim nCharSurpriseChanceVsMonster(nMaxMon)
+        ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
+    End If
 End If
 
 If Len(sCopyFile) > 0 Then Call WriteINI("Settings", "DataFile", sCopyFile)
