@@ -32,7 +32,8 @@ v2.3.5 (10/##/2026)
 - FIX: Monster Mobs/Spwn column and lair spawn chance going blank (until a reload) after the database connection was automatically reopened  
 
 v2.3.4 (09/06/2026)  
-------------------------------------------  
+------------------------------------------------------------------------------------  
+
 - UP: New toggle option in menu to initially always show shops first when listing item references  
 - UP: NPC greet commands now show in the map's room references  
 - UP: Armour AC/DR column now alternates between sorting by AC and by DR on repeated clicks  
