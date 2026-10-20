@@ -1,4 +1,4 @@
-v2.3.5 (10/##/2026)  
+v2.3.5 (10/20/2026)  
 ------------------------------------------------------------------------------------  
 - NEW: Monster reachability filter (by level) and path to monster in detail pane (Thanks Apathy)  
 - NEW: Route to Room button rooms/map shows the route to the current room from the nearest bank/POI  
