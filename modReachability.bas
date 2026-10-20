@@ -19,14 +19,21 @@ Option Explicit
 '   exits (Rooms.N..D, "(Level: a to b)", b=0 means no upper limit)
 '   room commands (Rooms.CMD textblock lines), room spells (Rooms.Spell),
 '   NPC conversations (Monsters.GreetTXT keyword lines, from the NPC's rooms),
-'   teleport spells that only work where a room item is ("roomitem N")
+'   teleport spells that only work where a room item is ("roomitem N"), unless only
+'   other spells cast them
 ' Textblock chains follow text/bare-number jumps, LinkTo, cast -> spell chains
 ' (140/141 teleport, 151 EndCast, 148 TextBlock). A 'random' block whose rolls go
 ' to more than one place is random (only usable when all destinations are in one
-' strongly connected area); with more than 20 places it's dropped.
+' strongly connected area); with more than 20 places it's dropped. Every 'price N'
+' on a line is taken, before or after its moves, so a step costs their total (the
+' jails' "bribe guard" casts first, then takes 100 + 1,000 + ... + 10,000,000).
+' An EndCast fires when its spell wears off, so a teleport behind one waits that
+' spell's duration (summed along the way: ships 50 + 30 + 20, a jail sentence 200).
 '
 ' Routes (ReachRoute, for the detail pane) use RouteSearch rather than the BFS: fewest coin-costing
 ' steps first (toll exits, chains with 'price N'), then fewest steps; optionally ignoring level gates.
+' A coin-costing step also counts as one extra step per 1,000 gold it costs (ROUTE_COIN_STEP_COPPER), and a
+' step that waits on a spell's duration as one extra step per round.
 ' When a shorter route costs coin and the coin-avoiding one is more than ROUTE_DETOUR_MAX times its length,
 ' the shorter one is used; the other is offered as the alternate route (ReachRoute bAltRoute).
 ' Monster rooms carry a category (RCAT_*: Room < Group(lair) < resolved summon < Group) so a route
@@ -97,6 +104,7 @@ Private Const RCAT_GROUP As Byte = 4      '[Summoned By] "Group: m/r"
 Private Const ROUTE_COIN_COST As Long = 1000000   'RouteSearch: one coin-costing step outweighs any step count
 Private Const ROUTE_INF As Long = 2147483647
 Private Const ROUTE_DETOUR_MAX As Long = 3        'ReachRoute: a coin-free route over 3x a shorter coin route's steps loses to it
+Private Const ROUTE_COIN_STEP_COPPER As Long = 100000   'RouteSearch: a coin-costing step weighs 1 extra step per 1,000 gold
 
 Private Type tTeleOut
     Room As Long
@@ -107,7 +115,8 @@ Private Type tTeleOut
     RoomItems As String   '",id,id," -- 'roomitem' requirements seen on the way
     LineNo As Long        'top-level textblock line that produced it
     Cmd As String         'top-level command / greet keyword that produced it ("" for spells)
-    Price As Long         'highest 'price N' seen on the way (0 = free)
+    Price As Long         'total of the 'price N' ops on the way, in copper (0 = free)
+    Wait As Long          'rounds spent waiting for spells to wear off on the way (EndCast after a duration)
 End Type
 
 Private sReachDatabase As String          'database file the results belong to ("" = none)
@@ -131,6 +140,8 @@ Private tbAction() As String, tbLink() As Long, tbCalled() As String
 'spells
 Private dSpell As Dictionary              'number -> index
 Private spNum() As Long, spAb() As Long, spVal() As Long, spReqLevel() As Long, spCastedBy() As String
+Private spDur() As Long                   'duration in rounds (0 = none): an EndCast fires when it runs out
+Private spSpellOnly() As Boolean          'only other spells cast it (see SpellOnlyCasters)
 Private nSpells As Long
 
 'items: rooms holding each item (Rooms.Placed, Items.[Obtained From] "Room m/r")
@@ -153,7 +164,9 @@ Private eDir() As Byte                    'exit direction 0..9, NO_DIR for non-e
 Private eLabel() As String                'exit: non-level restriction text ("" = plain); command: command text;
                                           'room spell: spell number; NPC: "npc|keyword";
                                           'item spell: "spell#|item#,item#" (numbers, so the UI can name them)
-Private eCoin() As Long                   'coin the step costs: exit "(Toll: N)" / chain 'price N' (0 = free)
+Private eCoin() As Long                   'coin the step costs: exit "(Toll: N)" in gold / chain 'price N' total in
+                                          'copper (0 = free)
+Private eWait() As Long                   'rounds the step waits for spells to wear off before it moves you (0 = none)
 Private nGroups As Long
 
 'chain-walk output buffer and per-root cache
@@ -328,8 +341,9 @@ End Function
 'Sources are Bank of Godfrey plus the other points of interest (ResolvePOIs) that are reachable from it
 'at this level. Two RouteSearches are seeded with all of them (Godfrey first, so it wins ties): one finds the
 'paths with the fewest coin-costing steps (toll / price), then the fewest steps; the other just the fewest
-'steps. Destination: among the monster's reachable rooms, the lowest category (RCAT_*: Room, Group(lair),
-'resolved summon, Group), then the lowest search cost, then the lowest room index (see RouteDest).
+'steps (both weigh coin and waits, see RouteSearch). Destination: among the monster's reachable rooms, the
+'lowest category (RCAT_*: Room, Group(lair), resolved summon, Group), then the lowest search cost, then the
+'lowest room index (see RouteDest).
 'The coin-avoiding route is used unless the shortest route is shorter with more coin-costing steps and the
 'coin-avoiding one is more than ROUTE_DETOUR_MAX times its length. When the two differ like that, the one not
 'used is the alternate route: nAltSteps/nAltCoinSteps/sAltSourceName describe it (nAltSteps = 0 = none).
@@ -524,14 +538,14 @@ End If
 
 'ReachIsMonsterOK only needs dMonIdx, mStatus, mHit, bpLevel; ReachMonsterInfo's gate tracing
 'also needs the rooms (rMap/rRoom), edges (e*, nEdges), traversal arrays (adjStart/adjEdge, grpOK,
-'grpSrc, nStartIdx) and mRooms; ReachRoute also needs the edge metadata (eKind/eDir/eLabel/eCoin),
+'grpSrc, nStartIdx) and mRooms; ReachRoute also needs the edge metadata (eKind/eDir/eLabel/eCoin/eWait),
 'the room categories (mRooms values), the direction names (sDirs) and the route sources
 '(nPOIIdx/sPOIName); RouteSearch builds its group adjacency (gadjStart/gadjEdge) lazily. Free the rest
 'of the build data (labels hold spell/item numbers, so no spell names are needed).
 Set dChainCache = Nothing
 Set dTB = Nothing: Set dSpell = Nothing: Set dItemRooms = Nothing: Set dRoomIdx = Nothing
 Erase tOut, tPool, rExit, rPlaced, rCMD, rSpell, rNPC
-Erase tbAction, tbLink, tbCalled, spNum, spAb, spVal, spReqLevel, spCastedBy
+Erase tbAction, tbLink, tbCalled, spNum, spAb, spVal, spReqLevel, spCastedBy, spDur, spSpellOnly
 Erase mBase, mBaseRaw, mSummonedBy, mGreet
 nOut = 0: nPool = 0
 GoTo done:
@@ -649,8 +663,25 @@ Call HandleError("Reach.LoadTextblocks")
 bBuildError = True
 End Sub
 
+'"Spell #586, Spell #641" -> True: nothing but other spells cast it (e.g. the jails' release spell, cast when a
+'sentence wears off). False when the list is empty, names anything else, or was cut off at 250 chars ("+").
+Private Function SpellOnlyCasters(ByVal s As String) As Boolean
+Dim v As Variant, i As Long, sEnt As String, nEnt As Long
+s = TrimWS(Replace(s, Chr$(0), ""))
+If s = "" Or Right$(s, 1) = "+" Then Exit Function
+v = Split(s, ",")
+For i = 0 To UBound(v)
+    sEnt = TrimWS(v(i))
+    If sEnt <> "" Then
+        If Left$(sEnt, 7) <> "Spell #" Then Exit Function
+        nEnt = nEnt + 1
+    End If
+Next i
+SpellOnlyCasters = (nEnt > 0)
+End Function
+
 Private Sub LoadSpells()
-Dim rs As DAO.Recordset, n As Long, j As Long, bCasted As Boolean, bReq As Boolean
+Dim rs As DAO.Recordset, n As Long, j As Long, bCasted As Boolean, bReq As Boolean, bDur As Boolean
 Dim fAb(0 To MAX_ABILS - 1) As Boolean
 On Error GoTo error:
 
@@ -658,24 +689,34 @@ Set dSpell = New Dictionary
 Set rs = DB.OpenRecordset("SELECT * FROM Spells", dbOpenSnapshot, dbForwardOnly)
 bCasted = FieldExists(rs, "Casted By")
 bReq = FieldExists(rs, "ReqLevel")
+bDur = FieldExists(rs, "Dur")
 For j = 0 To MAX_ABILS - 1
     fAb(j) = FieldExists(rs, "Abil-" & j)
 Next j
 nSpells = 0
 ReDim spNum(1 To 500): ReDim spAb(1 To 500, 0 To MAX_ABILS - 1): ReDim spVal(1 To 500, 0 To MAX_ABILS - 1)
-ReDim spReqLevel(1 To 500): ReDim spCastedBy(1 To 500)
+ReDim spReqLevel(1 To 500): ReDim spCastedBy(1 To 500): ReDim spDur(1 To 500): ReDim spSpellOnly(1 To 500)
 Do Until rs.EOF
     nSpells = nSpells + 1
     If nSpells > UBound(spNum) Then
         ReDim Preserve spNum(1 To nSpells * 2)
         ReDim Preserve spReqLevel(1 To nSpells * 2)
         ReDim Preserve spCastedBy(1 To nSpells * 2)
+        ReDim Preserve spDur(1 To nSpells * 2)
+        ReDim Preserve spSpellOnly(1 To nSpells * 2)
         Call GrowAbils(nSpells * 2)
     End If
     n = FldLng(rs, "Number")
     spNum(nSpells) = n
     If bReq Then spReqLevel(nSpells) = FldLng(rs, "ReqLevel")
-    If bCasted Then spCastedBy(nSpells) = FldStr(rs, "Casted By")
+    If bCasted Then
+        spCastedBy(nSpells) = FldStr(rs, "Casted By")
+        spSpellOnly(nSpells) = SpellOnlyCasters(spCastedBy(nSpells))
+    End If
+    If bDur Then
+        spDur(nSpells) = FldLng(rs, "Dur")
+        If spDur(nSpells) < 0 Then spDur(nSpells) = 0
+    End If
     For j = 0 To MAX_ABILS - 1
         If fAb(j) Then
             spAb(nSpells, j) = FldLng(rs, "Abil-" & j)
@@ -1056,41 +1097,53 @@ Private Function SpellIndex(ByVal n As Long) As Long
 If dSpell.Exists(n) Then SpellIndex = dSpell(n)
 End Function
 
+'a + b for amounts >= 0 (coin, rounds), capped so a long chain of them can't overflow
+Private Function AddCapped(ByVal a As Long, ByVal b As Long) As Long
+If a > 999999999 - b Then AddCapped = 999999999 Else AddCapped = a + b
+End Function
+
 Private Sub AddOut(ByVal nRoom As Long, ByVal nMap As Long, ByVal nMin As Long, ByVal nMax As Long, _
-    ByVal sItems As String, ByVal nPrice As Long, ByVal nLine As Long)
+    ByVal sItems As String, ByVal nPrice As Long, ByVal nWait As Long, ByVal nLine As Long)
 If nOut = 0 Then ReDim tOut(0 To 255)
 If nOut > UBound(tOut) Then ReDim Preserve tOut(0 To nOut * 2)
 With tOut(nOut)
     .Room = nRoom: .Map = nMap: .MinLvl = nMin: .MaxLvl = nMax
-    .IsRandom = False: .RoomItems = sItems: .LineNo = nLine: .Cmd = "": .Price = nPrice
+    .IsRandom = False: .RoomItems = sItems: .LineNo = nLine: .Cmd = "": .Price = nPrice: .Wait = nWait
 End With
 nOut = nOut + 1
 End Sub
 
 Private Sub FromOps(sOps() As String, ByVal nOps As Long, ByVal nMin As Long, ByVal nMax As Long, _
-    ByVal sItems As String, ByVal nPrice As Long, ByVal nDepth As Long, ByVal sSeen As String, _
+    ByVal sItems As String, ByVal nPrice As Long, ByVal nWait As Long, ByVal nDepth As Long, ByVal sSeen As String, _
     ByVal sCmd As String, ByVal bHasCmd As Boolean, ByVal nLine As Long)
 Dim i As Long, k As Long, v1 As Long, v2 As Long, nStart As Long, a As Long, b As Long, nDistinct As Long
-Dim bDup As Boolean, w As Variant
+Dim bDup As Boolean, w As Variant, nFirst As Long
+nFirst = nOut   'outputs from these ops start here
 For i = 0 To nOps - 1
     k = OpKind(sOps(i), v1, v2)
     Select Case k
         Case OP_MINLEVEL: If v1 > nMin Then nMin = v1
         Case OP_MAXLEVEL: If v1 > 0 And v1 < nMax Then nMax = v1   '"maxlevel 0" = no upper limit, as for exits
         Case OP_ROOMITEM: sItems = sItems & v1 & ","
-        Case OP_TELEPORT: If v1 <> 0 Then Call AddOut(v1, v2, nMin, nMax, sItems, nPrice, nLine)
-        Case OP_TEXT: Call FromTB(v1, nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, sCmd, bHasCmd, nLine)
-        Case OP_CAST: Call FromSpell(v1, nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, nLine)
+        Case OP_TELEPORT: If v1 <> 0 Then Call AddOut(v1, v2, nMin, nMax, sItems, nPrice, nWait, nLine)
+        Case OP_TEXT: Call FromTB(v1, nMin, nMax, sItems, nPrice, nWait, nDepth + 1, sSeen, sCmd, bHasCmd, nLine)
+        Case OP_CAST: Call FromSpell(v1, nMin, nMax, sItems, nPrice, nWait, nDepth + 1, sSeen, nLine)
         Case OP_OTHER
-            If v1 > nPrice Then       'OpKind puts the amount of 'price N' in v1 (other keywords too)
+            If v1 > 0 Then            'OpKind puts the amount of 'price N' in v1 (other keywords too)
                 w = SplitWords(sOps(i))
-                If LCase$(w(0)) = "price" Then nPrice = v1
+                If LCase$(w(0)) = "price" Then
+                    'taken even after this line's moves (see the header), so they cost it too
+                    For a = nFirst To nOut - 1
+                        tOut(a).Price = AddCapped(tOut(a).Price, v1)
+                    Next a
+                    nPrice = AddCapped(nPrice, v1)
+                End If
             End If
         Case OP_RANDOM
             'Only truly random if the rolls lead to different places (the ships roll
             'random but every outcome casts the same voyage).
             nStart = nOut
-            Call FromTB(v1, nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, "", False, nLine)
+            Call FromTB(v1, nMin, nMax, sItems, nPrice, nWait, nDepth + 1, sSeen, "", False, nLine)
             nDistinct = 0
             For a = nStart To nOut - 1
                 bDup = False
@@ -1112,7 +1165,7 @@ Next i
 End Sub
 
 Private Sub FromTB(ByVal n As Long, ByVal nMin As Long, ByVal nMax As Long, ByVal sItems As String, _
-    ByVal nPrice As Long, ByVal nDepth As Long, ByVal sSeen As String, ByVal sCmd As String, _
+    ByVal nPrice As Long, ByVal nWait As Long, ByVal nDepth As Long, ByVal sSeen As String, ByVal sCmd As String, _
     ByVal bHasCmd As Boolean, ByVal nLine As Long)
 Dim nIdx As Long, lines As Variant, i As Long, bFilter As Boolean
 Dim sLineCmd As String, bLineHasCmd As Boolean, sOps() As String, nOps As Long
@@ -1137,15 +1190,15 @@ For i = 0 To UBound(lines)
     If TrimWS(lines(i)) <> "" Then
         Call SplitLine(lines(i), True, sLineCmd, bLineHasCmd, sOps, nOps)
         If Not bFilter Or (bLineHasCmd And sLineCmd = sCmd) Then
-            Call FromOps(sOps, nOps, nMin, nMax, sItems, nPrice, nDepth, sSeen, sCmd, bHasCmd, nLine)
+            Call FromOps(sOps, nOps, nMin, nMax, sItems, nPrice, nWait, nDepth, sSeen, sCmd, bHasCmd, nLine)
         End If
     End If
 Next i
-If tbLink(nIdx) <> 0 Then Call FromTB(tbLink(nIdx), nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, sCmd, bHasCmd, nLine)
+If tbLink(nIdx) <> 0 Then Call FromTB(tbLink(nIdx), nMin, nMax, sItems, nPrice, nWait, nDepth + 1, sSeen, sCmd, bHasCmd, nLine)
 End Sub
 
 Private Sub FromSpell(ByVal s As Long, ByVal nMin As Long, ByVal nMax As Long, ByVal sItems As String, _
-    ByVal nPrice As Long, ByVal nDepth As Long, ByVal sSeen As String, ByVal nLine As Long)
+    ByVal nPrice As Long, ByVal nWait As Long, ByVal nDepth As Long, ByVal sSeen As String, ByVal nLine As Long)
 Dim nIdx As Long, j As Long, nRoom As Long, nMap As Long, bRoom As Boolean, bMap As Boolean
 
 If nDepth > MAX_CHAIN_DEPTH Then Exit Sub
@@ -1158,13 +1211,14 @@ For j = 0 To MAX_ABILS - 1
     If spAb(nIdx, j) = ABIL_TELEPORT_ROOM And Not bRoom Then nRoom = spVal(nIdx, j): bRoom = True
     If spAb(nIdx, j) = ABIL_TELEPORT_MAP And Not bMap Then nMap = spVal(nIdx, j): bMap = True
 Next j
-If nRoom <> 0 Then Call AddOut(nRoom, nMap, nMin, nMax, sItems, nPrice, nLine)
+If nRoom <> 0 Then Call AddOut(nRoom, nMap, nMin, nMax, sItems, nPrice, nWait, nLine)
 For j = 0 To MAX_ABILS - 1
     If spVal(nIdx, j) <> 0 Then
         If spAb(nIdx, j) = ABIL_ENDCAST Then
-            Call FromSpell(spVal(nIdx, j), nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, nLine)
+            'fires when this spell wears off
+            Call FromSpell(spVal(nIdx, j), nMin, nMax, sItems, nPrice, AddCapped(nWait, spDur(nIdx)), nDepth + 1, sSeen, nLine)
         ElseIf spAb(nIdx, j) = ABIL_TEXTBLOCK Then
-            Call FromTB(spVal(nIdx, j), nMin, nMax, sItems, nPrice, nDepth + 1, sSeen, "", False, nLine)
+            Call FromTB(spVal(nIdx, j), nMin, nMax, sItems, nPrice, nWait, nDepth + 1, sSeen, "", False, nLine)
         End If
     End If
 Next j
@@ -1187,7 +1241,7 @@ End If
 nOut = 0
 Select Case sKind
     Case "S"
-        Call FromSpell(n, 0, NO_MAX, ",", 0, 0, ",", 0)
+        Call FromSpell(n, 0, NO_MAX, ",", 0, 0, 0, ",", 0)
     Case "C", "G"   'room command block / NPC greet block: top-level command lines
         nIdx = TBIndex(n)
         If nIdx > 0 Then
@@ -1199,9 +1253,9 @@ Select Case sKind
                     If IsCommandLine(sCmd) Then
                         nFirst = nOut
                         If sKind = "C" Then
-                            Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, 0, ",", sCmd, True, nLine)
+                            Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, 0, 0, ",", sCmd, True, nLine)
                         Else
-                            Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, 0, ",t" & n & ",", "", False, nLine)
+                            Call FromOps(sOps, nOps, 0, NO_MAX, ",", 0, 0, 0, ",t" & n & ",", "", False, nLine)
                         End If
                         For k = nFirst To nOut - 1   'for route labels (FromOps' random rollback is already done)
                             tOut(k).Cmd = sCmd
@@ -1230,13 +1284,14 @@ End Sub
 '=============================================================== edges
 
 Private Sub AddEdge(ByVal nFrom As Long, ByVal nTo As Long, ByVal nMin As Long, ByVal nMax As Long, _
-    ByVal nGroup As Long, ByVal nKind As Byte, ByVal nDir As Byte, ByVal sLabel As String, ByVal nCoin As Long)
+    ByVal nGroup As Long, ByVal nKind As Byte, ByVal nDir As Byte, ByVal sLabel As String, ByVal nCoin As Long, _
+    ByVal nWait As Long)
 If nFrom = 0 Or nTo = 0 Then Exit Sub
 If nEdges = 0 Then
     ReDim eFrom(1 To 65536): ReDim eTo(1 To 65536): ReDim eMin(1 To 65536)
     ReDim eMax(1 To 65536): ReDim eGroup(1 To 65536)
     ReDim eKind(1 To 65536): ReDim eDir(1 To 65536): ReDim eLabel(1 To 65536)
-    ReDim eCoin(1 To 65536)
+    ReDim eCoin(1 To 65536): ReDim eWait(1 To 65536)
 End If
 nEdges = nEdges + 1
 If nEdges > UBound(eFrom) Then
@@ -1245,9 +1300,10 @@ If nEdges > UBound(eFrom) Then
     ReDim Preserve eGroup(1 To nEdges * 2)
     ReDim Preserve eKind(1 To nEdges * 2): ReDim Preserve eDir(1 To nEdges * 2)
     ReDim Preserve eLabel(1 To nEdges * 2): ReDim Preserve eCoin(1 To nEdges * 2)
+    ReDim Preserve eWait(1 To nEdges * 2)
 End If
 eFrom(nEdges) = nFrom: eTo(nEdges) = nTo: eMin(nEdges) = nMin: eMax(nEdges) = nMax: eGroup(nEdges) = nGroup
-eKind(nEdges) = nKind: eDir(nEdges) = nDir: eCoin(nEdges) = nCoin
+eKind(nEdges) = nKind: eDir(nEdges) = nDir: eCoin(nEdges) = nCoin: eWait(nEdges) = nWait
 If LenB(sLabel) > 0 Then eLabel(nEdges) = sLabel   'plain exits stay unallocated
 End Sub
 
@@ -1274,7 +1330,8 @@ For i = nStart To nStart + nCount - 1
             Case EK_NPC: sLabel = sLabelPrefix & "|" & tPool(i).Cmd
             Case Else: sLabel = sLabelPrefix
         End Select
-        Call AddEdge(nFromIdx, nTo, tPool(i).MinLvl, tPool(i).MaxLvl, nGroup, nKind, NO_DIR, sLabel, tPool(i).Price)
+        Call AddEdge(nFromIdx, nTo, tPool(i).MinLvl, tPool(i).MaxLvl, nGroup, nKind, NO_DIR, sLabel, tPool(i).Price, _
+            tPool(i).Wait)
     End If
 Next i
 End Sub
@@ -1379,7 +1436,7 @@ For i = 1 To nRooms
         If ParseExit(rExit(j, i), nMap, nRoom, sRest) Then
             Call ExitLevel(sRest, nMin, nMax)
             Call AddEdge(i, RoomIndex(nMap, nRoom), nMin, nMax, 0, EK_EXIT, CByte(j), ExitRestriction(sRest), _
-                ExitToll(sRest))
+                ExitToll(sRest), 0)
         End If
     Next j
     If rSpell(i) <> 0 Then
@@ -1424,9 +1481,11 @@ For m = 1 To nMons
 Next m
 
 'Teleport spells that need a room item ('roomitem N') only work where that item is,
-'e.g. potion of levitation at the waterfall (3/1) -> 9/1009.
+'e.g. potion of levitation at the waterfall (3/1) -> 9/1009. Not for spells only other spells cast: the jails'
+'release spell needs the jail cell item too, but only a sentence wearing off casts it.
 For s = 1 To nSpells
-    Call ChainOutputs("S", spNum(s), nStart, nCount)
+    nCount = 0
+    If Not spSpellOnly(s) Then Call ChainOutputs("S", spNum(s), nStart, nCount)
     For k = nStart To nStart + nCount - 1
         If tPool(k).Map <> 0 Then
             nTo = RoomIndex(tPool(k).Map, tPool(k).Room)
@@ -1454,7 +1513,8 @@ For s = 1 To nSpells
                     Next j
                     If Not dHold Is Nothing Then
                         For Each vR In dHold.Keys
-                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0, EK_ITEMSPELL, NO_DIR, spNum(s) & "|" & sItemList, tPool(k).Price)
+                            Call AddEdge(CLng(vR), nTo, nMin, nMax, 0, EK_ITEMSPELL, NO_DIR, spNum(s) & "|" & sItemList, _
+                                tPool(k).Price, tPool(k).Wait)
                         Next vR
                     End If
                 End If
@@ -1831,6 +1891,8 @@ End Sub
 
 'Cheapest paths from nSeeds(1..nSeedCount) for ReachRoute: Dijkstra over rooms keyed on steps, plus
 'ROUTE_COIN_COST per coin-costing step when bAvoidCoin (fewest toll/price steps first, then fewest steps).
+'Either way a coin-costing step also counts as RouteCoinWeight extra steps and a step that waits on a spell's
+'duration as one per round (eWait), so a costly or slow shortcut loses to a slightly longer walk.
 'Edges are usable when bIgnoreLevel or their level range includes L; random groups when grpOK and (bIgnoreLevel
 'or every edge of the group allows L). visited(room) = 1 when reached, parentEdge() = edge of the chosen path
 '(0 at a seed), dist() = its step count, cost() = its key (ROUTE_INF when not reached). Seeds start at 0 in
@@ -1840,7 +1902,7 @@ Private Sub RouteSearch(nSeeds() As Long, ByVal nSeedCount As Long, ByVal L As L
     ByVal bAvoidCoin As Boolean, visited() As Long, parentEdge() As Long, dist() As Long, cost() As Long)
 Dim bLvlOK() As Boolean, g As Long, e As Long, i As Long, j As Long, nPass As Long
 Dim hKey() As Long, hSeq() As Long, hNode() As Long, nHeap As Long, nSeq As Long
-Dim u As Long, v As Long, nKey As Long, nNew As Long
+Dim u As Long, v As Long, nKey As Long, nNew As Long, nAdd As Long
 
 ReDim visited(1 To nRooms): ReDim parentEdge(1 To nRooms): ReDim dist(1 To nRooms)   'all 0
 ReDim cost(1 To nRooms)
@@ -1896,7 +1958,15 @@ Do While nHeap > 0
                         GoTo next_edge:
                     End If
                     nNew = nKey + 1
-                    If bAvoidCoin And eCoin(e) > 0 And nNew < ROUTE_INF - ROUTE_COIN_COST Then nNew = nNew + ROUTE_COIN_COST
+                    nAdd = eWait(e)
+                    If nAdd > 99999 Then nAdd = 99999   'well below ROUTE_COIN_COST
+                    If eCoin(e) > 0 Then
+                        nAdd = nAdd + RouteCoinWeight(e)
+                        If bAvoidCoin Then nAdd = nAdd + ROUTE_COIN_COST
+                    End If
+                    If nAdd > 0 Then
+                        If nNew < ROUTE_INF - nAdd Then nNew = nNew + nAdd
+                    End If
                     If nNew < cost(v) Then
                         cost(v) = nNew: parentEdge(v) = e: dist(v) = dist(u) + 1
                         Call HeapPush(hKey, hSeq, hNode, nHeap, nSeq, nNew, v)
@@ -2152,6 +2222,17 @@ Do While qHead <= qTail
 Loop
 End Function
 
+'Extra steps a coin-costing step counts as in RouteSearch: one per ROUTE_COIN_STEP_COPPER of its cost. Exit
+'tolls are in gold (the engine takes N x 100 copper), 'price N' in copper. Capped well below ROUTE_COIN_COST.
+Private Function RouteCoinWeight(ByVal e As Long) As Long
+If eKind(e) = EK_EXIT Then
+    RouteCoinWeight = eCoin(e) \ (ROUTE_COIN_STEP_COPPER \ 100)
+Else
+    RouteCoinWeight = eCoin(e) \ ROUTE_COIN_STEP_COPPER
+End If
+If RouteCoinWeight > 99999 Then RouteCoinWeight = 99999
+End Function
+
 'Edge has a level range (a max of LEVEL_CAP or more means no upper limit).
 Private Function EdgeHasLevel(ByVal e As Long) As Boolean
 EdgeHasLevel = (eMin(e) > 1 Or eMax(e) < LEVEL_CAP)
@@ -2214,6 +2295,7 @@ Select Case eKind(e)
 End Select
 'exits already show "(Toll: N)" in their restriction text
 If eKind(e) <> EK_EXIT And eCoin(e) > 0 Then s = s & " (price " & Format$(eCoin(e), "#,##0") & ")"
+If eWait(e) > 0 Then s = s & " (after " & Format$(eWait(e), "#,##0") & " rounds)"
 
 If EdgeHasLevel(e) Then
     nLo = eMin(e)

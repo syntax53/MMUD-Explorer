@@ -2,18 +2,14 @@
 
 MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53. It has a unique comparing feature which allows you to easily compare weapons, armour, and spells. It also has a graphical room explorer in which you can 'walk' around the realm. Other features include an inventory calculator, exp calculator, explorers for monsters/shops/weapons/armour/spells/items/races/classes, saving/loading characters, and copying data to and from the clipboard.  More info may be found here: http://www.mudinfo.net/viewforum.php?f=34  
 
-v2.3.6 (10/##/2026)  
-------------------------------------------  
-- NEW: "Route to Room" button on the Rooms map and the external map (Options) shows the route to the current room from the nearest bank, port or the Lost City, or from Bank of Godfrey when the room is one of those  
-- UP: Results window: clicking an empty area of the list no longer jumps to the selected row; a row navigates only when the selection changes  
-
-v2.3.5 (10/18/2026)  
+v2.3.5 (10/##/2026)  
 ------------------------------------------  
 - NEW: Monster reachability filter (by level) and path to monster in detail pane (Thanks Apathy)  
+- NEW: Route to Room button rooms/map shows the route to the current room from the nearest bank/POI  
 - NEW: Item references now list the room commands that give the item (e.g. pry coffin) from NMR v1.8.4+ exports (Thanks Fujin)  
 - NEW: Extra monster filters: Follow % >= and <= filters  
 - UP: Extra monster filters: "Mobs/ Lair <=" and ">=" now accept decimal values  
-- UP: Extra monster filters: "At Least" option makes the Mobs/Lair filters require X lairs with a max regen in range, instead of the average  
+- UP: Extra monster filters: "At Least" option makes the Mobs/Lair filters require X lairs with a regen in range, instead average  
 - UP: By Mob monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now considered vs evil monsters  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
@@ -29,6 +25,7 @@ v2.3.5 (10/18/2026)
 - FIX: Double-clicking a Textblock/Command row in an item's references no longer uses the item number as the default map  
 - FIX: Character paste/import: once one item matched by name was gettable, every later same-name match was treated as gettable too  
 - FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
+- FIX: Reachability routes no longer path through the jail ("bribe guard" and the jail-release teleport were treated as free shortcuts)  
 - FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
