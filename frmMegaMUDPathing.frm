@@ -29,18 +29,17 @@ Begin VB.Form frmMegaMUDPath
       Width           =   495
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "+"
       Height          =   255
       Index           =   11
       Left            =   4000
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   31
       Top             =   420
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "D"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -55,12 +54,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   9
       Left            =   3960
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   20
       Top             =   1200
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "U"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -75,12 +74,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   8
       Left            =   3240
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   21
       Top             =   1200
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "SE"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -95,12 +94,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   6
       Left            =   3960
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   22
       Top             =   960
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "S"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -115,12 +114,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   1
       Left            =   3600
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   23
       Top             =   960
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "SW"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -135,12 +134,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   7
       Left            =   3240
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   24
       Top             =   960
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "E"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -155,12 +154,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   2
       Left            =   3960
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   25
       Top             =   720
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "X"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -175,12 +174,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   10
       Left            =   3600
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   30
       Top             =   720
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "W"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -195,12 +194,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   3
       Left            =   3240
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   26
       Top             =   720
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "NE"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -215,12 +214,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   4
       Left            =   3960
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   27
       Top             =   480
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "N"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -235,12 +234,12 @@ Begin VB.Form frmMegaMUDPath
       Index           =   0
       Left            =   3600
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   28
       Top             =   480
       Width           =   375
    End
    Begin VB.CommandButton cmdMove 
-      Style           =   1  'Graphical
       Caption         =   "NW"
       BeginProperty Font 
          Name            =   "Small Fonts"
@@ -255,21 +254,21 @@ Begin VB.Form frmMegaMUDPath
       Index           =   5
       Left            =   3240
       MaskColor       =   &H80000016&
+      Style           =   1  'Graphical
       TabIndex        =   29
       Top             =   480
       Width           =   375
    End
    Begin VB.CommandButton cmdUndoNote 
-      Style           =   1  'Graphical
       Caption         =   "!"
       Height          =   315
       Left            =   8760
+      Style           =   1  'Graphical
       TabIndex        =   19
       Top             =   360
       Width           =   315
    End
    Begin VB.CommandButton cmdUndoStep 
-      Style           =   1  'Graphical
       Caption         =   "Undo Step"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -282,15 +281,16 @@ Begin VB.Form frmMegaMUDPath
       EndProperty
       Height          =   315
       Left            =   7380
+      Style           =   1  'Graphical
       TabIndex        =   18
       Top             =   360
       Width           =   1275
    End
    Begin VB.CommandButton cmdResetCurrent 
-      Style           =   1  'Graphical
       Caption         =   "Set to Current Room"
       Height          =   435
       Left            =   7200
+      Style           =   1  'Graphical
       TabIndex        =   13
       Top             =   6240
       Width           =   1875
@@ -305,28 +305,28 @@ Begin VB.Form frmMegaMUDPath
       Width           =   4155
    End
    Begin VB.CommandButton cmdGotoLast 
-      Style           =   1  'Graphical
       Caption         =   "Go to Current Posiiton"
       Height          =   435
       Left            =   4920
+      Style           =   1  'Graphical
       TabIndex        =   12
       Top             =   6240
       Width           =   2055
    End
    Begin VB.CommandButton cmdGotoStart 
-      Style           =   1  'Graphical
       Caption         =   "Go to Starting Room"
       Height          =   375
       Left            =   4920
+      Style           =   1  'Graphical
       TabIndex        =   8
       Top             =   5160
       Width           =   2055
    End
    Begin VB.CommandButton cmdResetStart 
-      Style           =   1  'Graphical
       Caption         =   "Set to Current Room"
       Height          =   375
       Left            =   7200
+      Style           =   1  'Graphical
       TabIndex        =   9
       Top             =   5160
       Width           =   1875
@@ -361,34 +361,33 @@ Begin VB.Form frmMegaMUDPath
       Width           =   4575
    End
    Begin VB.CommandButton cmdMapMoveClear 
-      Style           =   1  'Graphical
       Caption         =   "Cl&ear All"
       Height          =   375
       Left            =   2700
+      Style           =   1  'Graphical
       TabIndex        =   15
       Top             =   5700
       Width           =   1995
    End
    Begin VB.CommandButton cmdMapCopyToClip 
-      Style           =   1  'Graphical
       Caption         =   "Cop&y to Clipboard"
       Height          =   375
       Left            =   120
+      Style           =   1  'Graphical
       TabIndex        =   14
       Top             =   5700
       Width           =   2355
    End
    Begin VB.CommandButton cmdMapSwitch 
-      Style           =   1  'Graphical
       Caption         =   "&Switch to Manual Edit"
       Height          =   495
       Left            =   2700
+      Style           =   1  'Graphical
       TabIndex        =   4
       Top             =   5100
       Width           =   1995
    End
    Begin VB.CommandButton cmdMapAddMegaCodes 
-      Style           =   1  'Graphical
       Caption         =   "Add Headers and Save Path"
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -401,15 +400,16 @@ Begin VB.Form frmMegaMUDPath
       EndProperty
       Height          =   495
       Left            =   120
+      Style           =   1  'Graphical
       TabIndex        =   17
       Top             =   6180
       Width           =   4575
    End
    Begin VB.CommandButton cmdMapCommand 
-      Style           =   1  'Graphical
       Caption         =   "Enter a Manual Command in the Current Room"
       Height          =   495
       Left            =   120
+      Style           =   1  'Graphical
       TabIndex        =   3
       Top             =   5100
       Width           =   2355
@@ -554,6 +554,7 @@ End Enum
 
 Dim nLocalMapStartMap As Long
 Dim nLocalMapStartRoom As Long
+Dim dictSavedNewRooms As Dictionary 'room checksum -> code<tab>group<tab>name of new rooms in paths saved this session
 Public nLastMapRecorded As Long
 Public nLastRoomRecorded As Long
 
@@ -623,6 +624,8 @@ Dim sFileHeader(3) As String, sNeededItem As String, sPathSteps() As String
 Dim sStartingRoomChecksum As String, sEndingRoomChecksum As String
 Dim sStartRoomName As String, sEndRoomName As String
 Dim sStartRoomCode As String, sEndRoomCode As String
+Dim dictRoomCodes As Dictionary, sNewRooms As String, sOwnCode As String, sGroup As String
+Dim sNewStartInfo As String, sNewEndInfo As String
 
 txtMapMove.Text = Replace(txtMapMove.Text, vbCrLf & vbCrLf, vbCrLf)
 
@@ -669,6 +672,10 @@ MsgBox "On the next screen you will be asked to select the MegaMUD rooms.md data
     
 Set fso = CreateObject("Scripting.FileSystemObject")
 
+'every room code seen in the scanned rooms.md files (code -> "group: name") so a new code can be checked for uniqueness
+Set dictRoomCodes = New Dictionary
+dictRoomCodes.CompareMode = vbTextCompare
+
 oComDag.Filter = "Rooms.md file (Rooms.md)|Rooms.md"
 oComDag.DialogTitle = "Select MegaMUD Rooms.md File"
 oComDag.FileName = "Rooms.md"
@@ -706,7 +713,7 @@ Call WriteINI("Settings", "Last_MegaMUD_DBFolder", oFile.ParentFolder)
 Set oFile = Nothing
 
 Set oTS = fso.OpenTextFile(sFile, ForReading)
-Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum)
+Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum, dictRoomCodes)
 oTS.Close
 Set oTS = Nothing
 
@@ -718,7 +725,7 @@ If sFileHeader(1) = "" Or sFileHeader(2) = "" Then
         For Each oSubFolder In oFolder.SubFolders
             If fso.FileExists(oSubFolder.Path & "\rooms.md") Then
                 Set oTS = fso.OpenTextFile(oSubFolder.Path & "\rooms.md", ForReading)
-                Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum)
+                Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum, dictRoomCodes)
                 oTS.Close
                 Set oTS = Nothing
                 If Not sFileHeader(1) = "" And Not sFileHeader(2) = "" Then GoTo skip_room_lookup
@@ -730,7 +737,7 @@ If sFileHeader(1) = "" Or sFileHeader(2) = "" Then
                     For Each oSubFolder2 In oSubFolder.SubFolders
                         If fso.FileExists(oSubFolder2.Path & "\rooms.md") Then
                             Set oTS = fso.OpenTextFile(oSubFolder2.Path & "\rooms.md", ForReading)
-                            Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum)
+                            Call ScanRoomsDatabase(oTS, sFileHeader(), sStartRoomCode, sEndRoomCode, sStartingRoomChecksum, sEndingRoomChecksum, dictRoomCodes)
                             oTS.Close
                             Set oTS = Nothing
                             If Not sFileHeader(1) = "" And Not sFileHeader(2) = "" Then GoTo skip_room_lookup
@@ -750,26 +757,39 @@ If Not sFileHeader(1) = "" And Not sFileHeader(2) = "" Then
         & "End: " & sFileHeader(2), vbInformation
 End If
 
+Call AddSavedNewRoomCodes(dictRoomCodes)
+
 If sFileHeader(1) = "" Then
    '[FFFF:Custom Paths:" & sStartRoomName
-   sText = InputBox("START room code / group not found for " & vbCrLf & sStartRoomName & vbCrLf & vbCrLf & "Enter 4 character megamud room code to use (must be unique if new to avoid conflict).", , "FFFF")
+   Call GetSavedNewRoom(sStartingRoomChecksum, sOwnCode, sGroup)
+   sText = PromptNewMegaRoomCode("START", sStartRoomName, dictRoomCodes, sOwnCode)
    If sText = "" Then GoTo out:
+   sStartRoomCode = sText 'used for the file name
+   dictRoomCodes.item(sText) = "the new START room of this path (" & sStartRoomName & ")"
+   sNewRooms = sNewRooms & vbCrLf & sText & " - " & sStartRoomName
    sFileHeader(1) = "[" & sText & ":"
    
-   sText = InputBox("START room code / group not found for " & vbCrLf & sStartRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room.", , "Custom Rooms")
+   sText = InputBox("START room code / group not found for " & vbCrLf & sStartRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room." _
+       & IIf(sOwnCode = "", "", vbCrLf & "(group remembered from a path saved earlier this session)"), , sGroup)
    If sText = "" Then GoTo out:
    sFileHeader(1) = sFileHeader(1) & sText & ":" & sStartRoomName & "]"
+   sNewStartInfo = sStartRoomCode & vbTab & sText & vbTab & sStartRoomName
 End If
 
 If sFileHeader(2) = "" And Not sStartingRoomChecksum = sEndingRoomChecksum Then
    '[FFFF:Custom Paths:" & sEndRoomName
-   sText = InputBox("END room code / group not found for " & vbCrLf & sEndRoomName & vbCrLf & vbCrLf & "Enter 4 character megamud room code to use (must be unique if new to avoid conflict).", , "FFFF")
+   Call GetSavedNewRoom(sEndingRoomChecksum, sOwnCode, sGroup)
+   sText = PromptNewMegaRoomCode("END", sEndRoomName, dictRoomCodes, sOwnCode)
    If sText = "" Then GoTo out:
+   sEndRoomCode = sText 'used for the file name
+   sNewRooms = sNewRooms & vbCrLf & sText & " - " & sEndRoomName
    sFileHeader(2) = "[" & sText & ":"
    
-   sText = InputBox("END room code / group not found for " & vbCrLf & sEndRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room.", , "Custom Rooms")
+   sText = InputBox("END room code / group not found for " & vbCrLf & sEndRoomName & vbCrLf & vbCrLf & "Enter group name to associate with the room." _
+       & IIf(sOwnCode = "", "", vbCrLf & "(group remembered from a path saved earlier this session)"), , sGroup)
    If sText = "" Then GoTo out:
    sFileHeader(2) = sFileHeader(2) & sText & ":" & sEndRoomName & "]"
+   sNewEndInfo = sEndRoomCode & vbTab & sText & vbTab & sEndRoomName
 End If
 
 If sStartingRoomChecksum = sEndingRoomChecksum Then
@@ -836,9 +856,20 @@ Set oTS = Nothing
 Set oFile = fso.GetFile(oComDag.FileName)
 Call WriteINI("Settings", "LastMegaPathDir", oFile.ParentFolder)
 
+'remember this path's new rooms so later paths this session reuse their code/group (and other rooms can't take the code)
+If Not sNewStartInfo = "" Then dictSavedNewRooms.item(sStartingRoomChecksum) = sNewStartInfo
+If Not sNewEndInfo = "" Then dictSavedNewRooms.item(sEndingRoomChecksum) = sNewEndInfo
+
+If Not sNewRooms = "" Then
+    MsgBox "Path saved.  It defines these new room(s):" & vbCrLf & sNewRooms & vbCrLf & vbCrLf _
+        & "It is advised to import this path into MegaMUD before chaining additional paths from the new room(s). " _
+        & "However, as of v2.3.5, MME will remember previously made codes on a per-session basis and suggest to re-use them where appropriate.", vbExclamation
+End If
+
 out:
 On Error Resume Next
 Set fso = Nothing
+Set dictRoomCodes = Nothing
 Set oTS = Nothing
 Set oFile = Nothing
 Exit Sub
@@ -853,8 +884,8 @@ Resume out:
 End Sub
 
 Private Sub ScanRoomsDatabase(ByRef oTS, ByRef sFileHeader() As String, ByRef sStartRoomCode As String, ByRef sEndRoomCode As String, _
-    ByRef sStartingRoomChecksum As String, ByRef sEndingRoomChecksum As String)
-Dim sLine As String, sArr() As String
+    ByRef sStartingRoomChecksum As String, ByRef sEndingRoomChecksum As String, ByRef dictRoomCodes As Dictionary)
+Dim sLine As String, sArr() As String, sName As String, x As Long
 
 Do While oTS.AtEndOfStream = False
     '0        1        2 3 4 5    6            7
@@ -862,18 +893,99 @@ Do While oTS.AtEndOfStream = False
     sLine = oTS.ReadLine
     sArr() = Split(sLine, ":")
     If UBound(sArr()) >= 7 Then
+        sName = sArr(7)
+        For x = 8 To UBound(sArr()) 'room names may contain a colon
+            sName = sName & ":" & sArr(x)
+        Next x
+        If Not dictRoomCodes.Exists(sArr(5)) Then dictRoomCodes.Add sArr(5), sArr(6) & ": " & sName
         If sArr(0) = sStartingRoomChecksum And sFileHeader(1) = "" Then
             '[CODE:FROM ROOM GROUP:FROM ROOM NAME]
-            sFileHeader(1) = "[" & sArr(5) & ":" & sArr(6) & ":" & sArr(7) & "]"
+            sFileHeader(1) = "[" & sArr(5) & ":" & sArr(6) & ":" & sName & "]"
             sStartRoomCode = sArr(5)
         End If
         If sArr(0) = sEndingRoomChecksum And sFileHeader(2) = "" Then
             '[CODE:TO ROOM GROUP:TO ROOM NAME]
-            sFileHeader(2) = "[" & sArr(5) & ":" & sArr(6) & ":" & sArr(7) & "]"
+            sFileHeader(2) = "[" & sArr(5) & ":" & sArr(6) & ":" & sName & "]"
             sEndRoomCode = sArr(5)
         End If
     End If
 Loop
+
+End Sub
+
+Private Function PromptNewMegaRoomCode(ByVal sWhich As String, ByVal sRoomName As String, ByRef dictRoomCodes As Dictionary, _
+    ByVal sOwnCode As String) As String
+'asks for a new 4 character megamud room code, re-prompting until it is valid and not already used by another room
+'(scanned rooms.md files, new rooms in paths saved this session, or this path's START room).  sOwnCode is the code
+'this room was given in a path saved earlier this session (suggested and allowed), if any.  returns "" if canceled.
+Dim sCode As String, sPrompt As String, sTitle As String
+
+If sOwnCode = "" Then
+    sCode = NextFreeMegaRoomCode(dictRoomCodes)
+    sTitle = App.Title
+    sPrompt = sWhich & " room code / group not found for " & vbCrLf & sRoomName & vbCrLf & vbCrLf _
+        & "Enter 4 character megamud room code to use (must be unique to avoid conflict)."
+Else
+    'not in rooms.md, but given a code in a path saved earlier this session (not imported into megamud yet)
+    sCode = sOwnCode
+    sTitle = "Room Code Remembered From Earlier Path"
+    sPrompt = sWhich & " room not found in rooms.md (not imported yet):" & vbCrLf & sRoomName & vbCrLf & vbCrLf _
+        & "Code " & sOwnCode & " was given to this room in a path saved earlier this session.  " _
+        & "Keep it to match that path, or enter a different unique 4 character code."
+End If
+Do
+    sCode = InputBox(sPrompt, sTitle, sCode)
+    sCode = UCase(Trim(sCode))
+    If sCode = "" Then Exit Function
+
+    If Not sCode Like "[A-Z0-9][A-Z0-9][A-Z0-9][A-Z0-9]" Then
+        MsgBox "Room codes must be exactly 4 letters/numbers.", vbExclamation
+    ElseIf dictRoomCodes.Exists(sCode) And Not sCode = sOwnCode Then
+        MsgBox "Room code " & sCode & " is already in use by:" & vbCrLf & dictRoomCodes.item(sCode) & vbCrLf & vbCrLf _
+            & "Please choose a different code.", vbExclamation
+    Else
+        PromptNewMegaRoomCode = sCode
+        Exit Function
+    End If
+Loop
+
+End Function
+
+Private Function NextFreeMegaRoomCode(ByRef dictRoomCodes As Dictionary) As String
+'suggested code for a new room: the highest unused hex code counting down from FFFF
+Dim n As Long
+
+For n = &HFFFF& To 0 Step -1
+    NextFreeMegaRoomCode = Right$("000" & Hex$(n), 4)
+    If Not dictRoomCodes.Exists(NextFreeMegaRoomCode) Then Exit Function
+Next n
+NextFreeMegaRoomCode = "FFFF"
+
+End Function
+
+Private Sub AddSavedNewRoomCodes(ByRef dictRoomCodes As Dictionary)
+'new rooms in paths saved earlier this session aren't in rooms.md until that path is imported, so their codes are taken too
+Dim vKey As Variant, sArr() As String
+
+If dictSavedNewRooms Is Nothing Then Set dictSavedNewRooms = New Dictionary
+For Each vKey In dictSavedNewRooms.keys
+    sArr() = Split(dictSavedNewRooms.item(vKey), vbTab)
+    If Not dictRoomCodes.Exists(sArr(0)) Then dictRoomCodes.Add sArr(0), sArr(2) & " (new room in a path saved earlier this session)"
+Next vKey
+
+End Sub
+
+Private Sub GetSavedNewRoom(ByVal sChecksum As String, ByRef sCode As String, ByRef sGroup As String)
+'code/group this room was given in a path saved earlier this session (blank code and default group if none)
+Dim sArr() As String
+
+sCode = ""
+sGroup = "Custom Rooms"
+If dictSavedNewRooms Is Nothing Then Exit Sub
+If Not dictSavedNewRooms.Exists(sChecksum) Then Exit Sub
+sArr() = Split(dictSavedNewRooms.item(sChecksum), vbTab)
+sCode = sArr(0)
+sGroup = sArr(1)
 
 End Sub
 

@@ -1,5 +1,5 @@
-frmMain = 52, 52, 1608, 924, , 26, 26, 1582, 898, C
-modMain = 104, 104, 1660, 976, Z
+frmMain = 52, 52, 1608, 924, C, 26, 26, 1582, 898, C
+modMain = 104, 104, 1660, 976, C
 frmLoad = 260, 260, 2004, 1106, C, 286, 286, 1842, 971, C
 modSettings = 260, 260, 2004, 1106, C
 modTheme = 52, 52, 1796, 924, C
@@ -27,7 +27,7 @@ frmNotepad = 0, 0, 0, 0, C, 312, 312, 1868, 997, C
 modMenuSubClass = 0, 0, 1889, 685, C
 clsMonsterAttackSim = 156, 156, 1712, 1028, C
 frmMonsterAttackSim = 182, 182, 1738, 1054, C, 364, 364, 1920, 1210, C
-frmMegaMUDPath = 0, 0, 0, 0, C, 182, 182, 1738, 1054, C
+frmMegaMUDPath = 26, 26, 1770, 898, Z, 182, 182, 1738, 1054, C
 frmSpellBook = 104, 104, 1848, 950, C, 390, 390, 1946, 1236, C
 modMonitors = 26, 26, 1874, 711, C
 frmPasteChar = 78, 78, 1822, 950, C, 78, 78, 1634, 763, C
