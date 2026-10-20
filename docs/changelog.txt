@@ -1,4 +1,4 @@
-v2.3.5 (10/18/2026)  
+v2.3.5 (10/##/2026)  
 ------------------------------------------------------------------------------------  
 - NEW: Monster reachability filter (by level) and path to monster in detail pane (Thanks Apathy)  
 - NEW: Route to Room button rooms/map shows the route to the current room from the nearest bank/POI  
@@ -21,6 +21,7 @@ v2.3.5 (10/18/2026)
 - FIX: Double-clicking a Textblock/Command row in an item's references no longer uses the item number as the default map  
 - FIX: Character paste/import: once one item matched by name was gettable, every later same-name match was treated as gettable too  
 - FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
+- FIX: Reachability routes no longer path through the jail ("bribe guard" and the jail-release teleport were treated as free shortcuts)  
 - FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
