@@ -2,14 +2,17 @@ v2.3.5 (10/##/2026)
 ------------------------------------------------------------------------------------  
 - NEW: Monster reachability filter (by level) and path to monster in detail pane (Thanks Apathy)  
 - NEW: Route to Room button rooms/map shows the route to the current room from the nearest bank/POI  
-- NEW: Item references now list the room commands that give the item (e.g. pry coffin) from NMR v1.8.4+ exports (Thanks Fujin)  
+- NEW: Item references now list the room command sources (e.g. pry coffin) from NMR v1.8.4+ exports (Thanks Fujin)  
 - NEW: Extra monster filters: Follow % >= and <= filters  
 - UP: Extra monster filters: "Mobs/ Lair <=" and ">=" now accept decimal values  
-- UP: Extra monster filters: "At Least" option makes the Mobs/Lair filters require X lairs with a regen in range, instead average  
+- UP: Extra monster filters: "At Least" option turns Mobs per Lair into "require at X lairs within range of min/max"  
 - UP: By Mob monster filters are now saved to the character file and restored after clearing the monster filter  
 - UP: GreaterMUD: Vile Ward from equipment and bless spells is now considered vs evil monsters  
 - UP: GreaterMUD: Monster attack sim and dodge calculations now use the class-based hit/dodge caps  
 - UP: GreaterMUD: Hit calculator now checks the Shadow box for a character with shadow and shows proper AC value  
+- UP: MegaMUD pathing: new room codes are now suggested, verified to be available, and considers paths saved this session  
+- FIX: MegaMUD pathing: saved path file name now uses the new room code entered instead of part of the room hash  
+- FIX: MegaMUD pathing: rooms.md room names containing a colon are no longer cut off in the saved path  
 - FIX: Critical hit chance now allows for negative values from sub-par stats  
 - FIX: Quick & Deadly bonus now calculated correctly with respect to 6 maximum swings in GreaterMUD  
 - FIX: Kick/Jumpkick critical hit damage now includes the kick/jumpkick damage multiplier in GreaterMUD  
@@ -19,13 +22,12 @@ v2.3.5 (10/##/2026)
 - FIX: Map's "Find room with Exits" window broken after setting attack (frame visibility issue)  
 - FIX: Map's "What Leads Here" now finds teleports reached through a textblock's random command  
 - FIX: Double-clicking a Textblock/Command row in an item's references no longer uses the item number as the default map  
-- FIX: Character paste/import: once one item matched by name was gettable, every later same-name match was treated as gettable too  
+- FIX: Character paste: once one item matched by name was gettable, every later same-name match was treated as gettable  
 - FIX: Monster spawn locations read from truncated database references (e.g. "Room 14/62+") no longer produce bogus rooms  
-- FIX: Reachability routes no longer path through the jail ("bribe guard" and the jail-release teleport were treated as free shortcuts)  
 - FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
-- FIX: Monster Mobs/Spwn column and lair spawn chance going blank (until a reload) after the database connection was automatically reopened  
+- FIX: Monster Mobs/Spwn column and lair spawn chance going blank (until a reload) after the database reconnected  
 
 v2.3.4 (09/06/2026)  
 ------------------------------------------------------------------------------------  
