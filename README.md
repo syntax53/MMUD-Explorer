@@ -29,6 +29,7 @@ v2.3.5 (10/##/2026)
 - FIX: Double-clicking a greet/textblock row in the compare pane's monster details opened the main pane's selection instead  
 - FIX: GreaterMUD: Monster attacks no longer gain accuracy/damage from the monster's weapon or drop items  
 - FIX: Prot. Evil in the monster attack sim now only applies vs evil monsters  
+- FIX: Monster Mobs/Spwn column and lair spawn chance going blank (until a reload) after the database connection was automatically reopened  
 
 v2.3.4 (09/06/2026)  
 ------------------------------------------  
