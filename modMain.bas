@@ -19,6 +19,7 @@ Global bHideRecordNumbers As Boolean
 Global bMobPrintCharDamageOutFirst As Boolean
 Global bOnlyInGame As Boolean
 Global nGlobalMonsterSimRounds As Long
+Global nRouteWaypointInterval As Long
 Global bCharLoaded As Boolean
 Global bStartup As Boolean
 Global bDontSyncSplitters As Boolean
@@ -49,6 +50,8 @@ Global nGlobalCharAccyItems As Long
 Global nGlobalCharAccyAbils As Long
 Global nGlobalCharAccyOther As Long
 Global nGlobalCharPlusDodge As Long
+Global nGlobalCharVileWard As Long 'GreaterMUD: raw vile ward from gear (tenths, like item AC) -- use GetCharActiveVileWard()
+Global nGlobalCharShadowAC As Long 'shadow bonus (0 or 10) already folded into the AC stat; the hit calc splits it back out
 Global nGlobalCharPlusMR As Long
 Global nGlobalCharQnDbonus As Long
 Global nGlobalCharSavedWeaponNumber As Long
@@ -99,8 +102,11 @@ Global filter_Monster_nAtkAccuracyMaj As Long
 Global filter_Monster_nAtkAccuracyMax As Long
 Global filter_Monster_nDodge As Long
 Global filter_Monster_nNumLairs As Long
-Global filter_Monster_nNumMobsLTE As Long
-Global filter_Monster_nNumMobsGTE As Long
+Global filter_Monster_nNumMobsLTE As Double
+Global filter_Monster_nNumMobsGTE As Double
+Global filter_Monster_nFollowGTE As Long
+Global filter_Monster_nFollowLTE As Long
+Global filter_Monster_nAtLeastLairs As Long
 
 'Index / 0=abil, 1=operator, 2=value
 Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
@@ -108,6 +114,8 @@ Global filter_Monster_nAbilities(0 To 2, 0 To 2) As Long
 Global filter_Monster_bIsUndead As Boolean
 Global filter_Monster_bIsNonHostile_vEvil As Boolean
 Global filter_Monster_bIsNonHostile_vNG As Boolean
+Global filter_Monster_bReachableOnly As Boolean
+Global filter_Monster_bAtLeastLairs As Boolean
 Global filter_Monster_bDropsCash As Boolean
 Global filter_Monster_bDropsR As Boolean
 Global filter_Monster_bDropsP As Boolean
@@ -552,6 +560,35 @@ Call HandleError("RefreshCombatHealingValues")
 Resume out:
 End Sub
 
+'GreaterMUD: is the character configured as evil-aligned? (global filter on + alignment combo set to Evil)
+Public Function bCharIsEvilAligned() As Boolean
+On Error GoTo error:
+
+If frmMain.chkGlobalFilter.Value = 1 And frmMain.cmbGlobalAlignment.ListIndex = 3 Then bCharIsEvilAligned = True
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("bCharIsEvilAligned")
+Resume out:
+End Function
+
+'GreaterMUD: vile ward only counts when the character is evil-aligned (and then in full)
+Public Function GetCharActiveVileWard() As Long
+On Error GoTo error:
+
+If Not bGreaterMUD Then Exit Function
+If bCharIsEvilAligned() Then GetCharActiveVileWard = nGlobalCharVileWard
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("GetCharActiveVileWard")
+Resume out:
+End Function
+
 Public Sub SetCharDefenseDescription()
 On Error GoTo error:
 Dim sConfig As String
@@ -575,6 +612,7 @@ sConfig = sConfig & "_" & frmMain.lblInvenCharStat(27).Tag 'rfir
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(25).Tag 'rsto
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(29).Tag 'rlit
 sConfig = sConfig & "_" & frmMain.lblInvenCharStat(26).Tag 'rwat
+sConfig = sConfig & "_" & GetCharActiveVileWard() 'vile ward (gmud, evil alignment only)
 
 If sConfig <> sGlobalCharDefenseDescription Then bDontPromptCalcCharMonsterDamage = False
 sGlobalCharDefenseDescription = sConfig
@@ -2237,6 +2275,323 @@ error:
 Call HandleError("AddRoomNPCCommandRefs")
 Resume out:
 End Sub
+
+'route rows under the "Reachable" detail row: start, a waypoint every nRouteWaypointInterval steps
+'(first 10 shown), then the destination. sDblClickWord = the detail text to double-click for the full route
+'("" = no full route to offer, so the "more waypoints" row gets no double-click hint).
+Private Sub AddRouteRows(DetailLV As ListView, ByVal nSourceMap As Long, ByVal nSourceRoom As Long, _
+    ByVal sSourceName As String, nStepMap() As Long, nStepRoom() As Long, ByVal nSteps As Long, _
+    Optional ByVal sDblClickWord As String = "Yes")
+On Error GoTo error:
+Dim oLI As ListItem, i As Long, nInterval As Long, nShown As Long, nMore As Long
+
+nInterval = nRouteWaypointInterval
+If nInterval < 1 Then nInterval = 25
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+oLI.Tag = "room"
+oLI.ListSubItems.Add (1), "Detail", "start: " & sSourceName _
+    & IIf(bHideRecordNumbers, "", " (" & nSourceMap & "/" & nSourceRoom & ")")
+oLI.ListSubItems(1).Tag = nSourceMap & "/" & nSourceRoom
+
+For i = nInterval To nSteps - 1 Step nInterval
+    If nShown < 10 Then
+        Set oLI = DetailLV.ListItems.Add()
+        oLI.Text = ""
+        oLI.Tag = "room"
+        oLI.ListSubItems.Add (1), "Detail", i & ": " & GetRoomName(, nStepMap(i), nStepRoom(i), bHideRecordNumbers)
+        oLI.ListSubItems(1).Tag = nStepMap(i) & "/" & nStepRoom(i)
+        nShown = nShown + 1
+    Else
+        nMore = nMore + 1
+    End If
+Next i
+
+If nMore > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.ListSubItems.Add (1), "Detail", "... plus " & nMore & " more waypoint" & IIf(nMore = 1, "", "s") _
+        & IIf(sDblClickWord = "", "", " (double-click " & sDblClickWord & " for the full route)")
+End If
+
+If nSteps > 0 Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+    oLI.Tag = "room"
+    oLI.ListSubItems.Add (1), "Detail", nSteps & ": " & GetRoomName(, nStepMap(nSteps), nStepRoom(nSteps), bHideRecordNumbers)
+    oLI.ListSubItems(1).Tag = nStepMap(nSteps) & "/" & nStepRoom(nSteps)
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRouteRows")
+Resume out:
+End Sub
+
+'detail row after the route rows offering ReachRoute's alternate route (double-click: frmMain.ShowMonsterRoute
+'with bAltRoute); sWhere = text after the route kind ("" or " past the level gate")
+Private Sub AddRouteAltRow(DetailLV As ListView, ByVal sWhere As String, ByVal nAltSteps As Long, _
+    ByVal nAltCoinSteps As Long, ByVal sAltSourceName As String, ByVal nCoinSteps As Long)
+On Error GoTo error:
+Dim oLI As ListItem
+
+Set oLI = DetailLV.ListItems.Add()
+oLI.Text = ""
+oLI.Tag = "reach_route_alt"
+oLI.ListSubItems.Add (1), "Detail", RouteKindText(nAltCoinSteps, nCoinSteps) & sWhere & ": " & nAltSteps _
+    & " step" & IIf(nAltSteps = 1, "", "s") & " from " & sAltSourceName _
+    & IIf(nAltCoinSteps > 0, ", " & RouteCoinText(nAltCoinSteps), "") & " (double-click to view)"
+oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRouteAltRow")
+Resume out:
+End Sub
+
+'"1 toll/fee" / "N tolls/fees": coin-costing steps on a route (ReachRoute nCoinSteps)
+Public Function RouteCoinText(ByVal nCoinSteps As Long) As String
+RouteCoinText = nCoinSteps & IIf(nCoinSteps = 1, " toll/fee", " tolls/fees")
+End Function
+
+'what sets a route apart from the other one when ReachRoute offers an alternate (the one with more coin-costing
+'steps is always the shorter): "Coin-free route", "Shorter route" or "Route with fewer tolls/fees"
+Public Function RouteKindText(ByVal nCoinSteps As Long, ByVal nOtherCoinSteps As Long) As String
+If nCoinSteps = 0 Then
+    RouteKindText = "Coin-free route"
+ElseIf nCoinSteps > nOtherCoinSteps Then
+    RouteKindText = "Shorter route"
+Else
+    RouteKindText = "Route with fewer tolls/fees"
+End If
+End Function
+
+'route step label (modReachability.ReachRoute) with its raw spell/item/class/race/toll numbers replaced by
+'names, record numbers per bHideRecordNumbers -- e.g. "go N (Key: 1076)" -> "go N (Key: silver key (1076))".
+'Only the listed prefixes are touched, so "(m/r)" room references and other digits are left alone.
+Public Function FormatRouteLabel(ByVal s As String) As String
+On Error GoTo error:
+Dim x As Long, y As Long, a As Long, b As Long, sWord As String, sNew As String
+
+s = RouteLabelNames(s, "spell #", 2)
+s = RouteLabelNames(s, "item #", 1)
+s = RouteLabelNames(s, "(Key: ", 1)
+s = RouteLabelNames(s, "(Item: ", 1)
+s = RouteLabelNames(s, "(Ticket/Item: ", 1)
+s = RouteLabelNames(s, "(Spell Trap: ", 2)
+s = RouteLabelNames(s, "(Toll: ", 3)
+If InStr(1, s, "(Cast: ") > 0 Then
+    s = RouteLabelNames(s, "pre-", 2)
+    s = RouteLabelNames(s, "post-", 2)
+End If
+
+'(Class: a OK, b NO) / (Race: a OK, b NO) -> the map's exit-text wording (see MapMapExits)
+For y = 1 To 2
+    If y = 1 Then sWord = "Class" Else sWord = "Race"
+    x = InStr(1, s, "(" & sWord & ": ")
+    If x > 0 Then
+        a = ExtractValueFromString(s, "(" & sWord & ": ")
+        b = ExtractValueFromString(s, "(" & sWord & ": " & a & " OK, ")
+        If a > 0 And b = 0 Then
+            sNew = "(" & sWord & " Only: " & RouteLabelClassRace(y, a)
+        ElseIf a > 0 And b > 0 Then
+            sNew = "(" & sWord & " OK: " & RouteLabelClassRace(y, a) & ", " & sWord & " NO: " & RouteLabelClassRace(y, b)
+        ElseIf b > 0 Then
+            sNew = "(NOT " & sWord & ": " & RouteLabelClassRace(y, b)
+        Else
+            sNew = "(" & sWord & "?"
+        End If
+        sNew = sNew & ")"
+        'replace through the closing paren of the original text
+        b = InStr(x, s, ")")
+        If b = 0 Then b = Len(s)
+        s = Left$(s, x - 1) & sNew & mid$(s, b + 1)
+    End If
+Next y
+
+out:
+FormatRouteLabel = s
+Exit Function
+error:
+Call HandleError("FormatRouteLabel")
+Resume out:
+End Function
+
+'every "<sPrefix><digits>" in s gets the digits replaced by a name: nKind 1 = item, 2 = spell, 3 = toll (gold)
+Private Function RouteLabelNames(ByVal s As String, ByVal sPrefix As String, ByVal nKind As Long) As String
+On Error GoTo error:
+Dim x As Long, y As Long, nNum As Long, sName As String
+
+x = InStr(1, s, sPrefix)
+Do While x > 0
+    y = x + Len(sPrefix)
+    Do While y <= Len(s)
+        If InStr(1, "0123456789", mid$(s, y, 1)) = 0 Then Exit Do
+        y = y + 1
+    Loop
+    'at most 9 digits so val() can't overflow the Long
+    If y > x + Len(sPrefix) And y - x - Len(sPrefix) <= 9 Then
+        nNum = val(mid$(s, x + Len(sPrefix), y - x - Len(sPrefix)))
+        Select Case nKind
+            Case 1: sName = GetItemName(nNum, bHideRecordNumbers)
+            Case 2: If nNum = 0 Then sName = "none" Else sName = GetSpellName(nNum, bHideRecordNumbers)
+            Case 3: sName = Format$(nNum, "#,##0") & " gold"
+            Case Else: sName = CStr(nNum)
+        End Select
+        s = Left$(s, x + Len(sPrefix) - 1) & sName & mid$(s, y)
+        x = InStr(x + Len(sPrefix) + Len(sName), s, sPrefix)
+    Else
+        x = InStr(x + Len(sPrefix), s, sPrefix)
+    End If
+Loop
+
+out:
+RouteLabelNames = s
+Exit Function
+error:
+Call HandleError("RouteLabelNames")
+Resume out:
+End Function
+
+'class (nKind 1) or race (nKind 2) name + "(n)" unless bHideRecordNumbers, as MapMapExits writes them
+Private Function RouteLabelClassRace(ByVal nKind As Long, ByVal nNum As Long) As String
+If nKind = 1 Then
+    RouteLabelClassRace = GetClassName(nNum)
+Else
+    RouteLabelClassRace = GetRaceName(nNum)
+End If
+If Not bHideRecordNumbers Then RouteLabelClassRace = RouteLabelClassRace & "(" & nNum & ")"
+End Function
+
+'the "Reachable" detail rows of PullMonsterDetail (reachability from Bank of Godfrey at the character's level,
+'see modReachability): the status row, its route rows, an alternate-route row and a trailing blank row.
+'May move tabRooms/tabMonsters.
+Private Sub AddMonsterReachRows(ByVal nMonsterNum As Long, DetailLV As ListView)
+On Error GoTo error:
+Dim oLI As ListItem
+Dim eReach As ReachStatus, nReachLevel As Long, nReachGateMap As Long, nReachGateRoom As Long, sReachReason As String
+Dim nReachDestMap As Long, nReachDestRoom As Long, nReachMinLvl As Long, nReachMaxLvl As Long, bReachRandomGroup As Boolean
+Dim nReachableAtLvl As Long, bReachRowAdded As Boolean, bReachRoute As Boolean, bFullRoute As Boolean
+Dim nRouteSrcMap As Long, nRouteSrcRoom As Long, sRouteSrcName As String, nRouteSteps As Long
+Dim nRouteStepMap() As Long, nRouteStepRoom() As Long, nRouteStepFlags() As Long, sRouteStepLabel() As String
+Dim nRouteCoin As Long, nRouteAltSteps As Long, nRouteAltCoin As Long, sRouteAltSrcName As String
+Dim nFullCoin As Long, nFullAltSteps As Long, nFullAltCoin As Long, sFullAltSrcName As String, sHelpText As String
+
+If Not ReachIsComputed() Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = "Reachable"
+    oLI.Tag = "reach_compute"
+    oLI.ForeColor = TColor(&H80000015)
+    oLI.ListSubItems.Add (1), "Detail", "(double-click to compute)"
+    oLI.ListSubItems(1).ForeColor = TColor(&H80000015)
+    bReachRowAdded = True
+Else
+    sHelpText = " - Double-Click for Detail"
+    nReachLevel = val(frmMain.txtGlobalLevel(0).Text)
+    eReach = ReachMonsterInfo(nMonsterNum, nReachLevel, False, nReachGateMap, nReachGateRoom, _
+        nReachDestMap, nReachDestRoom, nReachMinLvl, nReachMaxLvl, bReachRandomGroup, nReachableAtLvl)
+    Select Case eReach
+        Case reachYes:
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, False, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&H8000&)
+            If bReachRoute Then
+                oLI.Tag = "reach_route"
+                oLI.ListSubItems.Add (1), "Detail", "Yes (" & nRouteSteps & " step" & IIf(nRouteSteps = 1, "", "s") _
+                    & " from " & sRouteSrcName & IIf(nRouteCoin > 0, ", " & RouteCoinText(nRouteCoin), "") & ")" & sHelpText
+            Else
+                oLI.ListSubItems.Add (1), "Detail", "Yes" & sHelpText
+            End If
+            oLI.ListSubItems(1).ForeColor = TColor(&H8000&)
+            bReachRowAdded = True
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, "Yes")
+                If nRouteAltSteps > 0 Then
+                    Call AddRouteAltRow(DetailLV, "", nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName, nRouteCoin)
+                End If
+            End If
+
+        Case reachNoGate:
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No, no known path from Bank of Godfrey"
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+        Case reachNo:
+            If bReachRandomGroup Then
+                sReachReason = "random teleport (unusable)"
+            ElseIf nReachLevel < nReachMinLvl Then
+                sReachReason = "needs Level " & nReachMinLvl & IIf(nReachMaxLvl > 0, " to " & nReachMaxLvl, "+")
+                If nReachableAtLvl = 0 Then sReachReason = sReachReason & " (still blocked at higher levels)"
+            Else
+                sReachReason = "level too high (Level " & nReachMinLvl & " to " & nReachMaxLvl & ")"
+            End If
+            'the gate shown is the nearest one, not the lowest: a gate behind it, or another path, sets the level
+            'the monster actually becomes reachable at (higher or lower than this gate's)
+            If nReachableAtLvl > 0 And (bReachRandomGroup Or nReachableAtLvl <> nReachMinLvl) Then
+                sReachReason = sReachReason & " (reachable from Level " & nReachableAtLvl & ")"
+            End If
+
+            'the full route past the gate is what double-clicking the No row opens (frmMain.ShowMonsterRoute),
+            'so only tag the row when that route exists
+            bFullRoute = ReachRoute(nMonsterNum, nReachLevel, False, True, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nFullCoin, nFullAltSteps, nFullAltCoin, sFullAltSrcName)
+
+            Set oLI = DetailLV.ListItems.Add()
+            oLI.Text = "Reachable"
+            If bFullRoute Then oLI.Tag = "reach_route"
+            oLI.ForeColor = TColor(&HC0&)
+            oLI.ListSubItems.Add (1), "Detail", "No - blocked by " _
+                & GetRoomName(, nReachGateMap, nReachGateRoom, bHideRecordNumbers) & ", " & sReachReason
+            oLI.ListSubItems(1).ForeColor = TColor(&HC0&)
+            bReachRowAdded = True
+
+            'route to the room holding the blocking gate (the double-click hint only when the full route exists)
+            bReachRoute = ReachRoute(nMonsterNum, nReachLevel, True, False, False, nRouteSrcMap, nRouteSrcRoom, _
+                sRouteSrcName, nRouteStepMap, nRouteStepRoom, nRouteStepFlags, sRouteStepLabel, nRouteSteps, _
+                nRouteCoin, nRouteAltSteps, nRouteAltCoin, sRouteAltSrcName)
+            If bReachRoute Then
+                Call AddRouteRows(DetailLV, nRouteSrcMap, nRouteSrcRoom, sRouteSrcName, _
+                    nRouteStepMap, nRouteStepRoom, nRouteSteps, IIf(bFullRoute, "No", ""))
+            End If
+
+            'the full route past the gate may have an alternate (see ReachRoute)
+            If bFullRoute And nFullAltSteps > 0 Then
+                Call AddRouteAltRow(DetailLV, " past the level gate", nFullAltSteps, nFullAltCoin, _
+                    sFullAltSrcName, nFullCoin)
+            End If
+
+        'reachUnknown: not computed / monster not located -- show nothing
+    End Select
+End If
+If bReachRowAdded Then
+    Set oLI = DetailLV.ListItems.Add()
+    oLI.Text = ""
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddMonsterReachRows")
+Resume out:
+End Sub
+
 Public Sub PullMonsterDetail(nMonsterNum As Long, DetailLV As ListView, Optional ByVal nLookupLimit = 100)
 Dim sAbil As String, x As Integer, y As Integer, sTemp As String, sTemp2 As String, sExpEa As String
 Dim sCash As String, nCash As Currency, nPercent As Integer, nTemp As Long, tExpInfo As tExpPerHourInfo
@@ -3329,7 +3684,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                                 nCalcDamageMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, nCalcElementalResist(0), nCalcElementalResist(1), _
                                 nCalcElementalResist(2), nCalcElementalResist(3), nCalcElementalResist(5))
                 
-                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nCalcSpellImmuLVL)) Then
+                If nCalcSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel >= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel >= nCalcSpellImmuLVL)) Then
                     If eAttackFlags = AR000_Unknown Then
                         If SpellSeek(nGlobalAttackSpellNum) Then
                             For x = 0 To 9
@@ -3370,7 +3725,7 @@ For iAttack = 1 To IIf(tAvgLairInfo.nTotalLairs > 0, 2, 1) 'And frmMain.optMonst
                     nDamageOut = 0
                     nFirstRoundDamageOut = 0
                     nMinDamageOut = 0
-                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel <= nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
+                    If (nCalcSpellImmuLVL > 0 And ((tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel < nCalcSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel < nCalcSpellImmuLVL))) Then sImmuTXT = AutoAppend(sImmuTXT, "SpellImmuLVL", "+")
                     If ((eAttackFlags And AR023_Undead) <> 0 And (DF_Flags And DF023_IsUndead) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotUndead", "+")
                     If ((eAttackFlags And AR080_Animal) <> 0 And (DF_Flags And DF078_IsAnimal) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotAnimal", "+")
                     If ((eAttackFlags And AR108_Living) <> 0 And (DF_Flags And DF109_IsLiving) = 0) Then sImmuTXT = AutoAppend(sImmuTXT, "NotLiving", "+")
@@ -3780,10 +4135,12 @@ If tAvgLairInfo.nTotalLairs > 0 Then
         oLI.ListSubItems.Add (1), "Detail", tAvgLairInfo.nRTK & " RTK/mob, " & tAvgLairInfo.nRTC & " RTC/lair"
     End If
     
-    If tAvgLairInfo.nRTC > 1 Or tAvgLairInfo.nAvgDmg <> tAvgLairInfo.nAvgDmgLair Then
+    If tAvgLairInfo.nRTC > 1 Or tAvgLairInfo.nAvgDmg <> tAvgLairInfo.nAvgDmgClearRound Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "AVG DMG/clear"
-        oLI.ListSubItems.Add (1), "Detail", PutCommas(tAvgLairInfo.nAvgDmgLair) & "/round, " & PutCommas(Round(tAvgLairInfo.nAvgDmgLair * tAvgLairInfo.nRTC)) & "/clear (average damage taken, before any healing)"
+        sTemp = PutCommas(tAvgLairInfo.nAvgDmgClearRound) & "/round"
+        If tAvgLairInfo.nAvgDmgClear > 0 Then sTemp = sTemp & ", " & PutCommas(tAvgLairInfo.nAvgDmgClear) & "/clear"
+        oLI.ListSubItems.Add (1), "Detail", sTemp & " (average damage taken, before any healing)"
     End If
     
     If tAvgLairInfo.nAvgDelay > 0 And tAvgLairInfo.nMaxRegen > 0 Then
@@ -3894,12 +4251,12 @@ If tAvgLairInfo.nTotalLairs > 0 Then
     If tAvgLairInfo.nSpellImmuLVL + tAvgLairInfo.nMaxSpellImmuLVL > 0 Then
         Set oLI = DetailLV.ListItems.Add()
         oLI.Text = "Effective SpellImmu"
-        sTemp = tAvgLairInfo.nSpellImmuLVL & " (immune to spells <= level " & tAvgLairInfo.nSpellImmuLVL & ")"
+        sTemp = tAvgLairInfo.nSpellImmuLVL & " (immune to spells < level " & tAvgLairInfo.nSpellImmuLVL & ")"
         If tAvgLairInfo.nMaxSpellImmuLVL > tAvgLairInfo.nSpellImmuLVL Then sTemp = sTemp & " - Max SpellImmu in lairs: " & tAvgLairInfo.nMaxSpellImmuLVL
         oLI.ListSubItems.Add (1), "Detail", sTemp
         
         If nGlobalAttackSpellNum > 0 And (nGlobalAttackTypeMME = a2_Spell Or nGlobalAttackTypeMME = a3_SpellAny) Then
-            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel <= tAvgLairInfo.nMaxSpellImmuLVL) Then
+            If (tSpellcast.nRequiredLevel > 0 And tSpellcast.nRequiredLevel < tAvgLairInfo.nMaxSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > 0 And tSpellcast.nCastLevel < tAvgLairInfo.nMaxSpellImmuLVL) Then
                 oLI.ForeColor = TColor(RGB(204, 0, 0))
                 oLI.ListSubItems(1).ForeColor = TColor(RGB(204, 0, 0))
                 oLI.Bold = True
@@ -4000,6 +4357,12 @@ oLI.Text = ""
 If bMobPrintCharDamageOutFirst And nNMRVer >= 1.83 And frmMain.optMonsterFilter(1).Value = True Then GoTo mob_attacks:
 done_attacks:
 
+If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
+
+'reachability from Bank of Godfrey at the character's level (see modReachability)
+Call AddMonsterReachRows(nMonsterNum, DetailLV)
+
+'the reach rows may have moved tabRooms/tabMonsters (GetRoomName re-seeks only tabRooms); re-seek tabMonsters
 If Not tabMonsters.Fields("Number") = nMonsterNum Then tabMonsters.Seek "=", nMonsterNum
 
 If Not frmMain.bDontLookupMonRegen Then
@@ -5258,7 +5621,7 @@ Select Case nGlobalAttackTypeMME
                             IIf(nGlobalAttackTypeMME = a3_SpellAny, nGlobalAttackSpellLVL, tCharacter.nLevel), nVSMR, (DF_Flags And DFIAM_IsAntiMag) <> 0, _
                             nVSrcol, nVSrfir, nVSrsto, nVSrlit, nVSrwat)
             
-            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel > nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel > nSpellImmuLVL)) Then
+            If nSpellImmuLVL = 0 Or ((tSpellcast.nRequiredLevel >= nSpellImmuLVL) Or (tSpellcast.nRequiredLevel = 0 And tSpellcast.nCastLevel >= nSpellImmuLVL)) Then
                 If eAttackFlags = AR000_Unknown Then
                     If SpellSeek(nGlobalAttackSpellNum) Then
                         For x = 0 To 9
@@ -6639,7 +7002,9 @@ For Each oLI In lv.ListItems
                             str = str & oLI.SubItems(x)
                         End If
                     ElseIf Right(lv.name, 3) = "Loc" And oLI.ListSubItems.count > 0 Then
-                        If InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
+                        If Left(oLI.SubItems(x), 9) = "Room cmd " Or Left(oLI.SubItems(x), 12) = "Room action:" Then
+                            str = str & oLI.SubItems(x) 'the command is the point of these rows
+                        ElseIf InStr(1, oLI.SubItems(x), ":", vbTextCompare) > 0 Then
                             str = str & Trim(mid(oLI.SubItems(x), InStr(1, oLI.SubItems(x), ":", vbTextCompare) + 1, 999))
                         Else
                             str = str & oLI.SubItems(x)
@@ -6748,6 +7113,7 @@ Dim sDisplayFooter As String, sLairRegex As String, sRoomKey As String, nMarkup 
 Dim tMatches() As RegexMatches, nMaxRegen As Integer, sGroupIndex As String, tLairInfo As LairInfoType
 Dim tValue As tItemValue, sShopValue As String, nTemp As Double, sRegexPattern As String, iMatch As Integer, nMulti As Integer
 Dim nCount As Integer, nTB_Ref As Long, i As Integer, sTBcmd As String
+Dim sScan As String, tRoomCmd() As tRoomCmdSource, nRoomCmd As Long, iRoomCmd As Long
 
 sDisplayFooter = sFooter
 
@@ -6760,7 +7126,11 @@ sLairRegex = "Group\(lair\): (\d+)\/(\d+)"
 If nNMRVer >= 1.82 Then sLairRegex = "\[(\d+)\]" & sLairRegex
 If nNMRVer >= 1.83 Then sLairRegex = "\[([\d\-]+)\]" & sLairRegex
 
-sTest = LCase(sLoc)
+'room command entries ("Room(pry coffin) 17/278|...") get their own rows after the loop below, and
+'are kept out of its scan so their command text can't be read as some other reference
+sScan = sLoc
+If InStr(1, sLoc, "Room(", vbBinaryCompare) > 0 Then sScan = SplitRoomCmdSources(sLoc, tRoomCmd(), nRoomCmd)
+sTest = LCase(sScan)
 
 'SCRAPPED THIS IDEA 2025.11.09
 'If InStr(1, sFooter, " <-> ", vbTextCompare) > 0 Then
@@ -6906,7 +7276,10 @@ nonumber:
                     oLI.Text = sLocation & GetRoomName(mid(sTest, y1, y2), , , bHideRecordNumbers) & sPercent & sDisplayFooter
                 End If
                 
-                If nAuxValue > 0 And (bDontClear = True Or Len(sHeader) > 0) Then
+                'only a shop's rooms (sHeader "Shop: ", nAuxValue = shop number) carry the aux number: GotoLocation
+                'reads the shop from it. An item's own "Room m/r" rows keep the room so they still navigate
+                'when record numbers are hidden (the text has no "m/r" to fall back on then).
+                If nAuxValue > 0 And Len(sHeader) > 0 Then
                     If bTwoColumns Or bPercentColumn Then
                         oLI.ListSubItems(1).Tag = nAuxValue
                     Else
@@ -7218,10 +7591,10 @@ nonumber:
                     sTemp = GetRoomName(sRoomKey, , , bHideRecordNumbers) & sPercent & sDisplayFooter
                     If tLairInfo.nAvgExp > 0 Then sTemp = sTemp & ", Exp: " & FormatNumber(tLairInfo.nAvgExp * tLairInfo.nMaxRegen, 0, , , vbTrue)
                     'If tLairInfo.nScriptValue > 0 Then sTemp = sTemp & ", SV: " & FormatNumber(tLairInfo.nScriptValue, 0, , , vbTrue)
-                    If tLairInfo.nAvgDmgLair > 0 And tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
-                        sTemp = sTemp & ", Dmg In/Out: " & Round(tLairInfo.nAvgDmgLair) & "/" & tLairInfo.nDamageOut
-                    ElseIf tLairInfo.nAvgDmgLair > 0 Then
-                        sTemp = sTemp & ", Dmg In: " & Round(tLairInfo.nAvgDmgLair)
+                    If tLairInfo.nAvgDmgClearRound > 0 And tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
+                        sTemp = sTemp & ", Dmg In/Out: " & Round(tLairInfo.nAvgDmgClearRound) & "/" & tLairInfo.nDamageOut
+                    ElseIf tLairInfo.nAvgDmgClearRound > 0 Then
+                        sTemp = sTemp & ", Dmg In: " & Round(tLairInfo.nAvgDmgClearRound)
                     ElseIf tLairInfo.nDamageOut > 0 And (nGlobalAttackTypeMME > a0_oneshot And nGlobalAttackTypeMME <> a5_Manual) Then
                         sTemp = sTemp & ", Dmg Out: " & tLairInfo.nDamageOut
                     End If
@@ -7283,6 +7656,13 @@ skip:
     End If
 Next z
 
+'room command entries, one row each
+For iRoomCmd = 1 To nRoomCmd
+    If nLimit > 0 Then nCount = nCount + 1
+    If nLimit > 0 And nCount > nLimit Then GoTo finish:
+    Call AddRoomCmdLocationRow(lv, tRoomCmd(iRoomCmd), bTwoColumns, bPercentColumn, sFooter)
+Next iRoomCmd
+
 finish:
 
 If lv.ListItems.count > 1 And Not bDontSort And Not bPercentColumn Then
@@ -7319,6 +7699,88 @@ error:
 HandleError
 Set oLI = Nothing
 
+End Sub
+
+'GetLocations' row for a room command entry (see SplitRoomCmdSources), e.g.
+'    0.3% | Room cmd "pry coffin": Tomb (17/278) +93 more
+'The room text's Tag is the entry's room list: GotoLocation goes to that room, or lists them all.
+Private Sub AddRoomCmdLocationRow(lv As ListView, tSource As tRoomCmdSource, _
+    ByVal bTwoColumns As Boolean, ByVal bPercentColumn As Boolean, ByVal sFooter As String)
+On Error GoTo error:
+Dim oLI As ListItem, sLocation As String, sRoom As String, sPercent As String, sDisplayFooter As String
+Dim nPercent As Currency, nPercent2 As Currency
+
+If tSource.bAction Then
+    sLocation = "Room action: "
+Else
+    sLocation = "Room cmd " & tSource.sLabel & ": "
+End If
+
+sRoom = GetRoomName(tSource.sFirstRoom, , , bHideRecordNumbers)
+If tSource.nRoomCount > 1 Then sRoom = sRoom & " +" & (tSource.nRoomCount - 1) & " more"
+If tSource.bCut Then sRoom = sRoom & " (list cut short)"
+
+sDisplayFooter = sFooter
+Set oLI = lv.ListItems.Add()
+
+If bPercentColumn Then
+    If tSource.nChance > 0 Then nPercent = CCur(tSource.nChance)
+
+    'in a container's list (sFooter " -> chest (5%)") the container's chance applies too, as in GetLocations
+    If InStr(1, sFooter, "%)", vbTextCompare) > 0 Then
+        nPercent2 = ExtractNumbersFromString(mid(sFooter, InStr(1, sFooter, "(", vbTextCompare)))
+        If nPercent2 > 0 Then
+            If tSource.nChance < 0 Then
+                nPercent = nPercent2
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
+            ElseIf nPercent > 0 Then
+                nPercent = (nPercent * nPercent2) / 100
+                sDisplayFooter = Replace(sFooter, "(" & nPercent2 & "%)", "")
+            End If
+            'an unknown ("?") chance keeps the container's % in the footer: it is the half that is known
+        End If
+    End If
+
+    'rounded as the other rows; blank = always (giveitem), "?" = unknown
+    If nPercent > 1 Then
+        sPercent = Round(nPercent) & "%"
+    ElseIf Round(nPercent, 2) > 0 Then
+        sPercent = Round(nPercent, 2) & "%"
+    ElseIf tSource.nChance > 0 Then
+        sPercent = "<0.01%"
+    ElseIf tSource.nChance = 0 Then
+        sPercent = "?"
+    End If
+
+    oLI.Text = sPercent
+    oLI.Tag = nPercent
+    oLI.ListSubItems.Add 1, , sLocation & sRoom & sDisplayFooter
+    oLI.ListSubItems(1).Tag = tSource.sRoomList
+Else
+    If tSource.nChance > 0 Then
+        sPercent = " (" & tSource.nChance & "%)"
+    ElseIf tSource.nChance = 0 Then
+        sPercent = " (?%)"
+    End If
+
+    If bTwoColumns Then
+        oLI.Text = sLocation
+        oLI.ListSubItems.Add 1, , sRoom & sPercent & sDisplayFooter
+        oLI.Tag = "Room"
+        oLI.ListSubItems(1).Tag = tSource.sRoomList
+    Else
+        oLI.Text = sLocation & sRoom & sPercent & sDisplayFooter
+        oLI.Tag = tSource.sRoomList
+    End If
+End If
+
+out:
+On Error Resume Next
+Set oLI = Nothing
+Exit Sub
+error:
+Call HandleError("AddRoomCmdLocationRow")
+Resume out:
 End Sub
 
 'Public Function GetLocations_STR(ByVal sLoc As String) As String
@@ -8523,6 +8985,7 @@ Else
     If val(frmMain.lblCharDodge.Tag) > 0 Then clsMonAtkSim.nUserDodge = val(frmMain.lblCharDodge.Tag)
     If frmMain.chkCharAntiMagic.Value = 1 Then clsMonAtkSim.nUserAntiMagic = 1
     If val(frmMain.lblInvenCharStat(20).Tag) > 0 Then clsMonAtkSim.nUserProtEvil = val(frmMain.lblInvenCharStat(20).Tag)
+    clsMonAtkSim.nUserVileWard = GetCharActiveVileWard() 'gmud, evil alignment only
     clsMonAtkSim.nUserRCOL = frmMain.lblInvenCharStat(28).Tag 'col
     clsMonAtkSim.nUserRFIR = frmMain.lblInvenCharStat(27).Tag 'fir
     clsMonAtkSim.nUserRSTO = frmMain.lblInvenCharStat(25).Tag 'sto

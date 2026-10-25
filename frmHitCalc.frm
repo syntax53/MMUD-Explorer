@@ -955,10 +955,7 @@ Dim nDefenderEvilness As Long
 Dim bDefenderShadow As Boolean
 'Dim nDefenderClass As Long
 
-Dim nCharVileWard As Long
 Dim nCharPerception As Long
-Dim nCharEvilness As Long
-Dim bCharShadow As Boolean
 
 Dim ntimButtonPressCount As Long
 Dim nPlayer
@@ -997,7 +994,6 @@ If txtHitCalc(3).Enabled Then
 End If
 If txtHitCalc(4).Enabled Then
     nVileWard = Fix(val(txtHitCalc(4).Text))
-    If optDefender(0).Value = True Then nCharVileWard = nVileWard
     If optDefender(2).Value = True Then nDefenderVileWard = nVileWard
 End If
 
@@ -1021,13 +1017,11 @@ If bGreaterMUD And cmbEvil.Enabled = True Then 'cmbEvil will be disabled when vi
         Case 1: eEvil = e5_Criminal
         Case 2: eEvil = e7_FIEND
     End Select
-    If optDefender(0).Value = True Then nCharEvilness = cmbEvil.ListIndex
     If optDefender(2).Value = True Then nDefenderEvilness = cmbEvil.ListIndex
 End If
 
 If chkShadow.Enabled Then
     If chkShadow.Value = 1 Then bShadow = True
-    If optDefender(0).Value = True Then bCharShadow = bShadow
     If optDefender(2).Value = True Then bDefenderShadow = bShadow
 End If
 
@@ -1070,7 +1064,7 @@ End If
 lblSubRight.Caption = lblSubRight.Caption & " - " & nMaxHit & "%"
 
 If bGreaterMUD Then
-    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge DR-Cap:" & vbCrLf & GetDodgeCap(, True) & "% - " & GetDodgeCap() & "%"
+    lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge DR-Cap:" & vbCrLf & GetDodgeCap(nClass, True) & "% - " & GetDodgeCap(nClass) & "%"
 Else
     lblSubRight.Caption = lblSubRight.Caption & vbCrLf & "Dodge Cap:" & vbCrLf & GetDodgeCap() & "%"
 End If
@@ -1256,10 +1250,10 @@ If bVSmob And Not bCharacterOnly Then 'monster
     
 ElseIf bVSchar And Not bMonsterOnly Then
 
-    txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) 'ac
+    txtHitCalc(1).Text = Fix(val(frmMain.lblInvenCharStat(2).Tag)) - nGlobalCharShadowAC 'ac (shadow bonus split out into chkShadow below)
     txtHitCalc(2).Text = val(frmMain.lblInvenCharStat(8).Tag) 'dodge
     txtHitCalc(3).Text = val(frmMain.lblInvenCharStat(20).Tag) 'prot. evil
-    txtHitCalc(4).Text = nCharVileWard
+    txtHitCalc(4).Text = GetCharActiveVileWard() 'vile ward (gmud, evil alignment only)
     txtHitCalc(5).Text = nCharPerception
     
     If bBackstab Then
@@ -1268,17 +1262,17 @@ ElseIf bVSchar And Not bMonsterOnly Then
         lblBSPercep.Caption = "N/A"
     End If
     
-    If bCharShadow Then
+    If nGlobalCharShadowAC > 0 Then 'character has shadow (item abil 9 / bless): +10 handled by the checkbox, not the AC box
         chkShadow.Value = 1
     Else
         chkShadow.Value = 0
     End If
     
-    Select Case nCharEvilness
-        Case 1: cmbEvil.ListIndex = 1
-        Case 2: cmbEvil.ListIndex = 2
-        Case Else: cmbEvil.ListIndex = 0
-    End Select
+    If bGreaterMUD And bCharIsEvilAligned() Then 'evil alignment: vile ward applies in full
+        cmbEvil.ListIndex = 2
+    Else
+        cmbEvil.ListIndex = 0
+    End If
     
     chkSeeHidden.Value = 0
     

@@ -138,7 +138,9 @@ Public Type LairInfoType
     nSurpriseChance As Integer
     nPossSpawns As Long
     sGlobalAttackConfig As String
-    nAvgDmgLair As Currency 'avg dmg/round taken to clear lair of all mobs
+    nAvgDmgLair As Currency 'exp/hr model input: AvgDmg * nRTK / avgAlive (not a true per-round value; display uses nAvgDmgClearRound)
+    nAvgDmgClearRound As Currency 'display: avg dmg/round taken over a full clear, as mobs die off one at a time
+    nAvgDmgClear As Currency 'display: avg total dmg taken over a full clear, before any healing (0 = can't clear)
     nRTK As Double 'rounds to kill each mob
     nRTC As Double 'rounds to clear the lair
     nMagicLVL As Integer
@@ -169,6 +171,7 @@ Dim tmp_nAvgDmg As Currency, tmp_nAvgExp As Currency, tmp_nAvgHP As Currency, tm
 Dim tmp_nMaxRegen As Currency, tmp_nAvgDmgLair As Currency, tmp_nAvgDelay As Double, tmp_nSurpriseChance As Double
 Dim tmp_sMobList As String, tmp_nAvgAC As Long, tmp_nAvgDR As Long, tmp_nAvgMR As Long, tmp_nAvgMitigation As Currency
 Dim tmp_nRTC As Double, tmp_nRTK As Double, tmp_nAvgDamageOut As Currency, tmp_nAvgMobs As Double
+Dim tmp_nAvgDmgClearRound As Double, tmp_nAvgDmgClear As Double, nClearLairs As Long
 Dim tmp_nAvgWalk() As Double, tmp_nSurpriseDamageOut As Currency, tmp_nMinDmgOut As Double, tmp_nFirstDmgOut As Double
 Dim tmp_nMaxMagicLVL As Integer, tmp_nMaxSpellImmuLVL As Integer, tmp_nSurpriseMinDMG As Currency
 Dim tmp_nAvgNumUndeads As Double, tmp_nAvgNumAntiMagic As Double, nDmgOut As tDamageOutput
@@ -216,6 +219,11 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
                 tmp_nAvgHP = tmp_nAvgHP + (tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
                 tmp_nAvgDmg = tmp_nAvgDmg + tLairInfo.nAvgDmg
                 tmp_nAvgDmgLair = tmp_nAvgDmgLair + tLairInfo.nAvgDmgLair
+                tmp_nAvgDmgClearRound = tmp_nAvgDmgClearRound + tLairInfo.nAvgDmgClearRound
+                If tLairInfo.nAvgDmgClear > 0 Then
+                    tmp_nAvgDmgClear = tmp_nAvgDmgClear + tLairInfo.nAvgDmgClear
+                    nClearLairs = nClearLairs + 1
+                End If
                 tmp_nRTC = tmp_nRTC + tLairInfo.nRTC
                 tmp_nRTK = tmp_nRTK + tLairInfo.nRTK
                 tmp_nAvgAC = tmp_nAvgAC + tLairInfo.nAvgAC
@@ -261,6 +269,8 @@ If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
     '---------------------------
     GetLairAveragesFromLocs.nAvgDmg = Round(tmp_nAvgDmg / nLairs)
     GetLairAveragesFromLocs.nAvgDmgLair = Round(tmp_nAvgDmgLair / nLairs)
+    GetLairAveragesFromLocs.nAvgDmgClearRound = Round(tmp_nAvgDmgClearRound / nLairs)
+    If nClearLairs > 0 Then GetLairAveragesFromLocs.nAvgDmgClear = Round(tmp_nAvgDmgClear / nClearLairs)
     GetLairAveragesFromLocs.nRTC = Round(tmp_nRTC / nLairs, 1)
     GetLairAveragesFromLocs.nRTK = Round(tmp_nRTK / nLairs, 1)
     GetLairAveragesFromLocs.nAvgExp = Round(tmp_nAvgExp / nLairs)
@@ -382,6 +392,39 @@ Exit Function
 
 error:
 Call HandleError("GetLairAveragesFromLocs")
+Resume out:
+End Function
+
+'Lairs in a monster's [Summoned By] (sLoc) whose own max regen is nMinRegen..nMaxRegen. Each lair's max regen is
+'only in NMR v1.82+ exports (same patterns as CalculateAverageLairs): 0 before that. Lairs with no regen don't count.
+Public Function CountLairsByMaxRegen(ByVal sLoc As String, ByVal nMinRegen As Double, ByVal nMaxRegen As Double) As Long
+On Error GoTo error:
+Dim sRegexPattern As String, tMatches() As RegexMatches, iLair As Integer, iRegenMatch As Integer, nRegen As Long
+
+If nNMRVer < 1.82 Then Exit Function
+
+'[6]Group(lair): 1/2345
+sRegexPattern = "\[(\d+)\]Group\(lair\): (\d+)\/(\d+)"
+iRegenMatch = 0
+If nNMRVer >= 1.83 Then
+    '[7-8-9][6]Group(lair): 1/2345
+    sRegexPattern = "\[([\d\-]+)\]" & sRegexPattern
+    iRegenMatch = 1
+End If
+
+tMatches = RegExpFindv2(sLoc, sRegexPattern)
+If UBound(tMatches) > 0 Or Len(tMatches(0).sFullMatch) > 0 Then
+    For iLair = 0 To UBound(tMatches)
+        nRegen = val(tMatches(iLair).sSubMatches(iRegenMatch))
+        If nRegen > 0 And nRegen >= nMinRegen And nRegen <= nMaxRegen Then CountLairsByMaxRegen = CountLairsByMaxRegen + 1
+    Next iLair
+End If
+
+out:
+On Error Resume Next
+Exit Function
+error:
+Call HandleError("CountLairsByMaxRegen")
 Resume out:
 End Function
 
@@ -583,7 +626,7 @@ End Function
 Public Function GetLairInfo(ByVal sGroupIndex As String, Optional ByVal nMaxRegen As Integer) As LairInfoType
 On Error GoTo error:
 Dim x As Long, sArr() As String, nDamageOut As Long, nParty As Integer, sTemp As String
-Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean
+Dim avgAlive As Double, nRTK As Double, nRTC As Double, bUseCharacter As Boolean, nMobCount As Double
 Dim nDmgOut As tDamageOutput, nFirstRoundDamageOut As Long, DF_Flags As eDefenseFlags
 Dim nSurpriseDamageOut As Long, tCombatInfo As tCombatRoundInfo 'nMinDmgPct As Double,
 Dim nMinRoundDamageOut As Long, nSurpriseChance As Integer, nSurpriseMinDamageOut As Long
@@ -761,6 +804,18 @@ If Len(GetLairInfo.sMobList) > 0 And Not bStartup Then
     Else
         GetLairInfo.nRTC = 0
     End If
+
+    'display-only damage taken (nAvgDmgLair above is the exp/hr model input and has nRTK baked in).
+    'mobs die one at a time while every living mob attacks, so the k-th mob killed attacks for k * nRTK rounds:
+    'clear total = AvgDmg * nRTK * N(N+1)/2 over nRTC (nRTK * N) rounds = AvgDmg * (N+1)/2 per round
+    nMobCount = GetLairInfo.nMaxRegen
+    If nMobCount < 1 Then nMobCount = 1
+    If GetLairInfo.nRTC > 0 Then
+        GetLairInfo.nAvgDmgClearRound = Round(GetLairInfo.nAvgDmg * (nMobCount + 1) / 2, 1)
+        GetLairInfo.nAvgDmgClear = Round(GetLairInfo.nAvgDmg * GetLairInfo.nRTK * nMobCount * (nMobCount + 1) / 2, 1)
+    Else 'can't kill: every mob keeps attacking
+        GetLairInfo.nAvgDmgClearRound = Round(GetLairInfo.nAvgDmg * nMobCount, 1)
+    End If
 End If
 
 out:
@@ -866,6 +921,7 @@ End Function
 Public Function OpenTables(ByVal sFile As String, Optional ByVal bQuiet As Boolean = False) As Boolean
 On Error GoTo error:
 Dim nMaxMon As Long, nYesNo As Integer, fso As Object, sCopyFile As String
+Dim bReconnect As Boolean, bKeepMonsterArrays As Boolean
 
 again:
 
@@ -874,7 +930,11 @@ UseExpMulti = False
 'Set WS = DAO.CreateWorkspace("MMUD_Explorer_WS", "MMUD_Explorer", False, dbUseJet)
 Set DB = OpenDatabase(sFile, False, True)
 
+'a reconnect (EnsureDatabaseConnection, e.g. after the file's handle went stale) reopens the same file, so
+'what was computed from it at load is still valid and must be kept: nothing recomputes it until a reload
+bReconnect = bDatabaseReconnectInProgress And StrComp(sFile, sCurrentDatabaseFile, vbTextCompare) = 0
 sCurrentDatabaseFile = sFile
+If Not bReconnect Then Call ReachInvalidate
 
 On Error GoTo missing_tables:
 Set tabItems = DB.OpenRecordset("Items")
@@ -893,17 +953,22 @@ Call TestMonExpMulti
 If tabMonsters.RecordCount > 0 Then
     tabMonsters.MoveLast
     nMaxMon = tabMonsters.Fields("Number")
-    ReDim nMonsterDamageVsChar(nMaxMon)
-    ReDim nMonsterPossy(nMaxMon)
-    ReDim nMonsterSpawnChance(nMaxMon)
-    ReDim nCharDamageVsMonster(nMaxMon)
-    ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
-    ReDim nCharSurpriseDamageVsMonster(nMaxMon)
-    ReDim nMonsterDamageVsDefault(nMaxMon)
-    ReDim nMonsterDamageVsParty(nMaxMon)
-    ReDim nCharMinRoundDamageVsMonster(nMaxMon)
-    ReDim nCharSurpriseChanceVsMonster(nMaxMon)
-    ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
+    'a reconnect keeps the per-monster arrays: a ReDim zeroes the lair stats (nMonsterPossy/nMonsterSpawnChance,
+    'filled only by LoadMonsters/CalculateAverageLairs) and turns the -1 "not calculated" damage markers into a cached 0
+    If bReconnect Then bKeepMonsterArrays = (UBound(nMonsterPossy) = nMaxMon)
+    If Not bKeepMonsterArrays Then
+        ReDim nMonsterDamageVsChar(nMaxMon)
+        ReDim nMonsterPossy(nMaxMon)
+        ReDim nMonsterSpawnChance(nMaxMon)
+        ReDim nCharDamageVsMonster(nMaxMon)
+        ReDim nCharFirstRoundDamageVsMonster(nMaxMon)
+        ReDim nCharSurpriseDamageVsMonster(nMaxMon)
+        ReDim nMonsterDamageVsDefault(nMaxMon)
+        ReDim nMonsterDamageVsParty(nMaxMon)
+        ReDim nCharMinRoundDamageVsMonster(nMaxMon)
+        ReDim nCharSurpriseChanceVsMonster(nMaxMon)
+        ReDim nCharSurpriseMinDamageVsMonster(nMaxMon)
+    End If
 End If
 
 If Len(sCopyFile) > 0 Then Call WriteINI("Settings", "DataFile", sCopyFile)
@@ -3330,12 +3395,10 @@ End If
 ready:
 On Error GoTo error:
 
-'note: this is repeated in GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem
+'note: the "Obtained From" half is shared with GetItemsByExactNameArr, LV_AddRowByItemNumber, GetBestShopNumForItem (ObtainedFromIsGettable)
 If tabItems.Fields("Gettable") = 1 Then
     ItemIsGetable = True
-ElseIf InStr(1, tabItems.Fields("Obtained From"), "NPC #", vbTextCompare) > 0 Then
-    ItemIsGetable = True
-ElseIf InStr(1, tabItems.Fields("Obtained From"), "Textblock #", vbTextCompare) > 0 And InStr(1, tabItems.Fields("Obtained From"), "Room ", vbTextCompare) = 0 Then
+ElseIf ObtainedFromIsGettable(tabItems.Fields("Obtained From") & "") Then
     ItemIsGetable = True
 End If
 
@@ -5457,8 +5520,12 @@ nAccyArr(0) = 22
 nAccyArr(1) = 105
 nAccyArr(2) = 106
 
-nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
-nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
+'GreaterMUD/Paramud: a monster's weapon and drop items never modify its attacks. the engine (Mob.DoCombat) uses
+'each attack's own accuracy and min/max damage; the weapon only supplies the hit/miss message text.
+If Not bGreaterMUD Then
+    nItemDamageBonus = CalculateMonsterItemBonuses(nMonster, nDamageArr)
+    nItemAccyBonus = CalculateMonsterItemBonuses(nMonster, nAccyArr)
+End If
 
 Select Case tabMonsters.Fields("Align")
     Case 1, 2, 5, 6: clsMonAtkSim.bMobIsEvil = True
@@ -5698,12 +5765,14 @@ On Error GoTo ReturnFalse
 ReturnFalse:
 End Function
 
-Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom As Long, Optional ByVal nFindMap As Long, Optional ByVal bStrict As Boolean) As Boolean
+Public Function TextBlockHasTeleport(ByVal nTextblock As Long, ByVal nFindRoom As Long, Optional ByVal nFindMap As Long, Optional ByVal bStrict As Boolean, _
+    Optional ByVal nNest As Integer) As Boolean
 'bStrict true == nFindMap should be > 0 and map MUST match. a missing map specified will result in false.
 'bStrict false == only room must match. however, if nFindMap is specified and the textblock does specify the map and it doesn't match, then result = false
+'"random <textblock>" commands are followed (nNest tracks the depth) since the teleport often sits in the random textblock (e.g. 15/1112 "touch ruby" -> random 4013)
 On Error GoTo error:
 Dim sData As String, nDataPos As Long, sLine As String, sChar As String, nRoom As Long, nMap As Long
-Dim x As Integer, y As Integer
+Dim x As Integer, y As Integer, nRandomTB As Long
 
 If nTextblock <= 0 Then Exit Function
 
@@ -5722,6 +5791,21 @@ Do While nDataPos < Len(sData)
     If x = 0 Then x = Len(sData) + 1
     sLine = mid(sData, nDataPos, x - nDataPos)
     nDataPos = x + 1
+    
+    'sData is a local copy, so recursing (which re-seeks tabTBInfo) is safe here. the depth cap also stops reference loops.
+    If nNest < 5 Then
+        x = InStr(1, sLine, "random ")
+        Do While x > 0
+            nRandomTB = ExtractValueFromString(mid(sLine, x), "random ")
+            If nRandomTB > 0 And nRandomTB <> nTextblock Then
+                If TextBlockHasTeleport(nRandomTB, nFindRoom, nFindMap, bStrict, nNest + 1) Then
+                    TextBlockHasTeleport = True
+                    Exit Function
+                End If
+            End If
+            x = InStr(x + 1, sLine, "random ")
+        Loop
+    End If
     
     x = InStr(1, sLine, "teleport ")
     If x > 0 Then

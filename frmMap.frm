@@ -10623,6 +10623,16 @@ Begin VB.Form frmMap
          Top             =   2580
          Width           =   195
       End
+      Begin VB.CommandButton cmdNavigate 
+         Caption         =   "Route to Room"
+         Height          =   675
+         Left            =   2475
+         Style           =   1  'Graphical
+         TabIndex        =   3359
+         ToolTipText     =   "Route to this room from the nearest bank, port or the Lost City (from Bank of Godfrey when this room is one of those)"
+         Top             =   2580
+         Width           =   840
+      End
       Begin VB.CheckBox chkMapOptions 
          BackColor       =   &H00000000&
          Caption         =   "Show Map Controls"
@@ -44053,7 +44063,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
@@ -44093,6 +44103,27 @@ Select Case Index
             & vbCrLf & vbCrLf & "Having both of these options turned on for some maps can produce... interesting results.", vbInformation
 End Select
 
+End Sub
+
+'route to the current room (frmMain.ShowRoomRoute); its results rows move this map
+Private Sub cmdNavigate_Click()
+Dim bCompute As Boolean
+On Error GoTo error:
+
+If nMapStartMap < 1 Or nMapStartRoom < 1 Then Exit Sub
+'ShowRoomRoute computes the reachability first when needed, with a progress bar owned by this window: as for
+'Find Room's, drop always-on-top meanwhile
+bCompute = Not ReachIsComputed()
+If bCompute And chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, False)
+Call frmMain.ShowRoomRoute(nMapStartMap, nMapStartRoom, Me)
+
+out:
+On Error Resume Next
+If bCompute And chkMapOptions(6).Value = 0 Then Call SetTopMostWindow(Me.hWnd, True)
+Exit Sub
+error:
+Call HandleError("cmdNavigate_Click")
+Resume out:
 End Sub
 
 Private Sub cmdMapFindText_Click(Index As Integer)
@@ -44798,8 +44829,9 @@ If chkMapOptions(2).Value = 0 And Len(tabRooms.Fields("Lair")) > 1 Then
         sLairInfo = sLairInfo & ", HP: " & PutCommas(tLairInfo.nAvgHP * tLairInfo.nMaxRegen)
         
         nDmg = GetPreCalculatedMonsterDamage(0, sDmgVS)
-        If tLairInfo.nAvgDmgLair <> 0 Then
-            sLairInfo = sLairInfo & vbCrLf & "Dmg " & sDmgVS & ": " & tLairInfo.nAvgDmgLair & "/clear"
+        If tLairInfo.nAvgDmgClearRound <> 0 Then
+            sLairInfo = sLairInfo & vbCrLf & "Dmg " & sDmgVS & ": " & PutCommas(Round(tLairInfo.nAvgDmgClearRound)) & "/round"
+            If tLairInfo.nAvgDmgClear > 0 Then sLairInfo = sLairInfo & ", " & PutCommas(Round(tLairInfo.nAvgDmgClear)) & "/clear"
         End If
         
 '        If tLairInfo.nDamageMitigated <> 0 Then
@@ -46024,7 +46056,7 @@ Private Sub lvMapLoc_DblClick()
 On Error GoTo error:
 
 If lvMapLoc.ListItems.count = 0 Then Exit Sub
-Call frmMain.GotoLocation(lvMapLoc.SelectedItem, nMapStartMap, Me)
+Call frmMain.GotoLocation(lvMapLoc.SelectedItem, , Me, nMapStartMap)
 'If frmMain.WindowState = vbMinimized Then frmMain.WindowState = vbNormal
 'frmMain.SetFocus
 
@@ -46088,7 +46120,7 @@ Set cReg = New clsRegistryRoutines
     'sSectionName = RemoveCharacter(frmMain.lblDatVer.Caption, " ") & "_Presets"
 'End If
 
-cReg.hkey = HKEY_CURRENT_USER
+cReg.hKey = HKEY_CURRENT_USER
 cReg.KeyRoot = "Software\MMUD Explorer\Presets"
 cReg.Subkey = sSectionName
 
