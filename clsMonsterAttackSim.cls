@@ -331,7 +331,7 @@ If m_bHideEnergyInfo Then
 End If
 
 If Len(sRight) > 0 And Len(sLeft) > 29 Then
-    sLeft = mid(sLeft, 1, 26) & "..."
+    sLeft = Left$(sLeft, 26) & "..."
 End If
 m_sCombatLog = m_sCombatLog & vbCrLf & sLeft
 If Len(sRight) > 0 Then m_sCombatLog = m_sCombatLog & String(30 - Len(sLeft), " ") & sRight
@@ -668,7 +668,7 @@ For nRound = 1 To m_nNumberOfRounds
                             nAttack_AdjSuccessChance = m_HIT_CAP
                         End If
                         
-                        'PHYSICAL ATTACKS = 9% MIN HIT CHANCE, 99% MAX (stock)
+                        'PHYSICAL ATTACKS = 8% MIN HIT CHANCE, 99% MAX (stock)
                         If nAttack_AdjSuccessChance < m_HIT_MIN Then nAttack_AdjSuccessChance = m_HIT_MIN
                         If nAttack_AdjSuccessChance > m_HIT_CAP Then nAttack_AdjSuccessChance = m_HIT_CAP
                         
@@ -734,6 +734,7 @@ For nRound = 1 To m_nNumberOfRounds
                                 nDamage = nMR_Reduction
                             End If
                             
+                            nResist_Reduction = 0
                             If m_nAtkSpellType(nAttack) <> 4 And m_nAtkSpellType(nAttack) <> 6 Then 'normal-4 & poison-6
                                 Select Case m_nAtkSpellType(nAttack)
                                     Case 0: If m_nUserRCOL > 0 Then nResist_Reduction = (nDamage * (m_nUserRCOL / 100))  'col
@@ -809,6 +810,7 @@ For nRound = 1 To m_nNumberOfRounds
                                     nHitSpellDamage = nMR_Reduction
                                 End If
                                 
+                                nResist_Reduction = 0
                                 If m_nAtkHitSpellType(nAttack) <> 4 And m_nAtkHitSpellType(nAttack) <> 6 Then 'normal-4 & poison-6
                                     Select Case m_nAtkHitSpellType(nAttack)
                                         Case 0: If m_nUserRCOL > 0 Then nResist_Reduction = (nHitSpellDamage * (m_nUserRCOL / 100))  'col
@@ -964,6 +966,7 @@ next_round:
                     nDamage = nMR_Reduction
                 End If
                 
+                nResist_Reduction = 0
                 If m_nBetweenRoundSpellType(x) <> 4 And m_nBetweenRoundSpellType(x) <> 6 Then 'normal-4 & poison-6
                     Select Case m_nBetweenRoundSpellType(x)
                         Case 0: If m_nUserRCOL > 0 Then nResist_Reduction = (nDamage * (m_nUserRCOL / 100))  'col
