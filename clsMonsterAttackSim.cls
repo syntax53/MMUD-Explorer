@@ -1335,9 +1335,13 @@ m_nEnergyPerRound = 0
 m_nNumberOfRounds = 0
 m_nTotalAttacks = 0
 m_nTotalDamage = 0
+m_nTotalDamagePhys = 0
+m_nTotalDamageSpell = 0
 m_nMaxRoundDamage = 0
 m_nMaxEnergyPerRound = 0
 m_nAverageDamage = 0
+m_nAverageDamagePhys = 0
+m_nAverageDamageSpell = 0
 
 m_sCombatLog = ""
 nCombatLogRoundCount = 0
@@ -1356,6 +1360,8 @@ For x = 0 To 4
     m_nAtkHitSpellType(x) = 4
     m_nAtkResist(x) = 0
     m_nAtkMRdmgResist(x) = 0
+    m_nAtkDuration(x) = 0
+    m_sAtkHitSpellName(x) = ""
     
     m_nStatAtkAttempted(x) = 0
     m_nStatAtkHits(x) = 0
@@ -1374,6 +1380,7 @@ For x = 0 To 4
     m_nBetweenRoundChance(x) = 0
     m_nBetweenRoundResistType(x) = 0
     m_nBetweenRoundResistDmgMR(x) = 0
+    m_nBetweenRoundDuration(x) = 0
 Next x
 
 Call ResetActiveSpells
