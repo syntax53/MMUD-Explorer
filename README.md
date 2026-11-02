@@ -5,6 +5,7 @@ MMUD Explorer is a database viewer for the game MajorMUD(r) created by syntax53.
 v2.4 (##/##/2026)  
 ------------------------------------------  
 - FIX: Monster damage calculations no longer carry an earlier monster's spell durations into a later monster's plain attacks (from NMR issue #29)  
+- FIX: Monster damage calculations: a character's elemental resistance to one monster spell no longer also reduces later spells of other elements (which could even make their damage negative)  
 
 v2.3.5 (10/21/2026)  
 ------------------------------------------  
